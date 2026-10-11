@@ -37,6 +37,9 @@ import { DepositModal } from '../components/DepositModal';
 import { SyncEmailModal } from '../components/SyncEmailModal';
 import { CustomerModal } from '../components/CustomerModal';
 import { BottomNav } from '../components/BottomNav';
+import { CreditDetailModal } from '../components/CreditDetailModal';
+import { CustomerDetailModal } from '../components/CustomerDetailModal';
+import { DepositDetailModal } from '../components/DepositDetailModal';
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -61,6 +64,11 @@ export default function Home() {
   
   const [selectedCreditForPayment, setSelectedCreditForPayment] = useState<CreditItem | null>(null);
   const [selectedCreditForEarlySettlement, setSelectedCreditForEarlySettlement] = useState<CreditItem | null>(null);
+
+  // Detail & Action Modal States (Saat nama/judul diklik)
+  const [selectedCreditForDetail, setSelectedCreditForDetail] = useState<CreditItem | null>(null);
+  const [selectedCustomerForDetail, setSelectedCustomerForDetail] = useState<Customer | null>(null);
+  const [selectedDepositCustomerForDetail, setSelectedDepositCustomerForDetail] = useState<Customer | null>(null);
 
   // Load initial data
   useEffect(() => {
@@ -232,6 +240,21 @@ export default function Home() {
     };
     syncAndSave([newCust, ...customers], credits, payments, deposits);
     setIsCustomerModalOpen(false);
+  };
+
+  // Hapus Akad Kredit
+  const handleDeleteCredit = (creditId: string) => {
+    const updatedCredits = credits.filter(c => c.id !== creditId);
+    const updatedPayments = payments.filter(p => p.creditItemId !== creditId);
+    syncAndSave(customers, updatedCredits, updatedPayments, deposits);
+    setSelectedCreditForDetail(null);
+  };
+
+  // Hapus Data Nasabah
+  const handleDeleteCustomer = (customerId: string) => {
+    const updatedCustomers = customers.filter(c => c.id !== customerId);
+    syncAndSave(updatedCustomers, credits, payments, deposits);
+    setSelectedCustomerForDetail(null);
   };
 
   // Export File Cadangan
@@ -499,11 +522,24 @@ export default function Home() {
                             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                               {cred.period.toUpperCase()} • {cred.tenorCount}x Termin
                             </span>
-                            <h3 className="font-bold text-slate-900 text-base leading-snug">
-                              {cred.itemName}
+                            <h3
+                              onClick={() => setSelectedCreditForDetail(cred)}
+                              className="font-bold text-slate-900 text-base leading-snug hover:text-emerald-700 cursor-pointer transition flex items-center gap-1.5 group"
+                              title="Klik untuk melihat detail & tindakan lengkap"
+                            >
+                              <span>{cred.itemName}</span>
+                              <span className="text-[10px] text-emerald-600 font-medium opacity-70 group-hover:opacity-100 transition">
+                                Detail →
+                              </span>
                             </h3>
                             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold pt-0.5">
-                              <span>{cred.customerName}</span>
+                              <span
+                                onClick={() => cust && setSelectedCustomerForDetail(cust)}
+                                className="cursor-pointer hover:underline hover:text-emerald-800"
+                                title="Klik untuk lihat profil nasabah"
+                              >
+                                {cred.customerName}
+                              </span>
                               {cust?.phone && (
                                 <button
                                   onClick={() => openWhatsApp(cust.phone, `Halo ${cust.name}, saya dari TitenFin ingin mengonfirmasi jadwal kredit barang ${cred.itemName}...`)}
@@ -666,13 +702,27 @@ export default function Home() {
                 {filteredDepositorCustomers.map((c) => {
                   const bal = getCustomerDepositBalance(c.id, deposits);
                   return (
-                    <div key={c.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+                    <div
+                      key={c.id}
+                      onClick={() => setSelectedDepositCustomerForDetail(c)}
+                      className="bg-white p-4 rounded-xl border border-slate-200 hover:border-teal-500 hover:shadow-md cursor-pointer transition shadow-2xs group"
+                      title="Klik untuk membuka buku rekening & transaksi mutasi"
+                    >
                       <div className="flex justify-between items-start mb-2">
-                        <span className="font-bold text-slate-900 text-sm">{c.name}</span>
+                        <span className="font-bold text-slate-900 text-sm group-hover:text-teal-700 transition flex items-center gap-1.5">
+                          <span>{c.name}</span>
+                          <span className="text-[10px] text-teal-600 font-medium opacity-70 group-hover:opacity-100 transition">
+                            Buku Rekening →
+                          </span>
+                        </span>
                         {c.phone && (
                           <button
-                            onClick={() => openWhatsApp(c.phone, `Halo ${c.name}, saldo titipan uang Anda yang tercatat di TitenFin saat ini adalah ${formatRupiah(bal)}.`)}
-                            className="text-slate-400 hover:text-teal-600"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openWhatsApp(c.phone, `Halo ${c.name}, saldo titipan uang Anda yang tercatat di TitenFin saat ini adalah ${formatRupiah(bal)}.`);
+                            }}
+                            className="text-slate-400 hover:text-teal-600 p-1"
+                            title="Chat WhatsApp"
                           >
                             <MessageCircle className="w-4 h-4 text-teal-600" />
                           </button>
@@ -792,15 +842,28 @@ export default function Home() {
                 const totalCustDebt = activeCustCredits.reduce((s, cr) => s + cr.remainingAmount, 0);
 
                 return (
-                  <div key={c.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3">
+                  <div
+                    key={c.id}
+                    onClick={() => setSelectedCustomerForDetail(c)}
+                    className="bg-white p-4 rounded-xl border border-slate-200 hover:border-emerald-500 hover:shadow-md cursor-pointer transition shadow-2xs space-y-3 group"
+                    title="Klik untuk melihat profil lengkap & tindakan nasabah"
+                  >
                     <div className="flex items-start justify-between">
                       <div>
-                        <h4 className="font-bold text-slate-900 text-sm">{c.name}</h4>
+                        <h4 className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition flex items-center gap-1.5">
+                          <span>{c.name}</span>
+                          <span className="text-[10px] text-emerald-600 font-medium opacity-70 group-hover:opacity-100 transition">
+                            Profil →
+                          </span>
+                        </h4>
                         <span className="text-xs text-slate-500 block">{c.address || 'Alamat belum diisi'}</span>
                       </div>
                       {c.phone && (
                         <button
-                          onClick={() => openWhatsApp(c.phone, `Halo ${c.name}, salam dari TitenFin...`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openWhatsApp(c.phone, `Halo ${c.name}, salam dari TitenFin...`);
+                          }}
                           className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition"
                           title="Chat WA"
                         >
@@ -999,6 +1062,38 @@ export default function Home() {
         }}
         onExportBackup={handleExportBackup}
         onImportBackup={handleImportBackup}
+      />
+
+      {/* MODAL DETAIL & AKSI CEPAT (SAAT JUDUL / NAMA DIKLIK) */}
+      <CreditDetailModal
+        credit={selectedCreditForDetail}
+        customer={customers.find(c => c.id === selectedCreditForDetail?.customerId)}
+        payments={payments}
+        isOpen={!!selectedCreditForDetail}
+        onClose={() => setSelectedCreditForDetail(null)}
+        onPayInstallment={(cred) => setSelectedCreditForPayment(cred)}
+        onEarlySettlement={(cred) => setSelectedCreditForEarlySettlement(cred)}
+        onDeleteCredit={handleDeleteCredit}
+      />
+
+      <CustomerDetailModal
+        customer={selectedCustomerForDetail}
+        credits={credits}
+        deposits={deposits}
+        isOpen={!!selectedCustomerForDetail}
+        onClose={() => setSelectedCustomerForDetail(null)}
+        onNewCreditForCustomer={() => setIsNewCreditModalOpen(true)}
+        onNewDepositForCustomer={() => setIsDepositModalOpen(true)}
+        onSelectCreditDetail={(cred) => setSelectedCreditForDetail(cred)}
+        onDeleteCustomer={handleDeleteCustomer}
+      />
+
+      <DepositDetailModal
+        customer={selectedDepositCustomerForDetail}
+        deposits={deposits}
+        isOpen={!!selectedDepositCustomerForDetail}
+        onClose={() => setSelectedDepositCustomerForDetail(null)}
+        onOpenDepositAction={() => setIsDepositModalOpen(true)}
       />
 
       {/* Bar Navigasi Bawah & Menu Aksi Cepat (Mobile-Friendly & Luwes) */}

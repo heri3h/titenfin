@@ -36,6 +36,7 @@ import { NewCreditModal } from '../components/NewCreditModal';
 import { DepositModal } from '../components/DepositModal';
 import { SyncEmailModal } from '../components/SyncEmailModal';
 import { CustomerModal } from '../components/CustomerModal';
+import { BottomNav } from '../components/BottomNav';
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -296,7 +297,7 @@ export default function Home() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 sm:pb-20">
       {/* Header Utama */}
       <Header
         isPrivacyMode={isPrivacyMode}
@@ -316,8 +317,8 @@ export default function Home() {
           activeDepositorCount={uniqueDepositorsCount}
         />
 
-        {/* Tab Navigasi Menu */}
-        <div className="flex border-b border-slate-200 overflow-x-auto gap-2 text-xs sm:text-sm font-semibold">
+        {/* Tab Navigasi Desktop (di Mobile menggunakan BottomNav yang luwes) */}
+        <div className="hidden sm:flex border-b border-slate-200 overflow-x-auto gap-2 text-xs sm:text-sm font-semibold">
           <button
             onClick={() => setActiveTab('credits')}
             className={`pb-3 px-3 flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
@@ -859,6 +860,16 @@ export default function Home() {
         }}
         onExportBackup={handleExportBackup}
         onImportBackup={handleImportBackup}
+      />
+
+      {/* Bar Navigasi Bawah & Menu Aksi Cepat (Mobile-Friendly & Luwes) */}
+      <BottomNav
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
+        onOpenDeposit={() => setIsDepositModalOpen(true)}
+        onOpenNewCustomer={() => setIsCustomerModalOpen(true)}
+        activeCreditsCount={activeCredits.length}
       />
     </div>
   );

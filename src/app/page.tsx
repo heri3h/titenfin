@@ -1,0 +1,865 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import {
+  CreditCard,
+  Landmark,
+  Users,
+  PieChart,
+  Plus,
+  Search,
+  CheckCircle,
+  Clock,
+  Sparkles,
+  Phone,
+  MessageCircle,
+  ArrowDownLeft,
+  ArrowUpRight,
+  ShieldCheck,
+  AlertTriangle,
+  History,
+  FileSpreadsheet
+} from 'lucide-react';
+import { Customer, CreditItem, CreditPayment, DepositTransaction, DepositType, CreditStatus } from '../types';
+import {
+  getStorageData,
+  saveStorageData,
+  getCustomerDepositBalance,
+  calculateCashSummary,
+  formatRupiah
+} from '../lib/storage';
+import { Header } from '../components/Header';
+import { DashboardBoxes } from '../components/DashboardBoxes';
+import { PaymentModal } from '../components/PaymentModal';
+import { EarlySettlementModal } from '../components/EarlySettlementModal';
+import { NewCreditModal } from '../components/NewCreditModal';
+import { DepositModal } from '../components/DepositModal';
+import { SyncEmailModal } from '../components/SyncEmailModal';
+import { CustomerModal } from '../components/CustomerModal';
+
+export default function Home() {
+  const [isClient, setIsClient] = useState(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [credits, setCredits] = useState<CreditItem[]>([]);
+  const [payments, setPayments] = useState<CreditPayment[]>([]);
+  const [deposits, setDeposits] = useState<DepositTransaction[]>([]);
+  const [initialCapital, setInitialCapital] = useState<number>(10000000);
+  const [userEmail, setUserEmail] = useState<string>('heritri@titenfin.id');
+
+  // UI States
+  const [isPrivacyMode, setIsPrivacyMode] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'credits' | 'deposits' | 'customers' | 'capital'>('credits');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [creditFilter, setCreditFilter] = useState<'all' | 'active' | 'completed'>('active');
+
+  // Modal States
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isNewCreditModalOpen, setIsNewCreditModalOpen] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  
+  const [selectedCreditForPayment, setSelectedCreditForPayment] = useState<CreditItem | null>(null);
+  const [selectedCreditForEarlySettlement, setSelectedCreditForEarlySettlement] = useState<CreditItem | null>(null);
+
+  // Load initial data
+  useEffect(() => {
+    setIsClient(true);
+    const data = getStorageData();
+    setCustomers(data.customers);
+    setCredits(data.creditItems);
+    setPayments(data.creditPayments);
+    setDeposits(data.depositTxns);
+    setInitialCapital(data.initialCapital);
+    const savedEmail = localStorage.getItem('titenfin_user_email');
+    if (savedEmail) setUserEmail(savedEmail);
+  }, []);
+
+  // Save changes to storage
+  const syncAndSave = (
+    newCust = customers,
+    newCred = credits,
+    newPay = payments,
+    newDep = deposits,
+    newCap = initialCapital
+  ) => {
+    setCustomers(newCust);
+    setCredits(newCred);
+    setPayments(newPay);
+    setDeposits(newDep);
+    setInitialCapital(newCap);
+    saveStorageData(newCust, newCred, newPay, newDep, newCap);
+  };
+
+  // Helper untuk kirim pesan WhatsApp
+  const openWhatsApp = (phone: string, message: string) => {
+    const cleanPhone = phone.replace(/^0/, '62').replace(/\D/g, '');
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, '_blank');
+  };
+
+  // HANDLER: Simpan Pembayaran Cicilan (Parsial / Fleksibel)
+  const handleRecordPayment = (amount: number, date: string, notes: string, sendWa: boolean) => {
+    if (!selectedCreditForPayment) return;
+    const cred = selectedCreditForPayment;
+    const cust = customers.find(c => c.id === cred.customerId);
+
+    const newPayment: CreditPayment = {
+      id: `pay-${Date.now()}`,
+      creditItemId: cred.id,
+      customerId: cred.customerId,
+      date,
+      amount,
+      isEarlySettlement: false,
+      discountGranted: 0,
+      notes,
+    };
+
+    const newRemaining = Math.max(0, cred.remainingAmount - amount);
+    const updatedStatus: CreditStatus = newRemaining === 0 ? 'completed' : 'active';
+
+    const updatedCredits = credits.map(c => 
+      c.id === cred.id
+        ? { ...c, remainingAmount: newRemaining, status: updatedStatus }
+        : c
+    );
+    const updatedPayments = [newPayment, ...payments];
+
+    syncAndSave(customers, updatedCredits, updatedPayments, deposits);
+    setSelectedCreditForPayment(null);
+
+    // Kirim bukti WA jika dipilih
+    if (sendWa && cust && cust.phone) {
+      const msg = `Halo ${cust.name},\n\nTerima kasih, pembayaran cicilan untuk barang *${cred.itemName}* sebesar *${formatRupiah(amount)}* telah kami terima pada tanggal ${date}.\n\n*Sisa Tagihan:* ${formatRupiah(newRemaining)}\n*Status:* ${updatedStatus === 'completed' ? 'LUNAS SELESAI 🎉' : 'Dalam Angsuran'}\n\nCatatan: ${notes || '-'}\n\n_Salam hangat, TitenFin_`;
+      openWhatsApp(cust.phone, msg);
+    }
+  };
+
+  // HANDLER: Pelunasan Dipercepat dengan Diskon Profit
+  const handleEarlySettlement = (
+    discount: number,
+    finalAmount: number,
+    date: string,
+    notes: string,
+    sendWa: boolean
+  ) => {
+    if (!selectedCreditForEarlySettlement) return;
+    const cred = selectedCreditForEarlySettlement;
+    const cust = customers.find(c => c.id === cred.customerId);
+
+    const newPayment: CreditPayment = {
+      id: `pay-settle-${Date.now()}`,
+      creditItemId: cred.id,
+      customerId: cred.customerId,
+      date,
+      amount: finalAmount,
+      isEarlySettlement: true,
+      discountGranted: discount,
+      notes,
+    };
+
+    const updatedCredits = credits.map(c =>
+      c.id === cred.id
+        ? { ...c, remainingAmount: 0, status: 'completed' as CreditStatus }
+        : c
+    );
+    const updatedPayments = [newPayment, ...payments];
+
+    syncAndSave(customers, updatedCredits, updatedPayments, deposits);
+    setSelectedCreditForEarlySettlement(null);
+
+    if (sendWa && cust && cust.phone) {
+      const msg = `Halo ${cust.name},\n\nAlhamdulillah, akad kredit barang *${cred.itemName}* telah resmi *LUNAS DIPERCEPAT* pada ${date}.\n\n*Potongan/Diskon Bunga:* ${formatRupiah(discount)}\n*Total Pelunasan:* ${formatRupiah(finalAmount)}\n*Sisa Tagihan:* Rp 0 (LUNAS)\n\nTerima kasih banyak atas kerjasamanya yang baik 🙏\n\n_Salam hangat, TitenFin_`;
+      openWhatsApp(cust.phone, msg);
+    }
+  };
+
+  // HANDLER: Akad Kredit Baru
+  const handleCreateCredit = (newCreditData: Omit<CreditItem, 'id' | 'createdAt' | 'status'>) => {
+    const newCredit: CreditItem = {
+      ...newCreditData,
+      id: `cred-${Date.now()}`,
+      status: 'active',
+      createdAt: new Date().toISOString(),
+    };
+    syncAndSave(customers, [newCredit, ...credits], payments, deposits);
+    setIsNewCreditModalOpen(false);
+  };
+
+  // HANDLER: Titip Uang (Setor / Tarik)
+  const handleDepositMutation = (
+    customerId: string,
+    type: DepositType,
+    amount: number,
+    date: string,
+    notes: string,
+    sendWa: boolean
+  ) => {
+    const cust = customers.find(c => c.id === customerId);
+    if (!cust) return;
+
+    const currentBal = getCustomerDepositBalance(customerId, deposits);
+    const newBal = type === 'deposit' ? currentBal + amount : currentBal - amount;
+
+    const newTxn: DepositTransaction = {
+      id: `dep-${Date.now()}`,
+      customerId,
+      customerName: cust.name,
+      date,
+      type,
+      amount,
+      balanceAfter: newBal,
+      notes,
+    };
+
+    const updatedDeposits = [newTxn, ...deposits];
+    syncAndSave(customers, credits, payments, updatedDeposits);
+    setIsDepositModalOpen(false);
+
+    if (sendWa && cust.phone) {
+      const typeLabel = type === 'deposit' ? 'SETORAN TITIPAN (+)' : 'PENARIKAN TITIPAN (-)';
+      const msg = `Halo ${cust.name},\n\nTransaksi kas titipan berhasil dicatat pada ${date}:\n\n*Jenis Transaksi:* ${typeLabel}\n*Nominal:* ${formatRupiah(amount)}\n*Sisa Saldo Titipan Anda Saat Ini:* ${formatRupiah(newBal)}\n*Keperluan:* ${notes || '-'}\n\nUang titipan Anda tercatat aman dan terjaga rapi di TitenFin 🙏`;
+      openWhatsApp(cust.phone, msg);
+    }
+  };
+
+  // HANDLER: Tambah Pelanggan Baru
+  const handleAddCustomer = (data: Omit<Customer, 'id' | 'createdAt'>) => {
+    const newCust: Customer = {
+      ...data,
+      id: `cust-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    syncAndSave([newCust, ...customers], credits, payments, deposits);
+    setIsCustomerModalOpen(false);
+  };
+
+  // Export File Cadangan
+  const handleExportBackup = () => {
+    const payload = {
+      app: 'TitenFin',
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      userEmail,
+      initialCapital,
+      customers,
+      credits,
+      payments,
+      deposits,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup-titenfin-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+  };
+
+  // Import File Cadangan
+  const handleImportBackup = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target?.result as string);
+        if (parsed.customers && parsed.credits) {
+          syncAndSave(
+            parsed.customers,
+            parsed.credits,
+            parsed.payments || [],
+            parsed.deposits || [],
+            parsed.initialCapital || 10000000
+          );
+          alert('Data berhasil dipulihkan dari file cadangan!');
+          setIsSyncModalOpen(false);
+        } else {
+          alert('Format file cadangan tidak valid.');
+        }
+      } catch (err) {
+        alert('Gagal membaca file cadangan.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  if (!isClient) return null;
+
+  // Ringkasan 3 Kotak Kas
+  const summary = calculateCashSummary(initialCapital, credits, payments, deposits);
+  const activeCredits = credits.filter(c => c.status === 'active');
+  const uniqueDepositorsCount = new Set(deposits.map(d => d.customerId)).size;
+
+  // Filter Credits
+  const filteredCredits = credits.filter(c => {
+    const matchSearch = c.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.itemName.toLowerCase().includes(searchQuery.toLowerCase());
+    if (creditFilter === 'all') return matchSearch;
+    return matchSearch && c.status === creditFilter;
+  });
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+      {/* Header Utama */}
+      <Header
+        isPrivacyMode={isPrivacyMode}
+        setIsPrivacyMode={setIsPrivacyMode}
+        userEmail={userEmail}
+        onOpenSyncModal={() => setIsSyncModalOpen(true)}
+        onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
+        onOpenNewDeposit={() => setIsDepositModalOpen(true)}
+      />
+
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-5 space-y-6">
+        {/* FITUR 4: Dashboard 3 Kotak Kas (Pemisahan Kas Bersih vs Piutang vs Kas Amanah) */}
+        <DashboardBoxes
+          summary={summary}
+          isPrivacyMode={isPrivacyMode}
+          activeCreditCount={activeCredits.length}
+          activeDepositorCount={uniqueDepositorsCount}
+        />
+
+        {/* Tab Navigasi Menu */}
+        <div className="flex border-b border-slate-200 overflow-x-auto gap-2 text-xs sm:text-sm font-semibold">
+          <button
+            onClick={() => setActiveTab('credits')}
+            className={`pb-3 px-3 flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+              activeTab === 'credits'
+                ? 'border-emerald-600 text-emerald-700 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <CreditCard className="w-4 h-4" />
+            <span>Kredit Barang ({activeCredits.length} Aktif)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('deposits')}
+            className={`pb-3 px-3 flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+              activeTab === 'deposits'
+                ? 'border-teal-600 text-teal-700 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Landmark className="w-4 h-4" />
+            <span>Kas Titipan Uang ({deposits.length} Mutasi)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('customers')}
+            className={`pb-3 px-3 flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+              activeTab === 'customers'
+                ? 'border-emerald-600 text-emerald-700 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Daftar Nasabah ({customers.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('capital')}
+            className={`pb-3 px-3 flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+              activeTab === 'capital'
+                ? 'border-emerald-600 text-emerald-700 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <PieChart className="w-4 h-4" />
+            <span>Rekap Modal & Profit</span>
+          </button>
+        </div>
+
+        {/* TAB 1: KREDIT BARANG */}
+        {activeTab === 'credits' && (
+          <div className="space-y-4">
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Cari nama nasabah atau jenis barang..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="flex bg-slate-100 p-0.5 rounded-lg text-xs">
+                  <button
+                    onClick={() => setCreditFilter('active')}
+                    className={`px-3 py-1 rounded-md font-medium transition ${
+                      creditFilter === 'active' ? 'bg-white text-emerald-700 font-bold shadow-2xs' : 'text-slate-600'
+                    }`}
+                  >
+                    Aktif ({credits.filter(c => c.status === 'active').length})
+                  </button>
+                  <button
+                    onClick={() => setCreditFilter('completed')}
+                    className={`px-3 py-1 rounded-md font-medium transition ${
+                      creditFilter === 'completed' ? 'bg-white text-emerald-700 font-bold shadow-2xs' : 'text-slate-600'
+                    }`}
+                  >
+                    Lunas ({credits.filter(c => c.status === 'completed').length})
+                  </button>
+                  <button
+                    onClick={() => setCreditFilter('all')}
+                    className={`px-3 py-1 rounded-md font-medium transition ${
+                      creditFilter === 'all' ? 'bg-white text-emerald-700 font-bold shadow-2xs' : 'text-slate-600'
+                    }`}
+                  >
+                    Semua
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setIsNewCreditModalOpen(true)}
+                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs transition"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Tambah Akad</span>
+                </button>
+              </div>
+            </div>
+
+            {/* List Kartu Kredit Barang */}
+            {filteredCredits.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500 text-xs">
+                Tidak ada data akad kredit barang yang sesuai.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filteredCredits.map((cred) => {
+                  const cust = customers.find(c => c.id === cred.customerId);
+                  const isDone = cred.status === 'completed';
+                  const percentPaid = Math.min(100, Math.round(((cred.totalCreditPrice - cred.remainingAmount) / cred.totalCreditPrice) * 100));
+
+                  return (
+                    <div
+                      key={cred.id}
+                      className={`bg-white rounded-2xl border transition-all hover:shadow-md p-4 sm:p-5 flex flex-col justify-between ${
+                        isDone ? 'border-slate-200 opacity-80' : 'border-slate-200/90 shadow-2xs'
+                      }`}
+                    >
+                      <div>
+                        {/* Header Kartu */}
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              {cred.period.toUpperCase()} • {cred.tenorCount}x Termin
+                            </span>
+                            <h3 className="font-bold text-slate-900 text-base leading-snug">
+                              {cred.itemName}
+                            </h3>
+                            <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold pt-0.5">
+                              <span>{cred.customerName}</span>
+                              {cust?.phone && (
+                                <button
+                                  onClick={() => openWhatsApp(cust.phone, `Halo ${cust.name}, saya dari TitenFin ingin mengonfirmasi jadwal kredit barang ${cred.itemName}...`)}
+                                  className="text-slate-400 hover:text-emerald-600 transition"
+                                  title="Chat WhatsApp"
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                            isDone ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-800'
+                          }`}>
+                            {isDone ? 'LUNAS' : `${percentPaid}% Terbayar`}
+                          </span>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="w-full bg-slate-100 rounded-full h-2 mb-3.5 overflow-hidden">
+                          <div
+                            className={`h-2 rounded-full transition-all duration-500 ${
+                              isDone ? 'bg-slate-400' : 'bg-gradient-to-r from-emerald-500 to-teal-500'
+                            }`}
+                            style={{ width: `${percentPaid}%` }}
+                          />
+                        </div>
+
+                        {/* Rincian Angka Keuangan */}
+                        <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50/80 p-3 rounded-xl border border-slate-100 mb-4">
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Total Akad (Modal + Untung)</span>
+                            <span className="font-bold text-slate-800">{formatRupiah(cred.totalCreditPrice, isPrivacyMode)}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Sisa Tagihan Belum Bayar</span>
+                            <span className={`font-black ${isDone ? 'text-slate-500' : 'text-emerald-700'}`}>
+                              {formatRupiah(cred.remainingAmount, isPrivacyMode)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Target Angsuran</span>
+                            <span className="font-semibold text-slate-700">
+                              {formatRupiah(cred.scheduledAmount, isPrivacyMode)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Estimasi Jatuh Tempo</span>
+                            <span className="font-semibold text-slate-700 flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              {cred.dueDate}
+                            </span>
+                          </div>
+                        </div>
+
+                        {cred.collateralNotes && (
+                          <div className="text-[11px] bg-amber-50 text-amber-800 px-2.5 py-1 rounded-md mb-3 border border-amber-200/60">
+                            <strong>Jaminan:</strong> {cred.collateralNotes}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Tombol Aksi Transaksi (Fitur #2 & #3) */}
+                      {!isDone ? (
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                          {/* FITUR 2: Bayar Cicilan (Parsial / Fleksibel) */}
+                          <button
+                            onClick={() => setSelectedCreditForPayment(cred)}
+                            className="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs"
+                          >
+                            <CreditCard className="w-3.5 h-3.5" />
+                            <span>Bayar Cicilan</span>
+                          </button>
+
+                          {/* FITUR 3: Pelunasan Dipercepat (Early Settlement) */}
+                          <button
+                            onClick={() => setSelectedCreditForEarlySettlement(cred)}
+                            className="py-2 px-3 bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1"
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                            <span>Lunas Awal (Diskon)</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                          <span className="flex items-center gap-1 text-emerald-600 font-semibold">
+                            <CheckCircle className="w-4 h-4" /> Telah Lunas Selesai
+                          </span>
+                          {cust?.phone && (
+                            <button
+                              onClick={() => openWhatsApp(cust.phone, `Halo ${cust.name}, konfirmasi kuitansi lunas untuk barang ${cred.itemName} telah tersimpan rapi di sistem TitenFin. Terima kasih!`)}
+                              className="text-xs text-slate-500 hover:text-emerald-700 font-medium"
+                            >
+                              Kirim Bukti Lunas WA
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 2: TITIPAN UANG (TABUNGAN AMANAH) */}
+        {activeTab === 'deposits' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Buku Kas Saldo Titipan Uang</h3>
+                <p className="text-xs text-slate-500">
+                  Pencatatan setor berkali-kali & penarikan bertahap dengan saldo berjalan akurat.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsDepositModalOpen(true)}
+                className="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Catat Setor / Tarik Titipan</span>
+              </button>
+            </div>
+
+            {/* Rekap Saldo Per Penitip */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {customers.map((c) => {
+                const bal = getCustomerDepositBalance(c.id, deposits);
+                if (bal === 0 && !deposits.some(d => d.customerId === c.id)) return null;
+
+                return (
+                  <div key={c.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-bold text-slate-900 text-sm">{c.name}</span>
+                      {c.phone && (
+                        <button
+                          onClick={() => openWhatsApp(c.phone, `Halo ${c.name}, saldo titipan uang Anda yang tercatat di TitenFin saat ini adalah ${formatRupiah(bal)}.`)}
+                          className="text-slate-400 hover:text-teal-600"
+                        >
+                          <MessageCircle className="w-4 h-4 text-teal-600" />
+                        </button>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-slate-400 block">Saldo Dititipkan:</span>
+                    <div className="text-xl font-extrabold text-teal-700">
+                      {formatRupiah(bal, isPrivacyMode)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Riwayat Mutasi Seluruh Titipan */}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                  <History className="w-4 h-4 text-slate-500" />
+                  Riwayat Mutasi Dana Titipan
+                </h4>
+                <span className="text-xs text-slate-400 font-medium">{deposits.length} Catatan</span>
+              </div>
+
+              <div className="divide-y divide-slate-100">
+                {deposits.length === 0 ? (
+                  <div className="p-8 text-center text-xs text-slate-400">
+                    Belum ada riwayat mutasi titipan uang.
+                  </div>
+                ) : (
+                  deposits.map((d) => (
+                    <div key={d.id} className="p-3.5 sm:px-5 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                          d.type === 'deposit' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {d.type === 'deposit' ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-900">{d.customerName}</div>
+                          <div className="text-slate-500 text-[11px]">
+                            {d.date} • {d.notes || (d.type === 'deposit' ? 'Setor simpanan' : 'Tarik simpanan')}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className={`font-bold ${d.type === 'deposit' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                          {d.type === 'deposit' ? '+' : '-'}{formatRupiah(d.amount, isPrivacyMode)}
+                        </div>
+                        <div className="text-[10px] text-slate-400">
+                          Sisa Saldo: {formatRupiah(d.balanceAfter, isPrivacyMode)}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: DAFTAR NASABAH */}
+        {activeTab === 'customers' && (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center bg-white p-3.5 rounded-xl border border-slate-200">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Buku Kontak Nasabah & Pelanggan</h3>
+                <p className="text-xs text-slate-500">
+                  Data peminjam kredit dan pemilik dana titipan.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsCustomerModalOpen(true)}
+                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs transition"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ Nasabah Baru</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {customers.map((c) => {
+                const depositBal = getCustomerDepositBalance(c.id, deposits);
+                const activeCustCredits = credits.filter(cr => cr.customerId === c.id && cr.status === 'active');
+                const totalCustDebt = activeCustCredits.reduce((s, cr) => s + cr.remainingAmount, 0);
+
+                return (
+                  <div key={c.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-sm">{c.name}</h4>
+                        <span className="text-xs text-slate-500 block">{c.address || 'Alamat belum diisi'}</span>
+                      </div>
+                      {c.phone && (
+                        <button
+                          onClick={() => openWhatsApp(c.phone, `Halo ${c.name}, salam dari TitenFin...`)}
+                          className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition"
+                          title="Chat WA"
+                        >
+                          <Phone className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-xs space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Sisa Hutang Kredit:</span>
+                        <span className={`font-bold ${totalCustDebt > 0 ? 'text-amber-700' : 'text-slate-700'}`}>
+                          {formatRupiah(totalCustDebt, isPrivacyMode)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Saldo Uang Dititipkan:</span>
+                        <span className="font-bold text-teal-700">
+                          {formatRupiah(depositBal, isPrivacyMode)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {c.notes && (
+                      <p className="text-[11px] text-slate-400 italic">
+                        "{c.notes}"
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: REKAP MODAL & PERPUTARAN KAS */}
+        {activeTab === 'capital' && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-5">
+            <div>
+              <h3 className="font-bold text-slate-900 text-base">Rekonsiliasi Modal & Perputaran Kas Bersih</h3>
+              <p className="text-xs text-slate-500">
+                Pemisahan akurat antara modal yang Anda tanam, laba yang sudah terealisasi, dan uang titipan orang lain.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-xs">
+                <span className="font-bold text-slate-800 text-sm block">Pengaturan Modal Sendiri</span>
+                <p className="text-slate-500">
+                  Ubah nominal modal dasar yang Anda sediakan untuk pembiayaan barang:
+                </p>
+                <div className="flex gap-2 items-center pt-1">
+                  <span className="font-bold text-slate-700">Rp</span>
+                  <input
+                    type="number"
+                    step="1000000"
+                    value={initialCapital}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setInitialCapital(val);
+                      saveStorageData(customers, credits, payments, deposits, val);
+                    }}
+                    className="px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm text-slate-900 w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 space-y-2 text-xs">
+                <span className="font-bold text-emerald-950 text-sm block">Kesehatan Likuiditas Kas</span>
+                <p className="text-emerald-900 leading-relaxed">
+                  Dengan sistem <strong>TitenFin</strong>, Anda terbebas dari jebakan kas semu. Uang titipan Rp {formatRupiah(summary.totalDeposits, isPrivacyMode)} senantiasa dipisahkan dari modal putar agar kepercayaan nasabah tetap terjaga 100%.
+                </p>
+              </div>
+            </div>
+
+            {/* Riwayat Pembayaran Angsuran Terakhir */}
+            <div className="pt-2">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 mb-2.5 flex items-center gap-2">
+                <History className="w-4 h-4 text-emerald-600" />
+                Catatan Penerimaan Pembayaran Angsuran Masuk
+              </h4>
+              <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
+                {payments.map((p) => {
+                  const cred = credits.find(c => c.id === p.creditItemId);
+                  const cust = customers.find(c => c.id === p.customerId);
+                  return (
+                    <div key={p.id} className="p-3 text-xs flex justify-between items-center">
+                      <div>
+                        <span className="font-bold text-slate-900">{cust?.name || 'Nasabah'}</span>
+                        <span className="text-slate-500 text-[11px] block">
+                          {p.date} • {cred?.itemName || 'Barang'} • {p.notes || '-'}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-extrabold text-emerald-700 text-sm">
+                          +{formatRupiah(p.amount, isPrivacyMode)}
+                        </span>
+                        {p.isEarlySettlement && (
+                          <span className="block text-[10px] text-amber-600 font-semibold">
+                            Pelunasan Dipercepat (Diskon: {formatRupiah(p.discountGranted)})
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* MODAL-MODAL INTERAKTIF */}
+      {selectedCreditForPayment && (
+        <PaymentModal
+          credit={selectedCreditForPayment}
+          isOpen={!!selectedCreditForPayment}
+          onClose={() => setSelectedCreditForPayment(null)}
+          onSubmit={handleRecordPayment}
+        />
+      )}
+
+      {selectedCreditForEarlySettlement && (
+        <EarlySettlementModal
+          credit={selectedCreditForEarlySettlement}
+          isOpen={!!selectedCreditForEarlySettlement}
+          onClose={() => setSelectedCreditForEarlySettlement(null)}
+          onSubmit={handleEarlySettlement}
+        />
+      )}
+
+      <NewCreditModal
+        customers={customers}
+        isOpen={isNewCreditModalOpen}
+        onClose={() => setIsNewCreditModalOpen(false)}
+        onSubmit={handleCreateCredit}
+        onAddNewCustomer={() => {
+          setIsNewCreditModalOpen(false);
+          setIsCustomerModalOpen(true);
+        }}
+      />
+
+      <DepositModal
+        customers={customers}
+        isOpen={isDepositModalOpen}
+        onClose={() => setIsDepositModalOpen(false)}
+        getCustomerBalance={(id) => getCustomerDepositBalance(id, deposits)}
+        onSubmit={handleDepositMutation}
+        onAddNewCustomer={() => {
+          setIsDepositModalOpen(false);
+          setIsCustomerModalOpen(true);
+        }}
+      />
+
+      <CustomerModal
+        isOpen={isCustomerModalOpen}
+        onClose={() => setIsCustomerModalOpen(false)}
+        onSubmit={handleAddCustomer}
+      />
+
+      <SyncEmailModal
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+        userEmail={userEmail}
+        onSaveEmail={(email) => {
+          setUserEmail(email);
+          localStorage.setItem('titenfin_user_email', email);
+        }}
+        onExportBackup={handleExportBackup}
+        onImportBackup={handleImportBackup}
+      />
+    </div>
+  );
+}

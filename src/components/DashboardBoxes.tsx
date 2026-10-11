@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Wallet, Users, Landmark, AlertCircle, ArrowUpRight, ArrowDownRight, Info } from 'lucide-react';
+import { Wallet, Users, Landmark, AlertCircle, Info } from 'lucide-react';
 import { CashDashboardSummary } from '../types';
 import { formatRupiah } from '../lib/storage';
+import { translations } from '../lib/i18n';
 
 interface DashboardBoxesProps {
   summary: CashDashboardSummary;
   isPrivacyMode: boolean;
   activeCreditCount: number;
   activeDepositorCount: number;
+  t: (typeof translations)['id'];
 }
 
 export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
@@ -17,6 +19,7 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
   isPrivacyMode,
   activeCreditCount,
   activeDepositorCount,
+  t,
 }) => {
   // Total uang fisik yang wajib ada di kantong/rekening Anda saat ini:
   const totalPhysicalCashHeld = summary.ownCash + summary.totalDeposits;
@@ -33,10 +36,10 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold tracking-wider text-emerald-300 uppercase flex items-center gap-1.5">
               <Wallet className="w-4 h-4 text-emerald-400" />
-              1. Kas Bersih Sendiri
+              {t.box1Title}
             </span>
             <span className="text-[11px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-medium">
-              Aman Dibelanjakan
+              {t.box1Badge}
             </span>
           </div>
 
@@ -45,7 +48,7 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
               {formatRupiah(summary.ownCash, isPrivacyMode)}
             </h2>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Modal berjalan + akumulasi keuntungan bersih yang sudah cair.
+              {t.box1Desc}
             </p>
           </div>
         </div>
@@ -55,10 +58,10 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold tracking-wider text-blue-700 uppercase flex items-center gap-1.5">
               <Users className="w-4 h-4 text-blue-600" />
-              2. Total Piutang di Luar
+              {t.box2Title}
             </span>
             <span className="text-[11px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">
-              {activeCreditCount} Akad Aktif
+              {activeCreditCount} {t.box2BadgeSuffix}
             </span>
           </div>
 
@@ -67,7 +70,7 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
               {formatRupiah(summary.totalReceivables, isPrivacyMode)}
             </h2>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Sisa tagihan barang (pokok + margin) yang masih diangsur nasabah.
+              {t.box2Desc}
             </p>
           </div>
         </div>
@@ -77,10 +80,10 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold tracking-wider text-amber-900 uppercase flex items-center gap-1.5">
               <Landmark className="w-4 h-4 text-amber-700" />
-              3. Dana Titipan (Amanah)
+              {t.box3Title}
             </span>
             <span className="text-[11px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">
-              {activeDepositorCount} Orang Penitip
+              {activeDepositorCount} {t.box3BadgeSuffix}
             </span>
           </div>
 
@@ -91,7 +94,7 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
             <div className="flex items-start gap-1 text-xs text-amber-800 font-medium pt-0.5">
               <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
               <span>
-                Uang orang lain. Siap ditarik kapan saja, <strong>jangan dipakai belanja!</strong>
+                {t.box3Warning}
               </span>
             </div>
           </div>
@@ -104,7 +107,7 @@ export const DashboardBoxes: React.FC<DashboardBoxesProps> = ({
         <div className="flex items-center gap-2 text-slate-600">
           <Info className="w-4 h-4 text-slate-500 shrink-0" />
           <span>
-            Total uang tunai fisik yang harus ada di brankas/rekening Anda saat ini (Kas Sendiri + Dana Titipan):
+            {t.reconciliationLabel}
           </span>
         </div>
         <div className="font-bold text-slate-900 text-sm bg-white px-2.5 py-1 rounded-md border border-slate-200 shadow-2xs">

@@ -40,6 +40,7 @@ import { BottomNav } from '../components/BottomNav';
 import { CreditDetailModal } from '../components/CreditDetailModal';
 import { CustomerDetailModal } from '../components/CustomerDetailModal';
 import { DepositDetailModal } from '../components/DepositDetailModal';
+import { detectUserLanguage, saveUserLanguage, translations, Language } from '../lib/i18n';
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -49,6 +50,9 @@ export default function Home() {
   const [deposits, setDeposits] = useState<DepositTransaction[]>([]);
   const [initialCapital, setInitialCapital] = useState<number>(10000000);
   const [userEmail, setUserEmail] = useState<string>('heritri@titenfin.id');
+
+  // Multilingual State (Auto-Detect Regional pada pertama kali buka)
+  const [language, setLanguage] = useState<Language>('id');
 
   // UI States
   const [isPrivacyMode, setIsPrivacyMode] = useState<boolean>(false);
@@ -70,9 +74,10 @@ export default function Home() {
   const [selectedCustomerForDetail, setSelectedCustomerForDetail] = useState<Customer | null>(null);
   const [selectedDepositCustomerForDetail, setSelectedDepositCustomerForDetail] = useState<Customer | null>(null);
 
-  // Load initial data
+  // Load initial data & auto-detect language
   useEffect(() => {
     setIsClient(true);
+    setLanguage(detectUserLanguage());
     const data = getStorageData();
     setCustomers(data.customers);
     setCredits(data.creditItems);
@@ -82,6 +87,11 @@ export default function Home() {
     const savedEmail = localStorage.getItem('titenfin_user_email');
     if (savedEmail) setUserEmail(savedEmail);
   }, []);
+
+  const handleChangeLanguage = (newLang: Language) => {
+    setLanguage(newLang);
+    saveUserLanguage(newLang);
+  };
 
   // Save changes to storage
   const syncAndSave = (
@@ -362,13 +372,18 @@ export default function Home() {
       p.date.includes(query);
   });
 
+  const t = translations[language];
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 sm:pb-20">
-      {/* Header Utama */}
+      {/* Header Utama dengan Pemilih Bahasa */}
       <Header
         isPrivacyMode={isPrivacyMode}
         setIsPrivacyMode={setIsPrivacyMode}
         userEmail={userEmail}
+        language={language}
+        onChangeLanguage={handleChangeLanguage}
+        t={t}
         onOpenSyncModal={() => setIsSyncModalOpen(true)}
         onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
         onOpenNewDeposit={() => setIsDepositModalOpen(true)}
@@ -381,6 +396,7 @@ export default function Home() {
           isPrivacyMode={isPrivacyMode}
           activeCreditCount={activeCredits.length}
           activeDepositorCount={uniqueDepositorsCount}
+          t={t}
         />
 
         {/* Tab Navigasi Desktop (di Mobile menggunakan BottomNav yang luwes) */}
@@ -394,7 +410,7 @@ export default function Home() {
             }`}
           >
             <CreditCard className="w-4 h-4" />
-            <span>Kredit Barang ({activeCredits.length} Aktif)</span>
+            <span>{t.tabCredits} ({activeCredits.length} {t.filterActive})</span>
           </button>
 
           <button
@@ -406,7 +422,7 @@ export default function Home() {
             }`}
           >
             <Landmark className="w-4 h-4" />
-            <span>Kas Titipan Uang ({deposits.length} Mutasi)</span>
+            <span>{t.tabDeposits} ({deposits.length})</span>
           </button>
 
           <button
@@ -418,7 +434,7 @@ export default function Home() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Daftar Nasabah ({customers.length})</span>
+            <span>{t.tabCustomers} ({customers.length})</span>
           </button>
 
           <button
@@ -430,7 +446,7 @@ export default function Home() {
             }`}
           >
             <PieChart className="w-4 h-4" />
-            <span>Rekap Modal & Profit</span>
+            <span>{t.tabCapital}</span>
           </button>
         </div>
 
@@ -443,7 +459,7 @@ export default function Home() {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Cari nama nasabah atau jenis barang..."
+                  placeholder={t.searchCreditPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-9 pr-8 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -466,7 +482,7 @@ export default function Home() {
                       creditFilter === 'active' ? 'bg-white text-emerald-700 font-bold shadow-2xs' : 'text-slate-600'
                     }`}
                   >
-                    Aktif ({credits.filter(c => c.status === 'active').length})
+                    {t.filterActive} ({credits.filter(c => c.status === 'active').length})
                   </button>
                   <button
                     onClick={() => setCreditFilter('completed')}
@@ -474,7 +490,7 @@ export default function Home() {
                       creditFilter === 'completed' ? 'bg-white text-emerald-700 font-bold shadow-2xs' : 'text-slate-600'
                     }`}
                   >
-                    Lunas ({credits.filter(c => c.status === 'completed').length})
+                    {t.filterCompleted} ({credits.filter(c => c.status === 'completed').length})
                   </button>
                   <button
                     onClick={() => setCreditFilter('all')}
@@ -482,7 +498,7 @@ export default function Home() {
                       creditFilter === 'all' ? 'bg-white text-emerald-700 font-bold shadow-2xs' : 'text-slate-600'
                     }`}
                   >
-                    Semua
+                    {t.filterAll}
                   </button>
                 </div>
 
@@ -491,7 +507,7 @@ export default function Home() {
                   className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Tambah Akad</span>
+                  <span>{t.newCreditBtn}</span>
                 </button>
               </div>
             </div>
@@ -663,7 +679,7 @@ export default function Home() {
                 className="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition"
               >
                 <Plus className="w-4 h-4" />
-                <span>Catat Setor / Tarik Titipan</span>
+                <span>{t.newDepositBtn}</span>
               </button>
             </div>
 
@@ -673,7 +689,7 @@ export default function Home() {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Cari nama penitip, keperluan mutasi (panen, pupuk, belanja)..."
+                  placeholder={t.searchDepositPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-9 pr-8 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -811,7 +827,7 @@ export default function Home() {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Cari nama nasabah, no WhatsApp, alamat dusun..."
+                  placeholder={t.searchCustomerPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-9 pr-8 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -826,7 +842,7 @@ export default function Home() {
                 )}
               </div>
               <span className="text-xs text-slate-400 whitespace-nowrap hidden sm:inline">
-                {filteredCustomers.length} Nasabah Ditemukan
+                {filteredCustomers.length} {t.foundItemsSuffix}
               </span>
             </div>
 
@@ -951,7 +967,7 @@ export default function Home() {
                   <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder="Filter nama / barang / tanggal..."
+                    placeholder={t.searchPaymentPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-8 pr-7 py-1 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -1104,6 +1120,7 @@ export default function Home() {
         onOpenDeposit={() => setIsDepositModalOpen(true)}
         onOpenNewCustomer={() => setIsCustomerModalOpen(true)}
         activeCreditsCount={activeCredits.length}
+        t={t}
       />
     </div>
   );

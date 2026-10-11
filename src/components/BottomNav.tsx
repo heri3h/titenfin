@@ -8,11 +8,10 @@ import {
   PieChart,
   Plus,
   ShoppingBag,
-  ArrowDownLeft,
-  ArrowUpRight,
   UserPlus,
   X
 } from 'lucide-react';
+import { translations } from '../lib/i18n';
 
 interface BottomNavProps {
   activeTab: 'credits' | 'deposits' | 'customers' | 'capital';
@@ -21,6 +20,7 @@ interface BottomNavProps {
   onOpenDeposit: () => void;
   onOpenNewCustomer: () => void;
   activeCreditsCount: number;
+  t: (typeof translations)['id'];
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({
@@ -30,6 +30,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onOpenDeposit,
   onOpenNewCustomer,
   activeCreditsCount,
+  t,
 }) => {
   const [isQuickMenuOpen, setIsQuickMenuOpen] = useState(false);
 
@@ -47,7 +48,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       {isQuickMenuOpen && (
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-xs bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 space-y-1.5 animate-in slide-in-from-bottom-5 duration-150">
           <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-100">
-            <span>Transaksi Cepat</span>
+            <span>{t.quickMenuTitle}</span>
             <button
               onClick={() => setIsQuickMenuOpen(false)}
               className="text-slate-400 hover:text-slate-700"
@@ -67,8 +68,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               <ShoppingBag className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-bold leading-tight">Akad Kredit Baru</div>
-              <div className="text-[10px] text-slate-500">Kredit barang fleksibel</div>
+              <div className="text-xs font-bold leading-tight">{t.quickNewCredit}</div>
+              <div className="text-[10px] text-slate-500">{t.quickNewCreditDesc}</div>
             </div>
           </button>
 
@@ -83,8 +84,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               <Landmark className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-bold leading-tight">Kas Titipan Uang</div>
-              <div className="text-[10px] text-slate-500">Setor atau tarik tabungan</div>
+              <div className="text-xs font-bold leading-tight">{t.quickDeposit}</div>
+              <div className="text-[10px] text-slate-500">{t.quickDepositDesc}</div>
             </div>
           </button>
 
@@ -99,8 +100,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               <UserPlus className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-bold leading-tight">Tambah Nasabah</div>
-              <div className="text-[10px] text-slate-500">Buku kontak & riwayat</div>
+              <div className="text-xs font-bold leading-tight">{t.quickNewCustomer}</div>
+              <div className="text-[10px] text-slate-500">{t.quickNewCustomerDesc}</div>
             </div>
           </button>
         </div>
@@ -127,7 +128,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                 </span>
               )}
             </div>
-            <span className="text-[10px] mt-1">Kredit</span>
+            <span className="text-[10px] mt-1">{t.navCredit}</span>
           </button>
 
           {/* TAB 2: Titipan */}
@@ -140,7 +141,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             }`}
           >
             <Landmark className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Titipan</span>
+            <span className="text-[10px] mt-1">{t.navDeposit}</span>
           </button>
 
           {/* TOMBOL TENGAH: FAB Quick Action */}
@@ -157,7 +158,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               <Plus className="w-6 h-6 stroke-[2.5]" />
             </button>
             <span className="text-[9px] font-bold text-slate-500 mt-1">
-              {isQuickMenuOpen ? 'Tutup' : 'Tambah'}
+              {isQuickMenuOpen ? t.fabClose : t.fabAdd}
             </span>
           </div>
 
@@ -171,7 +172,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             }`}
           >
             <Users className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Nasabah</span>
+            <span className="text-[10px] mt-1">{t.navCustomer}</span>
           </button>
 
           {/* TAB 4: Rekap Kas */}
@@ -184,7 +185,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             }`}
           >
             <PieChart className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Kas & Modal</span>
+            <span className="text-[10px] mt-1">{t.navCapital}</span>
           </button>
 
         </div>

@@ -288,12 +288,55 @@ export default function Home() {
   const activeCredits = credits.filter(c => c.status === 'active');
   const uniqueDepositorsCount = new Set(deposits.map(d => d.customerId)).size;
 
-  // Filter Credits
+  const query = searchQuery.trim().toLowerCase();
+
+  // 1. Filter Credits
   const filteredCredits = credits.filter(c => {
-    const matchSearch = c.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.itemName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchSearch = !query ||
+      c.customerName.toLowerCase().includes(query) ||
+      c.itemName.toLowerCase().includes(query) ||
+      (c.notes && c.notes.toLowerCase().includes(query));
     if (creditFilter === 'all') return matchSearch;
     return matchSearch && c.status === creditFilter;
+  });
+
+  // 2. Filter Nasabah Penitip
+  const filteredDepositorCustomers = customers.filter(c => {
+    const bal = getCustomerDepositBalance(c.id, deposits);
+    const hasDeposit = bal > 0 || deposits.some(d => d.customerId === c.id);
+    if (!hasDeposit) return false;
+    if (!query) return true;
+    return c.name.toLowerCase().includes(query) ||
+      c.phone.includes(query) ||
+      (c.notes && c.notes.toLowerCase().includes(query));
+  });
+
+  // 3. Filter Riwayat Mutasi Titipan
+  const filteredDeposits = deposits.filter(d => {
+    if (!query) return true;
+    return d.customerName.toLowerCase().includes(query) ||
+      (d.notes && d.notes.toLowerCase().includes(query)) ||
+      d.date.includes(query);
+  });
+
+  // 4. Filter Daftar Nasabah (Semua)
+  const filteredCustomers = customers.filter(c => {
+    if (!query) return true;
+    return c.name.toLowerCase().includes(query) ||
+      c.phone.includes(query) ||
+      (c.address && c.address.toLowerCase().includes(query)) ||
+      (c.notes && c.notes.toLowerCase().includes(query));
+  });
+
+  // 5. Filter Riwayat Angsuran Masuk
+  const filteredPayments = payments.filter(p => {
+    if (!query) return true;
+    const cust = customers.find(c => c.id === p.customerId);
+    const cred = credits.find(c => c.id === p.creditItemId);
+    return (cust && cust.name.toLowerCase().includes(query)) ||
+      (cred && cred.itemName.toLowerCase().includes(query)) ||
+      (p.notes && p.notes.toLowerCase().includes(query)) ||
+      p.date.includes(query);
   });
 
   return (
@@ -380,8 +423,16 @@ export default function Home() {
                   placeholder="Cari nama nasabah atau jenis barang..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full pl-9 pr-8 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -563,6 +614,7 @@ export default function Home() {
         {/* TAB 2: TITIPAN UANG (TABUNGAN AMANAH) */}
         {activeTab === 'deposits' && (
           <div className="space-y-4">
+            {/* Header & Action Bar */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Buku Kas Saldo Titipan Uang</h3>
@@ -579,33 +631,62 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Rekap Saldo Per Penitip */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {customers.map((c) => {
-                const bal = getCustomerDepositBalance(c.id, deposits);
-                if (bal === 0 && !deposits.some(d => d.customerId === c.id)) return null;
-
-                return (
-                  <div key={c.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="font-bold text-slate-900 text-sm">{c.name}</span>
-                      {c.phone && (
-                        <button
-                          onClick={() => openWhatsApp(c.phone, `Halo ${c.name}, saldo titipan uang Anda yang tercatat di TitenFin saat ini adalah ${formatRupiah(bal)}.`)}
-                          className="text-slate-400 hover:text-teal-600"
-                        >
-                          <MessageCircle className="w-4 h-4 text-teal-600" />
-                        </button>
-                      )}
-                    </div>
-                    <span className="text-[11px] text-slate-400 block">Saldo Dititipkan:</span>
-                    <div className="text-xl font-extrabold text-teal-700">
-                      {formatRupiah(bal, isPrivacyMode)}
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Bilah Pencarian Tab Titipan Uang */}
+            <div className="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Cari nama penitip, keperluan mutasi (panen, pupuk, belanja)..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-8 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              <span className="text-xs text-slate-400 whitespace-nowrap hidden sm:inline">
+                {filteredDeposits.length} Mutasi Ditemukan
+              </span>
             </div>
+
+            {/* Rekap Saldo Per Penitip */}
+            {filteredDepositorCustomers.length === 0 && searchQuery ? (
+              <div className="bg-white rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400">
+                Tidak ada penitip uang yang cocok dengan pencarian "{searchQuery}".
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {filteredDepositorCustomers.map((c) => {
+                  const bal = getCustomerDepositBalance(c.id, deposits);
+                  return (
+                    <div key={c.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="font-bold text-slate-900 text-sm">{c.name}</span>
+                        {c.phone && (
+                          <button
+                            onClick={() => openWhatsApp(c.phone, `Halo ${c.name}, saldo titipan uang Anda yang tercatat di TitenFin saat ini adalah ${formatRupiah(bal)}.`)}
+                            className="text-slate-400 hover:text-teal-600"
+                          >
+                            <MessageCircle className="w-4 h-4 text-teal-600" />
+                          </button>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-slate-400 block">Saldo Dititipkan:</span>
+                      <div className="text-xl font-extrabold text-teal-700">
+                        {formatRupiah(bal, isPrivacyMode)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Riwayat Mutasi Seluruh Titipan */}
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
@@ -614,16 +695,16 @@ export default function Home() {
                   <History className="w-4 h-4 text-slate-500" />
                   Riwayat Mutasi Dana Titipan
                 </h4>
-                <span className="text-xs text-slate-400 font-medium">{deposits.length} Catatan</span>
+                <span className="text-xs text-slate-400 font-medium">{filteredDeposits.length} Catatan</span>
               </div>
 
               <div className="divide-y divide-slate-100">
-                {deposits.length === 0 ? (
+                {filteredDeposits.length === 0 ? (
                   <div className="p-8 text-center text-xs text-slate-400">
-                    Belum ada riwayat mutasi titipan uang.
+                    {searchQuery ? `Tidak ada riwayat mutasi yang cocok dengan "${searchQuery}".` : 'Belum ada riwayat mutasi titipan uang.'}
                   </div>
                 ) : (
-                  deposits.map((d) => (
+                  filteredDeposits.map((d) => (
                     <div key={d.id} className="p-3.5 sm:px-5 flex items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
@@ -674,8 +755,38 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {customers.map((c) => {
+            {/* Bilah Pencarian Tab Nasabah */}
+            <div className="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Cari nama nasabah, no WhatsApp, alamat dusun..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-8 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              <span className="text-xs text-slate-400 whitespace-nowrap hidden sm:inline">
+                {filteredCustomers.length} Nasabah Ditemukan
+              </span>
+            </div>
+
+            {filteredCustomers.length === 0 ? (
+              <div className="bg-white rounded-xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-400">
+                {searchQuery ? `Tidak ada kontak nasabah yang cocok dengan "${searchQuery}".` : 'Belum ada data nasabah.'}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {filteredCustomers.map((c) => {
                 const depositBal = getCustomerDepositBalance(c.id, deposits);
                 const activeCustCredits = credits.filter(cr => cr.customerId === c.id && cr.status === 'active');
                 const totalCustDebt = activeCustCredits.reduce((s, cr) => s + cr.remainingAmount, 0);
@@ -722,6 +833,7 @@ export default function Home() {
                 );
               })}
             </div>
+            )}
           </div>
         )}
 
@@ -766,13 +878,39 @@ export default function Home() {
             </div>
 
             {/* Riwayat Pembayaran Angsuran Terakhir */}
-            <div className="pt-2">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 mb-2.5 flex items-center gap-2">
-                <History className="w-4 h-4 text-emerald-600" />
-                Catatan Penerimaan Pembayaran Angsuran Masuk
-              </h4>
+            <div className="pt-2 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                  <History className="w-4 h-4 text-emerald-600" />
+                  Catatan Penerimaan Pembayaran Angsuran Masuk
+                </h4>
+                <div className="relative max-w-xs w-full">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Filter nama / barang / tanggal..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-8 pr-7 py-1 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-[10px] font-bold"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
-                {payments.map((p) => {
+                {filteredPayments.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-slate-400">
+                    {searchQuery ? `Tidak ada pembayaran yang cocok dengan "${searchQuery}".` : 'Belum ada catatan pembayaran angsuran.'}
+                  </div>
+                ) : (
+                  filteredPayments.map((p) => {
                   const cred = credits.find(c => c.id === p.creditItemId);
                   const cust = customers.find(c => c.id === p.customerId);
                   return (
@@ -795,7 +933,8 @@ export default function Home() {
                       </div>
                     </div>
                   );
-                })}
+                })
+                )}
               </div>
             </div>
           </div>

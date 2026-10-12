@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" fill="none">
+  <!-- Outer Wheel Ring -->
+  <circle cx="260" cy="260" r="220" stroke="#059669" stroke-width="26" />
+  
+  <!-- Inner Segmented Ring -->
+  <circle cx="260" cy="260" r="176" stroke="#059669" stroke-width="14" />
+
+  <!-- 8 Outer Spokes -->
+  <line x1="260" y1="40" x2="260" y2="84" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+  <line x1="260" y1="436" x2="260" y2="480" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+  <line x1="40" y1="260" x2="84" y2="260" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+  <line x1="436" y1="260" x2="480" y2="260" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+  <line x1="104" y1="104" x2="135" y2="135" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+  <line x1="385" y1="385" x2="416" y2="416" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+  <line x1="104" y1="416" x2="135" y2="385" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+  <line x1="385" y1="135" x2="416" y2="104" stroke="#059669" stroke-width="20" stroke-linecap="round" />
+
+  <!-- Central Stylized Aerodynamic 'T' Emblem -->
+  <!-- Left Wing Upper -->
+  <path d="M165 180 H245 L235 208 H165 Z" fill="#059669" />
+  <!-- Right Wing Upper -->
+  <path d="M265 180 H355 L335 208 H275 Z" fill="#059669" />
+  <!-- Left Wing Lower -->
+  <path d="M165 220 H240 L230 248 H165 Z" fill="#059669" />
+  <!-- Right Wing Lower -->
+  <path d="M270 220 H355 L335 248 H278 Z" fill="#059669" />
+
+  <!-- Left Center Pillar -->
+  <path d="M228 258 H254 V360 C254 368 248 374 240 374 C232 374 228 366 228 358 Z" fill="#059669" />
+  <!-- Right Center Pillar -->
+  <path d="M266 258 H292 L280 366 C278 372 272 376 266 376 Z" fill="#059669" />
+</svg>

@@ -5,6 +5,16 @@ export const metadata: Metadata = {
   title: 'TitenFin - Cermat Kelola Kredit Barang & Kas Titipan',
   description: 'Aplikasi pembukuan kredit barang fleksibel dan buku rekening titipan uang dengan proteksi kas amanah.',
   manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/icon.svg',
+  },
 };
 
 export const viewport: Viewport = {

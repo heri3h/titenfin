@@ -68,9 +68,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
   const getPrimaryButtonLabel = () => {
     if (userEmail) return t.openDashboard;
-    if (language === 'id') return 'Daftar Gratis';
-    if (language === 'jv') return 'Daftar Gratis';
-    return 'Sign Up Free';
+    return t.navSignUp || 'Daftar Gratis';
   };
 
   return (
@@ -239,9 +237,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <button
                 onClick={() => onOpenAuth('login')}
                 className="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1"
-                title="Masuk ke Akun Toko"
+                title={t.navSignIn || 'Masuk'}
               >
-                <span>Masuk</span>
+                <span>{t.navSignIn || 'Masuk'}</span>
               </button>
             )}
 
@@ -286,7 +284,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               onClick={handlePrimaryAction}
               className="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-sm font-black flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/25 transition-all hover:scale-105"
             >
-              <span>{userEmail ? t.openDashboard : (language === 'id' ? 'Daftar Sekarang — Gratis' : language === 'jv' ? 'Daftar Saiki — Gratis' : 'Get Started Free')}</span>
+              <span>{userEmail ? t.openDashboard : (t.heroCtaPrimary || t.navSignUp)}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <a
@@ -568,7 +566,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               onClick={handlePrimaryAction}
               className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-base font-black inline-flex items-center gap-2.5 shadow-2xl shadow-emerald-500/30 transition-all hover:scale-105"
             >
-              <span>{userEmail ? t.openDashboard : (language === 'id' ? 'Daftar Sekarang — Gratis' : language === 'jv' ? 'Daftar Saiki — Gratis' : 'Get Started Free')}</span>
+              <span>{userEmail ? t.openDashboard : (t.ctaButton || t.navSignUp)}</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>

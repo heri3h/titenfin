@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" fill="none">
+  <!-- Outer Coin Circle -->
+  <circle cx="250" cy="250" r="210" stroke="#059669" stroke-width="36" />
+  
+  <!-- TitenFin Currency Symbol 'T' -->
+  <!-- Top Horizontal Bar -->
+  <rect x="130" y="130" width="240" height="42" rx="10" fill="#059669" />
+  
+  <!-- Middle Crossbar 1 -->
+  <rect x="148" y="200" width="204" height="34" rx="8" fill="#059669" />
+  
+  <!-- Middle Crossbar 2 -->
+  <rect x="148" y="260" width="204" height="34" rx="8" fill="#059669" />
+  
+  <!-- Vertical Stem -->
+  <rect x="226" y="130" width="48" height="230" rx="10" fill="#059669" />
+</svg>

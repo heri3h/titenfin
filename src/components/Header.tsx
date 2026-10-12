@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Cloud, PlusCircle, Globe, Check } from 'lucide-react';
 import { Language, LANGUAGE_OPTIONS, translations } from '../lib/i18n';
+import { Logo } from './Logo';
 
 interface HeaderProps {
   isPrivacyMode: boolean;
@@ -37,9 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between gap-2.5">
           {/* Logo & Slogan */}
           <div className="flex items-center space-x-2.5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 font-black text-xl tracking-tight">
-              T
-            </div>
+            <Logo size={36} />
             <div>
               <div className="flex items-center gap-1.5">
                 <h1 className="text-xl font-bold tracking-tight text-slate-900">

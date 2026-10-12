@@ -1365,7 +1365,7 @@ const STORAGE_LANG_KEY = 'titenfin_user_language';
  * Prioritas 2: Deteksi regional / bahasa browser / timezone perangkat.
  */
 export const detectUserLanguage = (): Language => {
-  if (typeof window === 'undefined') return 'id';
+  if (typeof window === 'undefined') return 'en';
 
   // 1. Cek apakah pengguna sudah pernah memilih secara manual
   const savedLang = localStorage.getItem(STORAGE_LANG_KEY) as Language | null;
@@ -1404,9 +1404,9 @@ export const detectUserLanguage = (): Language => {
 
     if (browserLang.startsWith('en')) return 'en';
 
-    return 'id'; // default fallback
+    return 'en'; // default fallback internasional
   } catch {
-    return 'id';
+    return 'en';
   }
 };
 

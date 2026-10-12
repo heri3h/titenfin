@@ -51,8 +51,8 @@ export default function Home() {
   const [initialCapital, setInitialCapital] = useState<number>(10000000);
   const [userEmail, setUserEmail] = useState<string>('heritri@titenfin.id');
 
-  // Multilingual State (Auto-Detect Regional pada pertama kali buka)
-  const [language, setLanguage] = useState<Language>('id');
+  // Multilingual State (Auto-Detect Regional pada pertama kali buka, default internasional: en)
+  const [language, setLanguage] = useState<Language>('en');
 
   // UI States
   const [isPrivacyMode, setIsPrivacyMode] = useState<boolean>(false);

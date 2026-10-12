@@ -232,12 +232,11 @@ export const calculateCashSummary = (
   };
 };
 
-// Format Rupiah
-export const formatRupiah = (val: number, isHidden: boolean = false): string => {
-  if (isHidden) return 'Rp ••••••••';
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0,
-  }).format(val);
+import { formatCurrency, CurrencyCode } from './currency';
+
+// Format Keuangan (Multimata Uang Otomatis & Kustom)
+export const formatRupiah = (val: number, isHidden: boolean = false, currencyCode?: CurrencyCode): string => {
+  return formatCurrency(val, currencyCode, isHidden);
 };
+
+export { formatCurrency };

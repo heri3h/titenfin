@@ -42,6 +42,14 @@ import { CustomerDetailModal } from '../components/CustomerDetailModal';
 import { DepositDetailModal } from '../components/DepositDetailModal';
 import { LandingPage } from '../components/LandingPage';
 import { detectUserLanguage, saveUserLanguage, translations, Language } from '../lib/i18n';
+import {
+  CurrencyCode,
+  resolveActiveCurrency,
+  saveCustomCurrency,
+  getSavedCustomCurrency,
+  getDefaultCurrencyForLanguage,
+  setRuntimeCurrency
+} from '../lib/currency';
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
@@ -55,6 +63,10 @@ export default function Home() {
 
   // Multilingual State (Auto-Detect Regional pada pertama kali buka, default internasional: en)
   const [language, setLanguage] = useState<Language>('en');
+
+  // Multi-Currency State (Default sesuai negara bahasa, atau pilihan custom user)
+  const [currency, setCurrency] = useState<CurrencyCode>('IDR');
+  const [isCustomCurrency, setIsCustomCurrency] = useState<boolean>(false);
 
   // UI States
   const [isPrivacyMode, setIsPrivacyMode] = useState<boolean>(false);
@@ -76,10 +88,18 @@ export default function Home() {
   const [selectedCustomerForDetail, setSelectedCustomerForDetail] = useState<Customer | null>(null);
   const [selectedDepositCustomerForDetail, setSelectedDepositCustomerForDetail] = useState<Customer | null>(null);
 
-  // Load initial data & auto-detect language
+  // Load initial data & auto-detect language & currency
   useEffect(() => {
     setIsClient(true);
-    setLanguage(detectUserLanguage());
+    const detectedLang = detectUserLanguage();
+    setLanguage(detectedLang);
+
+    // Inisialisasi Mata Uang: cek apakah ada custom override tersimpan atau ikuti default negara bahasa
+    const initialCurr = resolveActiveCurrency(detectedLang);
+    setCurrency(initialCurr);
+    setRuntimeCurrency(initialCurr);
+    setIsCustomCurrency(!!getSavedCustomCurrency());
+
     const data = getStorageData();
     setCustomers(data.customers);
     setCredits(data.creditItems);
@@ -97,6 +117,29 @@ export default function Home() {
   const handleChangeLanguage = (newLang: Language) => {
     setLanguage(newLang);
     saveUserLanguage(newLang);
+    // Jika user belum pernah menyetel mata uang custom manual, sesuaikan otomatis ke default negara baru
+    if (!getSavedCustomCurrency()) {
+      const defCurr = getDefaultCurrencyForLanguage(newLang);
+      setCurrency(defCurr);
+      setRuntimeCurrency(defCurr);
+    }
+  };
+
+  const handleChangeCurrency = (newCode: CurrencyCode | null) => {
+    if (newCode === null) {
+      // Reset ke mode otomatis (ikuti bahasa)
+      saveCustomCurrency(null);
+      setIsCustomCurrency(false);
+      const def = getDefaultCurrencyForLanguage(language);
+      setCurrency(def);
+      setRuntimeCurrency(def);
+    } else {
+      // User memilih mata uang spesifik
+      saveCustomCurrency(newCode);
+      setIsCustomCurrency(true);
+      setCurrency(newCode);
+      setRuntimeCurrency(newCode);
+    }
   };
 
   // Save changes to storage
@@ -398,19 +441,25 @@ export default function Home() {
         }}
         language={language}
         onChangeLanguage={handleChangeLanguage}
+        currency={currency}
+        onChangeCurrency={handleChangeCurrency}
+        isCustomCurrency={isCustomCurrency}
       />
     );
   }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 sm:pb-20">
-      {/* Header Utama dengan Pemilih Bahasa */}
+      {/* Header Utama dengan Pemilih Bahasa & Mata Uang */}
       <Header
         isPrivacyMode={isPrivacyMode}
         setIsPrivacyMode={setIsPrivacyMode}
         userEmail={userEmail}
         language={language}
         onChangeLanguage={handleChangeLanguage}
+        currency={currency}
+        onChangeCurrency={handleChangeCurrency}
+        isCustomCurrency={isCustomCurrency}
         t={t}
         onOpenSyncModal={() => setIsSyncModalOpen(true)}
         onOpenNewCredit={() => setIsNewCreditModalOpen(true)}

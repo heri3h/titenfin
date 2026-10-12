@@ -18,26 +18,41 @@ import {
   Layers,
   ArrowDownLeft,
   ArrowUpRight,
-  Clock
+  Clock,
+  Coins
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { Language, LANGUAGE_OPTIONS } from '../lib/i18n';
 import { landingTranslations } from '../lib/landing-i18n';
+import {
+  CurrencyCode,
+  CURRENCY_OPTIONS,
+  getCurrencyOption,
+  formatCurrency
+} from '../lib/currency';
 
 interface LandingPageProps {
   onEnterApp: () => void;
   language: Language;
   onChangeLanguage: (lang: Language) => void;
+  currency: CurrencyCode;
+  onChangeCurrency: (code: CurrencyCode | null) => void;
+  isCustomCurrency?: boolean;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
   onEnterApp,
   language,
   onChangeLanguage,
+  currency,
+  onChangeCurrency,
+  isCustomCurrency = false,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isCurrencyMenuOpen, setIsCurrencyMenuOpen] = useState(false);
   const t = landingTranslations[language] || landingTranslations.en;
   const currentLang = LANGUAGE_OPTIONS.find((l) => l.code === language) || LANGUAGE_OPTIONS[0];
+  const currentCurrencyObj = getCurrencyOption(currency);
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 selection:bg-emerald-500 selection:text-white font-sans antialiased">
@@ -65,8 +80,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </a>
           </div>
 
-          {/* Right Action: Language Selector & Enter App Button */}
-          <div className="flex items-center gap-2.5">
+          {/* Right Action: Language & Currency Selector & Enter App Button */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Language Selector Dropdown */}
             <div className="relative">
               <button
@@ -109,6 +124,92 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                         <span className="text-[10px] text-slate-400">{item.regional}</span>
                       </button>
                     ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Currency Selector Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsCurrencyMenuOpen(!isCurrencyMenuOpen)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition ${
+                  isCustomCurrency
+                    ? 'border-emerald-500/60 bg-emerald-950/40 text-emerald-300 font-bold'
+                    : 'border-slate-700 hover:border-slate-600 bg-slate-800 text-slate-200'
+                }`}
+                title="Pilih Mata Uang / Currency"
+              >
+                <Coins className="w-3.5 h-3.5 text-slate-400" />
+                <span className="font-bold text-[11px] uppercase tracking-wide">
+                  {currentCurrencyObj.code}
+                </span>
+                <span className="hidden sm:inline text-slate-400 text-[10px]">
+                  ({currentCurrencyObj.symbol})
+                </span>
+              </button>
+
+              {isCurrencyMenuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-30"
+                    onClick={() => setIsCurrencyMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-40 py-1.5 max-h-80 overflow-y-auto">
+                    <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-700/60">
+                      Mata Uang (12 Pilihan)
+                    </div>
+
+                    {/* Reset Otomatis Option */}
+                    <button
+                      onClick={() => {
+                        onChangeCurrency(null);
+                        setIsCurrencyMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 text-xs transition border-b border-slate-700/60 ${
+                        !isCustomCurrency
+                          ? 'bg-emerald-950/60 text-emerald-400 font-bold'
+                          : 'text-slate-300 hover:bg-slate-700/60'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>✨</span>
+                        <div className="text-left">
+                          <div className="leading-tight font-medium">Otomatis (Ikuti Bahasa)</div>
+                          <div className="text-[9px] text-slate-400">Default Negara</div>
+                        </div>
+                      </div>
+                      {!isCustomCurrency && <span className="text-emerald-400 font-bold">✓</span>}
+                    </button>
+
+                    {CURRENCY_OPTIONS.map((opt) => {
+                      const isSelected = isCustomCurrency && currency === opt.code;
+                      return (
+                        <button
+                          key={opt.code}
+                          onClick={() => {
+                            onChangeCurrency(opt.code);
+                            setIsCurrencyMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-3 py-2 text-xs transition ${
+                            isSelected
+                              ? 'bg-emerald-950/60 text-emerald-400 font-bold'
+                              : 'text-slate-300 hover:bg-slate-700/60'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span>{opt.flag}</span>
+                            <div className="text-left">
+                              <div className="leading-tight font-medium">
+                                {opt.code} ({opt.symbol})
+                              </div>
+                              <div className="text-[9px] text-slate-400">{opt.name}</div>
+                            </div>
+                          </div>
+                          {isSelected && <span className="text-emerald-400 font-bold">✓</span>}
+                        </button>
+                      );
+                    })}
                   </div>
                 </>
               )}
@@ -209,7 +310,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">
                   {t.simBox1Title}
                 </span>
-                <div className="text-xl font-black text-white">Rp 12.850.000</div>
+                <div className="text-xl font-black text-white">
+                  {formatCurrency(12850000, currency)}
+                </div>
                 <span className="text-[10px] text-emerald-400/90 font-medium">{t.simBox1Safe}</span>
               </div>
 
@@ -217,7 +320,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">
                   {t.simBox2Title}
                 </span>
-                <div className="text-xl font-black text-white">Rp 8.400.000</div>
+                <div className="text-xl font-black text-white">
+                  {formatCurrency(8400000, currency)}
+                </div>
                 <span className="text-[10px] text-amber-400/90 font-medium">{t.simBox2Status}</span>
               </div>
 
@@ -225,7 +330,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300 block mb-1">
                   {t.simBox3Title}
                 </span>
-                <div className="text-xl font-black text-teal-200">Rp 4.500.000</div>
+                <div className="text-xl font-black text-teal-200">
+                  {formatCurrency(4500000, currency)}
+                </div>
                 <span className="text-[10px] text-teal-400 font-medium">{t.simBox3Warning}</span>
               </div>
             </div>
@@ -233,7 +340,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {/* Total Kas Fisik Rekonsiliasi */}
             <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
               <span className="text-slate-400">
-                {t.simTotalPhysicalCash} <strong>Rp 17.350.000</strong> {t.simTotalFormula}
+                {t.simTotalPhysicalCash} <strong>{formatCurrency(17350000, currency)}</strong> {t.simTotalFormula}
               </span>
               <button
                 onClick={onEnterApp}

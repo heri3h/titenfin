@@ -1,8 +1,7 @@
-'use client';
-
 import React, { useState } from 'react';
-import { Eye, EyeOff, Cloud, PlusCircle, Globe, Check, LogOut } from 'lucide-react';
+import { Eye, EyeOff, Cloud, PlusCircle, Globe, Check, LogOut, Coins } from 'lucide-react';
 import { Language, LANGUAGE_OPTIONS, translations } from '../lib/i18n';
+import { CurrencyCode, CURRENCY_OPTIONS, getCurrencyOption } from '../lib/currency';
 import { Logo } from './Logo';
 
 interface HeaderProps {
@@ -11,6 +10,9 @@ interface HeaderProps {
   userEmail: string;
   language: Language;
   onChangeLanguage: (lang: Language) => void;
+  currency: CurrencyCode;
+  onChangeCurrency: (code: CurrencyCode | null) => void;
+  isCustomCurrency: boolean;
   t: (typeof translations)['id'];
   onOpenSyncModal: () => void;
   onOpenNewCredit: () => void;
@@ -25,6 +27,9 @@ export const Header: React.FC<HeaderProps> = ({
   userEmail,
   language,
   onChangeLanguage,
+  currency,
+  onChangeCurrency,
+  isCustomCurrency,
   t,
   onOpenSyncModal,
   onOpenNewCredit,
@@ -33,8 +38,10 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isCurrencyMenuOpen, setIsCurrencyMenuOpen] = useState(false);
 
   const currentLangObj = LANGUAGE_OPTIONS.find((l) => l.code === language) || LANGUAGE_OPTIONS[0];
+  const currentCurrencyObj = getCurrencyOption(currency);
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
@@ -112,6 +119,103 @@ export const Header: React.FC<HeaderProps> = ({
                             <div>
                               <div className="leading-tight text-xs">{opt.label}</div>
                               <div className="text-[9px] text-slate-400 leading-none">{opt.regional}</div>
+                            </div>
+                          </div>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* PEMILIH MATA UANG (CURRENCY SWITCHER) */}
+            <div className="relative">
+              <button
+                onClick={() => setIsCurrencyMenuOpen(!isCurrencyMenuOpen)}
+                className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg border text-xs flex items-center gap-1 transition ${
+                  isCustomCurrency
+                    ? 'border-emerald-300 bg-emerald-50/70 text-emerald-800 font-bold'
+                    : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'
+                }`}
+                title="Pilih Mata Uang / Currency"
+              >
+                <Coins className="w-3.5 h-3.5 text-slate-500" />
+                <span className="font-bold text-[11px] uppercase tracking-wide">
+                  {currentCurrencyObj.code}
+                </span>
+                <span className="hidden md:inline text-slate-400 text-[10px]">
+                  ({currentCurrencyObj.symbol})
+                </span>
+              </button>
+
+              {/* Dropdown Mata Uang */}
+              {isCurrencyMenuOpen && (
+                <>
+                  <div
+                    onClick={() => setIsCurrencyMenuOpen(false)}
+                    className="fixed inset-0 z-40 bg-transparent"
+                  />
+                  <div className="absolute right-0 top-full mt-1.5 z-50 w-52 bg-white rounded-xl shadow-xl border border-slate-200 p-1 space-y-0.5 animate-in fade-in duration-150 max-h-72 overflow-y-auto">
+                    <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                      <span>Mata Uang</span>
+                      {isCustomCurrency && (
+                        <button
+                          onClick={() => {
+                            onChangeCurrency(null);
+                            setIsCurrencyMenuOpen(false);
+                          }}
+                          className="text-[10px] text-emerald-600 hover:underline font-bold capitalize"
+                        >
+                          Reset Otomatis
+                        </button>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        onChangeCurrency(null);
+                        setIsCurrencyMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition text-left border-b border-slate-100 mb-1 ${
+                        !isCustomCurrency
+                          ? 'bg-emerald-50 text-emerald-800 font-bold'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>✨</span>
+                        <div>
+                          <div className="leading-tight text-xs">Otomatis (Ikuti Bahasa)</div>
+                          <div className="text-[9px] text-slate-400">Default: {currency}</div>
+                        </div>
+                      </div>
+                      {!isCustomCurrency && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                    </button>
+
+                    {CURRENCY_OPTIONS.map((cOpt) => {
+                      const isSelected = isCustomCurrency && cOpt.code === currency;
+                      return (
+                        <button
+                          key={cOpt.code}
+                          onClick={() => {
+                            onChangeCurrency(cOpt.code);
+                            setIsCurrencyMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition text-left ${
+                            isSelected
+                              ? 'bg-emerald-50 text-emerald-800 font-bold'
+                              : 'text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span>{cOpt.flag}</span>
+                            <div>
+                              <div className="leading-tight text-xs">
+                                {cOpt.code} • {cOpt.symbol}
+                              </div>
+                              <div className="text-[9px] text-slate-400 leading-none">{cOpt.name}</div>
                             </div>
                           </div>
                           {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600" />}

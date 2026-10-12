@@ -15,6 +15,7 @@ interface HeaderProps {
   onOpenSyncModal: () => void;
   onOpenNewCredit: () => void;
   onOpenNewDeposit: () => void;
+  onOpenLanding?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -27,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSyncModal,
   onOpenNewCredit,
   onOpenNewDeposit,
+  onOpenLanding,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
@@ -37,7 +39,11 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-6xl mx-auto px-4 py-2.5 sm:px-6">
         <div className="flex items-center justify-between gap-2.5">
           {/* Logo & Slogan */}
-          <div className="flex items-center space-x-2.5">
+          <div
+            className={`flex items-center space-x-2.5 ${onOpenLanding ? 'cursor-pointer hover:opacity-90 transition' : ''}`}
+            onClick={onOpenLanding}
+            title={onOpenLanding ? 'Lihat Halaman Depan / Landing Page' : undefined}
+          >
             <Logo size={36} />
             <div>
               <div className="flex items-center gap-1.5">

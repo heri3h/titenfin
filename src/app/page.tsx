@@ -40,10 +40,12 @@ import { BottomNav } from '../components/BottomNav';
 import { CreditDetailModal } from '../components/CreditDetailModal';
 import { CustomerDetailModal } from '../components/CustomerDetailModal';
 import { DepositDetailModal } from '../components/DepositDetailModal';
+import { LandingPage } from '../components/LandingPage';
 import { detectUserLanguage, saveUserLanguage, translations, Language } from '../lib/i18n';
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);
+  const [viewMode, setViewMode] = useState<'landing' | 'dashboard'>('landing');
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [credits, setCredits] = useState<CreditItem[]>([]);
   const [payments, setPayments] = useState<CreditPayment[]>([]);
@@ -86,6 +88,10 @@ export default function Home() {
     setInitialCapital(data.initialCapital);
     const savedEmail = localStorage.getItem('titenfin_user_email');
     if (savedEmail) setUserEmail(savedEmail);
+    const savedMode = localStorage.getItem('titenfin_view_mode') as 'landing' | 'dashboard' | null;
+    if (savedMode === 'dashboard') {
+      setViewMode('dashboard');
+    }
   }, []);
 
   const handleChangeLanguage = (newLang: Language) => {
@@ -374,6 +380,23 @@ export default function Home() {
 
   const t = translations[language];
 
+  if (!isClient) {
+    return <div className="min-h-screen bg-slate-900" />;
+  }
+
+  if (viewMode === 'landing') {
+    return (
+      <LandingPage
+        onEnterApp={() => {
+          setViewMode('dashboard');
+          localStorage.setItem('titenfin_view_mode', 'dashboard');
+        }}
+        language={language}
+        onChangeLanguage={handleChangeLanguage}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-28 sm:pb-20">
       {/* Header Utama dengan Pemilih Bahasa */}
@@ -387,6 +410,10 @@ export default function Home() {
         onOpenSyncModal={() => setIsSyncModalOpen(true)}
         onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
         onOpenNewDeposit={() => setIsDepositModalOpen(true)}
+        onOpenLanding={() => {
+          setViewMode('landing');
+          localStorage.setItem('titenfin_view_mode', 'landing');
+        }}
       />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-5 space-y-6">

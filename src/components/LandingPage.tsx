@@ -1,0 +1,459 @@
+'use client';
+
+import React, { useState } from 'react';
+import {
+  CreditCard,
+  Landmark,
+  ShieldCheck,
+  Sparkles,
+  MessageCircle,
+  EyeOff,
+  ArrowRight,
+  CheckCircle2,
+  AlertTriangle,
+  Globe,
+  ChevronRight,
+  TrendingUp,
+  Lock,
+  Layers,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Clock
+} from 'lucide-react';
+import { Logo } from './Logo';
+import { Language, LANGUAGE_OPTIONS } from '../lib/i18n';
+import { landingTranslations } from '../lib/landing-i18n';
+
+interface LandingPageProps {
+  onEnterApp: () => void;
+  language: Language;
+  onChangeLanguage: (lang: Language) => void;
+}
+
+export const LandingPage: React.FC<LandingPageProps> = ({
+  onEnterApp,
+  language,
+  onChangeLanguage,
+}) => {
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const t = landingTranslations[language] || landingTranslations.en;
+  const currentLang = LANGUAGE_OPTIONS.find((l) => l.code === language) || LANGUAGE_OPTIONS[0];
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 selection:bg-emerald-500 selection:text-white font-sans antialiased">
+      {/* 1. NAVBAR */}
+      <nav className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          {/* Brand Logo */}
+          <div className="flex items-center gap-2 cursor-pointer" onClick={onEnterApp}>
+            <Logo size={36} color="#10b981" />
+            <span className="font-black text-xl tracking-wider text-white">
+              TITEN<span className="text-emerald-400">FIN</span>
+            </span>
+          </div>
+
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-300">
+            <a href="#boxes" className="hover:text-emerald-400 transition">
+              {t.navBoxes}
+            </a>
+            <a href="#comparison" className="hover:text-emerald-400 transition">
+              {t.navSecurity}
+            </a>
+            <a href="#features" className="hover:text-emerald-400 transition">
+              {t.navFeatures}
+            </a>
+          </div>
+
+          {/* Right Action: Language Selector & Enter App Button */}
+          <div className="flex items-center gap-2.5">
+            {/* Language Selector Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 hover:border-slate-600 bg-slate-800 text-slate-200 text-xs font-medium transition"
+                title="Pilih Bahasa / Select Language"
+              >
+                <span className="text-sm">{currentLang.flag}</span>
+                <span className="hidden sm:inline">{currentLang.label}</span>
+                <Globe className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              {isLangMenuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-30"
+                    onClick={() => setIsLangMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-40 py-1.5 max-h-80 overflow-y-auto">
+                    <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-700/60">
+                      Pilih Bahasa (12 Bahasa)
+                    </div>
+                    {LANGUAGE_OPTIONS.map((item) => (
+                      <button
+                        key={item.code}
+                        onClick={() => {
+                          onChangeLanguage(item.code);
+                          setIsLangMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-2 text-xs transition ${
+                          language === item.code
+                            ? 'bg-emerald-950/60 text-emerald-400 font-bold'
+                            : 'text-slate-300 hover:bg-slate-700/60'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>{item.flag}</span>
+                          <span>{item.label}</span>
+                        </span>
+                        <span className="text-[10px] text-slate-400">{item.regional}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Primary CTA Button */}
+            <button
+              onClick={onEnterApp}
+              className="px-3.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-lg text-xs font-black flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]"
+            >
+              <span>{t.openDashboard}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* 2. HERO SECTION */}
+      <section className="relative pt-12 pb-20 sm:pt-20 sm:pb-28 overflow-hidden">
+        {/* Glow Effects */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 right-10 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-6 shadow-inner">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{t.heroBadge}</span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none mb-6">
+            {t.heroTitle}
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
+            {t.heroSubtitle}
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14">
+            <button
+              onClick={onEnterApp}
+              className="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-sm font-black flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/25 transition-all hover:scale-105"
+            >
+              <span>{t.heroCtaPrimary}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <a
+              href="#boxes"
+              className="w-full sm:w-auto px-6 py-3.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition"
+            >
+              <span>{t.heroCtaSecondary}</span>
+              <ChevronRight className="w-4 h-4 text-slate-400" />
+            </a>
+          </div>
+
+          {/* Metrics Pill Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
+            {[
+              { icon: Layers, label: t.metric1 },
+              { icon: ShieldCheck, label: t.metric2 },
+              { icon: MessageCircle, label: t.metric3 },
+              { icon: Globe, label: t.metric4 },
+            ].map((m, idx) => (
+              <div
+                key={idx}
+                className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 flex items-center gap-2.5 backdrop-blur-xs"
+              >
+                <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
+                  <m.icon className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-bold text-slate-200 leading-tight">
+                  {m.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Mini Interactive Dashboard Preview Box */}
+          <div className="mt-14 max-w-4xl mx-auto rounded-2xl bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700 p-4 sm:p-6 shadow-2xl text-left">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-700/70 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                <div className="w-3 h-3 rounded-full bg-amber-500/80" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                <span className="text-[11px] font-mono text-slate-400 ml-2">app.titenfin.id</span>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded">
+                Live Simulation
+              </span>
+            </div>
+
+            {/* 3 Cash Boxes Preview */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+              <div className="bg-slate-800/90 rounded-xl p-3.5 border border-slate-700">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">
+                  1. Kas Bersih Sendiri
+                </span>
+                <div className="text-xl font-black text-white">Rp 12.850.000</div>
+                <span className="text-[10px] text-emerald-400/90 font-medium">✓ Bebas Dibelanjakan</span>
+              </div>
+
+              <div className="bg-slate-800/90 rounded-xl p-3.5 border border-slate-700">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">
+                  2. Piutang di Luar
+                </span>
+                <div className="text-xl font-black text-white">Rp 8.400.000</div>
+                <span className="text-[10px] text-amber-400/90 font-medium">Sedang Diangsur (3 Nasabah)</span>
+              </div>
+
+              <div className="bg-slate-800/90 rounded-xl p-3.5 border border-teal-500/40 bg-teal-950/20">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300 block mb-1">
+                  3. Kas Titipan (Amanah)
+                </span>
+                <div className="text-xl font-black text-teal-200">Rp 4.500.000</div>
+                <span className="text-[10px] text-teal-400 font-medium">🔒 Uang Orang Lain (Jangan Dipakai!)</span>
+              </div>
+            </div>
+
+            {/* Total Kas Fisik Rekonsiliasi */}
+            <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <span className="text-slate-400">
+                Total Uang Tunai Fisik di Dompet/Brankas: <strong>Rp 17.350.000</strong> (Kas Sendiri Rp 12,85jt + Titipan Rp 4,5jt)
+              </span>
+              <button
+                onClick={onEnterApp}
+                className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 self-start sm:self-auto"
+              >
+                <span>Coba Sistem Ini Sekarang</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. REVOLUSI 3 KOTAK KAS */}
+      <section id="boxes" className="py-20 bg-slate-950/80 border-t border-b border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <h2 className="text-2xl sm:text-4xl font-black text-white mb-4">
+              {t.boxesTitle}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+              {t.boxesSubtitle}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Box 1 */}
+            <div className="bg-slate-900 border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-400 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-black text-base mb-4">
+                1
+              </div>
+              <h3 className="text-lg font-black text-white mb-2">{t.box1Title}</h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                {t.box1Desc}
+              </p>
+            </div>
+
+            {/* Box 2 */}
+            <div className="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 relative overflow-hidden group hover:border-amber-400 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-black text-base mb-4">
+                2
+              </div>
+              <h3 className="text-lg font-black text-white mb-2">{t.box2Title}</h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                {t.box2Desc}
+              </p>
+            </div>
+
+            {/* Box 3 */}
+            <div className="bg-slate-900 border border-teal-500/40 rounded-2xl p-6 relative overflow-hidden group hover:border-teal-400 transition-all bg-gradient-to-b from-teal-950/20 to-slate-900">
+              <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center font-black text-base mb-4">
+                3
+              </div>
+              <h3 className="text-lg font-black text-teal-200 mb-2">{t.box3Title}</h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                {t.box3Desc}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. COMPARISON SCENARIO: Tanpa vs Dengan TitenFin */}
+      <section id="comparison" className="py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <h2 className="text-2xl sm:text-4xl font-black text-white mb-4">
+              {t.comparisonTitle}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+              {t.comparisonSubtitle}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* The Bad Way */}
+            <div className="bg-red-950/20 border border-red-500/30 rounded-2xl p-6 sm:p-8 space-y-4">
+              <div className="flex items-center gap-2.5 text-red-400">
+                <AlertTriangle className="w-5 h-5 shrink-0" />
+                <h3 className="text-base sm:text-lg font-black">{t.badWayTitle}</h3>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                {t.badWayDesc}
+              </p>
+            </div>
+
+            {/* The Good Way with TitenFin */}
+            <div className="bg-emerald-950/30 border border-emerald-500/40 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl shadow-emerald-500/5">
+              <div className="flex items-center gap-2.5 text-emerald-400">
+                <CheckCircle2 className="w-5 h-5 shrink-0" />
+                <h3 className="text-base sm:text-lg font-black">{t.goodWayTitle}</h3>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                {t.goodWayDesc}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. 6 FITUR UTAMA */}
+      <section id="features" className="py-20 bg-slate-950/80 border-t border-b border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <h2 className="text-2xl sm:text-4xl font-black text-white mb-4">
+              {t.featuresTitle}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+              {t.featuresSubtitle}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: CreditCard, title: t.feat1Title, desc: t.feat1Desc, color: 'text-emerald-400' },
+              { icon: Landmark, title: t.feat2Title, desc: t.feat2Desc, color: 'text-teal-400' },
+              { icon: Sparkles, title: t.feat3Title, desc: t.feat3Desc, color: 'text-amber-400' },
+              { icon: MessageCircle, title: t.feat4Title, desc: t.feat4Desc, color: 'text-emerald-400' },
+              { icon: EyeOff, title: t.feat5Title, desc: t.feat5Desc, color: 'text-blue-400' },
+              { icon: ShieldCheck, title: t.feat6Title, desc: t.feat6Desc, color: 'text-teal-400' },
+            ].map((f, i) => (
+              <div
+                key={i}
+                className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-6 transition-all hover:-translate-y-1"
+              >
+                <div className={`p-3 rounded-xl bg-slate-800/80 w-fit mb-4 ${f.color}`}>
+                  <f.icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{f.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                  {f.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. IDENTITAS RESMI: EMBLEM STIKER KENDARAAN */}
+      <section className="py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-10 flex flex-col lg:flex-row items-center gap-8 shadow-2xl">
+            <div className="flex-1 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Identitas Brand Profesional & Terpercaya</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white leading-snug">
+                Logo Koin TitenFin: Siap untuk Cutting Sticker Armada & Toko Anda
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Desain logo resmi <strong>TITENFIN</strong> dirancang dengan garis potong vektor presisi tinggi tanpa gradasi, siap diaplikasikan pada stiker kaca mobil operasional, helm, maupun etalase kasir toko Anda.
+              </p>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <span className="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700">
+                  ✓ Vector SVG Asli
+                </span>
+                <span className="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700">
+                  ✓ Plotter Cutter Ready
+                </span>
+                <span className="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700">
+                  ✓ Monokrom / Vinil Putih
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden border border-slate-700 shadow-xl">
+              <img
+                src="/titenfin-sticker-car.jpg"
+                alt="TitenFin Cutting Sticker Mockup"
+                className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. FINAL CALL TO ACTION BANNER */}
+      <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-950 border-t border-slate-800">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6">
+          <div className="inline-block p-3 rounded-2xl bg-emerald-500/10 mb-2">
+            <Logo size={48} color="#10b981" />
+          </div>
+
+          <h2 className="text-2xl sm:text-4xl font-black text-white">
+            {t.ctaTitle}
+          </h2>
+
+          <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
+            {t.ctaSubtitle}
+          </p>
+
+          <div className="pt-4">
+            <button
+              onClick={onEnterApp}
+              className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-base font-black inline-flex items-center gap-2.5 shadow-2xl shadow-emerald-500/30 transition-all hover:scale-105"
+            >
+              <span>{t.ctaButton}</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. FOOTER */}
+      <footer className="py-8 border-t border-slate-800 bg-slate-950 text-slate-500 text-xs">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Logo size={24} color="#10b981" />
+            <span className="font-bold text-white tracking-wider">
+              TITEN<span className="text-emerald-400">FIN</span>
+            </span>
+            <span className="text-slate-600">|</span>
+            <span>{t.footerTagline}</span>
+          </div>
+          <div>
+            © {new Date().getFullYear()} TitenFin. {t.footerRights}
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};

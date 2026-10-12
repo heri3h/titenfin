@@ -29,6 +29,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+      setErrorMessage('');
+      setSuccessMessage('');
+    }
+  }, [isOpen, initialMode]);
+
   // Handle Response Credential resmi dari Google
   const handleGoogleCredentialResponse = async (response: any) => {
     if (!response || !response.credential) return;

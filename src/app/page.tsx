@@ -110,36 +110,50 @@ export default function Home() {
     setDeposits(data.depositTxns);
     setInitialCapital(data.initialCapital);
     const savedEmail = localStorage.getItem('titenfin_user_email') || '';
-    setUserEmail(savedEmail);
+    const savedToken = localStorage.getItem('titenfin_auth_token') || '';
 
-    const savedMode = localStorage.getItem('titenfin_view_mode') as 'landing' | 'dashboard' | null;
-    if (savedMode === 'dashboard') {
-      setViewMode('dashboard');
-    }
+    // WAJIB LOGIN: Hanya boleh buka dashboard jika sudah ada sesi login aktif
+    if (savedEmail && savedToken) {
+      setUserEmail(savedEmail);
+      const savedMode = localStorage.getItem('titenfin_view_mode') as 'landing' | 'dashboard' | null;
+      if (savedMode === 'dashboard') {
+        setViewMode('dashboard');
+      } else {
+        setViewMode('landing');
+      }
 
-    // Background sync otomatis hanya jika pengguna sudah login
-    if (savedEmail) {
+      // Background sync otomatis dari Cloud MariaDB VPS
       fetch(`/api/sync?email=${encodeURIComponent(savedEmail)}`)
         .then((res) => res.json())
         .then((json) => {
-          if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0)) {
-            setCustomers(json.customers);
-            setCredits(json.creditItems);
-            setPayments(json.creditPayments);
-            setDeposits(json.depositTxns);
+          if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0 || json.depositTxns?.length > 0)) {
+            setCustomers(json.customers || []);
+            setCredits(json.creditItems || []);
+            setPayments(json.creditPayments || []);
+            setDeposits(json.depositTxns || []);
             if (json.initialCapital) setInitialCapital(json.initialCapital);
             saveStorageData(
-              json.customers,
-              json.creditItems,
-              json.creditPayments,
-              json.depositTxns,
+              json.customers || [],
+              json.creditItems || [],
+              json.creditPayments || [],
+              json.depositTxns || [],
               json.initialCapital || data.initialCapital
             );
           }
         })
         .catch(() => {
-          // Mode offline
+          // Mode offline saat koneksi terputus
         });
+    } else {
+      // Belum login: Pastikan landing page dan kosongkan session
+      setUserEmail('');
+      setViewMode('landing');
+      localStorage.setItem('titenfin_view_mode', 'landing');
+      // Kosongkan data toko di memori agar aman
+      setCustomers([]);
+      setCredits([]);
+      setPayments([]);
+      setDeposits([]);
     }
   }, []);
 
@@ -488,6 +502,10 @@ export default function Home() {
     localStorage.removeItem('titenfin_auth_token');
     setViewMode('landing');
     localStorage.setItem('titenfin_view_mode', 'landing');
+    setCustomers([]);
+    setCredits([]);
+    setPayments([]);
+    setDeposits([]);
   };
 
   const handleAuthSuccess = async (user: { email: string; name: string; token: string }) => {
@@ -496,31 +514,38 @@ export default function Home() {
     if (user.token) localStorage.setItem('titenfin_auth_token', user.token);
     setViewMode('dashboard');
     localStorage.setItem('titenfin_view_mode', 'dashboard');
+    setIsAuthModalOpen(false);
 
     // Tarik data toko dari database MariaDB VPS untuk akun ini
     try {
       const res = await fetch(`/api/sync?email=${encodeURIComponent(user.email)}`);
       const json = await res.json();
-      if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0)) {
-        setCustomers(json.customers);
-        setCredits(json.creditItems);
-        setPayments(json.creditPayments);
-        setDeposits(json.depositTxns);
+      if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0 || json.depositTxns?.length > 0)) {
+        setCustomers(json.customers || []);
+        setCredits(json.creditItems || []);
+        setPayments(json.creditPayments || []);
+        setDeposits(json.depositTxns || []);
         if (json.initialCapital) setInitialCapital(json.initialCapital);
         if (json.currency) {
           setCurrency(json.currency as CurrencyCode);
           setRuntimeCurrency(json.currency as CurrencyCode);
         }
         saveStorageData(
-          json.customers,
-          json.creditItems,
-          json.creditPayments,
-          json.depositTxns,
+          json.customers || [],
+          json.creditItems || [],
+          json.creditPayments || [],
+          json.depositTxns || [],
           json.initialCapital || initialCapital
         );
       } else {
-        // Jika akun baru, sync data default saat ini ke cloud
-        syncToCloud(user.email, customers, credits, payments, deposits, initialCapital, currency);
+        // Jika akun baru, buat data template awal bersih untuk toko ini dan simpan ke cloud
+        const initialData = getStorageData();
+        setCustomers(initialData.customers || []);
+        setCredits(initialData.creditItems || []);
+        setPayments(initialData.creditPayments || []);
+        setDeposits(initialData.depositTxns || []);
+        setInitialCapital(initialData.initialCapital || 10000000);
+        await syncToCloud(user.email, initialData.customers, initialData.creditItems, initialData.creditPayments, initialData.depositTxns, initialData.initialCapital, currency);
       }
     } catch (e) {
       console.warn('Gagal sync data setelah login', e);
@@ -531,23 +556,39 @@ export default function Home() {
     return <div className="min-h-screen bg-slate-900" />;
   }
 
-  if (viewMode === 'landing') {
+  // WAJIB LOGIN: Jika belum ada userEmail aktif, selalu tampilkan Landing Page dan Modal Login
+  if (viewMode === 'landing' || !userEmail) {
     return (
-      <LandingPage
-        onEnterApp={() => {
-          setViewMode('dashboard');
-          localStorage.setItem('titenfin_view_mode', 'dashboard');
-        }}
-        language={language}
-        onChangeLanguage={handleChangeLanguage}
-        currency={currency}
-        onChangeCurrency={handleChangeCurrency}
-        isCustomCurrency={isCustomCurrency}
-        onOpenAuth={(mode) => {
-          setAuthModalMode(mode);
-          setIsAuthModalOpen(true);
-        }}
-      />
+      <>
+        <LandingPage
+          onEnterApp={() => {
+            if (!userEmail) {
+              setAuthModalMode('login');
+              setIsAuthModalOpen(true);
+            } else {
+              setViewMode('dashboard');
+              localStorage.setItem('titenfin_view_mode', 'dashboard');
+            }
+          }}
+          language={language}
+          onChangeLanguage={handleChangeLanguage}
+          currency={currency}
+          onChangeCurrency={handleChangeCurrency}
+          isCustomCurrency={isCustomCurrency}
+          onOpenAuth={(mode) => {
+            setAuthModalMode(mode);
+            setIsAuthModalOpen(true);
+          }}
+        />
+
+        {/* MODAL MASUK / DAFTAR (1-CLICK GOOGLE & EMAIL) */}
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onAuthSuccess={handleAuthSuccess}
+          initialMode={authModalMode}
+        />
+      </>
     );
   }
 

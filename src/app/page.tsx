@@ -60,7 +60,7 @@ export default function Home() {
   const [credits, setCredits] = useState<CreditItem[]>([]);
   const [payments, setPayments] = useState<CreditPayment[]>([]);
   const [deposits, setDeposits] = useState<DepositTransaction[]>([]);
-  const [initialCapital, setInitialCapital] = useState<number>(10000000);
+  const [initialCapital, setInitialCapital] = useState<number>(0);
   const [userEmail, setUserEmail] = useState<string>('');
 
   // Multilingual State (Auto-Detect Regional pada pertama kali buka, default internasional: en)
@@ -132,7 +132,7 @@ export default function Home() {
             setCredits(json.creditItems || []);
             setPayments(json.creditPayments || []);
             setDeposits(json.depositTxns || []);
-            if (json.initialCapital) setInitialCapital(json.initialCapital);
+            if (json.initialCapital !== undefined) setInitialCapital(Number(json.initialCapital));
             if (json.currency) {
               setCurrency(json.currency as CurrencyCode);
               setRuntimeCurrency(json.currency as CurrencyCode);
@@ -142,7 +142,7 @@ export default function Home() {
               json.creditItems || [],
               json.creditPayments || [],
               json.depositTxns || [],
-              json.initialCapital || 10000000
+              json.initialCapital !== undefined ? Number(json.initialCapital) : 0
             );
           }
         })
@@ -560,7 +560,7 @@ export default function Home() {
         setCredits([]);
         setPayments([]);
         setDeposits([]);
-        const initialCap = json.initialCapital || 10000000;
+        const initialCap = json.initialCapital !== undefined ? Number(json.initialCapital) : 0;
         setInitialCapital(initialCap);
         if (json.currency) {
           setCurrency(json.currency as CurrencyCode);

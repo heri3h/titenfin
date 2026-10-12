@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, email, pin, name, currency = 'IDR', initialCapital = 10000000, googleToken, googleUser } = body;
+    const { action, email, pin, name, currency = 'IDR', initialCapital = 0, googleToken, googleUser } = body;
 
     const pool = getDbPool();
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       if (existingUsers && existingUsers.length > 0) {
         userId = existingUsers[0].id;
         userCurr = existingUsers[0].currency || 'IDR';
-        userCap = Number(existingUsers[0].initial_capital) || 10000000;
+        userCap = Number(existingUsers[0].initial_capital) || 0;
 
         // Update info profil terbaru jika ada
         await pool.query(
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
           name: user.name || user.email.split('@')[0],
           avatar: user.avatar_url || '',
           currency: user.currency || 'IDR',
-          initialCapital: Number(user.initial_capital) || 10000000,
+          initialCapital: Number(user.initial_capital) || 0,
           authProvider: 'email',
         },
         token,

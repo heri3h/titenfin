@@ -34,7 +34,7 @@ export const getStorageData = () => {
       creditItems: [],
       creditPayments: [],
       depositTxns: [],
-      initialCapital: 10000000,
+      initialCapital: 0,
     };
   }
 
@@ -48,6 +48,7 @@ export const getStorageData = () => {
   let creditItems: CreditItem[] = rawCredits ? JSON.parse(rawCredits) : [];
   let creditPayments: CreditPayment[] = rawPayments ? JSON.parse(rawPayments) : [];
   let depositTxns: DepositTransaction[] = rawDeposits ? JSON.parse(rawDeposits) : [];
+  let initialCapital: number = rawCapital ? Number(rawCapital) : 0;
 
   const hasDummyData = customers.some(c => DUMMY_IDS.has(c.id)) || creditItems.some(ci => DUMMY_IDS.has(ci.id));
   if (hasDummyData) {
@@ -55,7 +56,14 @@ export const getStorageData = () => {
     creditItems = creditItems.filter(ci => !DUMMY_IDS.has(ci.id));
     creditPayments = creditPayments.filter(p => !DUMMY_IDS.has(p.id) && !DUMMY_IDS.has(p.creditItemId));
     depositTxns = depositTxns.filter(d => !DUMMY_IDS.has(d.id));
-    saveStorageData(customers, creditItems, creditPayments, depositTxns, rawCapital ? Number(rawCapital) : 10000000);
+    if (initialCapital === 10000000) initialCapital = 0;
+    saveStorageData(customers, creditItems, creditPayments, depositTxns, initialCapital);
+  }
+
+  // Jika modal masih bernilai template 10000000 dari sesi lama, bersihkan ke 0
+  if (initialCapital === 10000000 && customers.length === 0 && creditItems.length === 0) {
+    initialCapital = 0;
+    saveStorageData(customers, creditItems, creditPayments, depositTxns, 0);
   }
 
   return {
@@ -63,7 +71,7 @@ export const getStorageData = () => {
     creditItems,
     creditPayments,
     depositTxns,
-    initialCapital: rawCapital ? Number(rawCapital) : 10000000,
+    initialCapital,
   };
 };
 

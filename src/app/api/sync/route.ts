@@ -18,19 +18,19 @@ export async function GET(request: NextRequest) {
     );
 
     let userId = email;
-    let initialCapital = 10000000;
+    let initialCapital = 0;
     let currency = 'IDR';
 
     if (users && users.length > 0) {
       userId = users[0].id;
-      initialCapital = Number(users[0].initial_capital) || 10000000;
+      initialCapital = Number(users[0].initial_capital) || 0;
       currency = users[0].currency || 'IDR';
     } else {
       // Buat user awal jika belum ada
       userId = `usr-${Date.now()}`;
       await pool.query(
         'INSERT INTO users (id, email, name, currency, initial_capital) VALUES (?, ?, ?, ?, ?)',
-        [userId, email, email.split('@')[0], 'IDR', 10000000]
+        [userId, email, email.split('@')[0], 'IDR', 0]
       );
     }
 
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
     const {
       email = 'heritri@titenfin.id',
       currency = 'IDR',
-      initialCapital = 10000000,
+      initialCapital = 0,
       customers = [],
       creditItems = [],
       creditPayments = [],

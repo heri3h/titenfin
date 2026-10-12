@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { X, Landmark, ArrowDownLeft, ArrowUpRight, Check, AlertCircle } from 'lucide-react';
 import { Customer, DepositType } from '../types';
 import { formatRupiah } from '../lib/storage';
+import { TranslationDictionary } from '../lib/i18n';
 
 interface DepositModalProps {
   customers: Customer[];
@@ -12,6 +13,7 @@ interface DepositModalProps {
   getCustomerBalance: (custId: string) => number;
   onSubmit: (customerId: string, type: DepositType, amount: number, date: string, notes: string, sendWa: boolean) => void;
   onAddNewCustomer: () => void;
+  t: TranslationDictionary;
 }
 
 export const DepositModal: React.FC<DepositModalProps> = ({
@@ -21,6 +23,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   getCustomerBalance,
   onSubmit,
   onAddNewCustomer,
+  t,
 }) => {
   const [customerId, setCustomerId] = useState<string>(customers[0]?.id || '');
   const [type, setType] = useState<DepositType>('deposit');
@@ -52,10 +55,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({
           <div>
             <h3 className="font-bold text-base flex items-center gap-2">
               <Landmark className="w-5 h-5 text-teal-300" />
-              Kelola Kas Titipan Uang
+              {t.depositModalTitle}
             </h3>
             <p className="text-xs text-teal-100">
-              Catat setoran amanah atau penarikan bertahap
+              {t.depositModalDesc}
             </p>
           </div>
           <button
@@ -80,7 +83,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               }`}
             >
               <ArrowDownLeft className="w-4 h-4" />
-              <span>Setor Titipan (+)</span>
+              <span>{t.depositMutationLabel}</span>
             </button>
             <button
               type="button"
@@ -92,20 +95,20 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               }`}
             >
               <ArrowUpRight className="w-4 h-4" />
-              <span>Tarik Uang (-)</span>
+              <span>{t.withdrawMutationLabel}</span>
             </button>
           </div>
 
           {/* Pilih Nasabah */}
           <div className="space-y-1">
             <div className="flex justify-between items-center">
-              <label className="block text-xs font-semibold text-slate-700">Nama Penitip</label>
+              <label className="block text-xs font-semibold text-slate-700">{t.fullNameLabel}</label>
               <button
                 type="button"
                 onClick={onAddNewCustomer}
                 className="text-[11px] font-semibold text-teal-600 hover:text-teal-700"
               >
-                + Penitip Baru
+                + {t.customerModalTitle}
               </button>
             </div>
             <select
@@ -116,7 +119,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
             >
               {customers.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name} (Saldo: {formatRupiah(getCustomerBalance(c.id))})
+                  {c.name} ({formatRupiah(getCustomerBalance(c.id))})
                 </option>
               ))}
             </select>
@@ -124,7 +127,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
 
           {/* Info Saldo Berjalan Saat Ini */}
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs flex justify-between items-center">
-            <span className="text-slate-500">Saldo Dititipkan Saat Ini:</span>
+            <span className="text-slate-500">{t.heldDepositBalance}:</span>
             <span className="font-bold text-slate-900 text-sm">
               {formatRupiah(currentBalance)}
             </span>
@@ -133,7 +136,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
           {/* Nominal */}
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-700">
-              Nominal {type === 'deposit' ? 'Setoran' : 'Penarikan'} (Rp)
+              {t.depositAmountLabel}
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
@@ -155,7 +158,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
             {isExceedingBalance && (
               <p className="text-[11px] text-red-600 font-medium flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />
-                Nominal penarikan melebihi saldo yang dititipkan!
+                !
               </p>
             )}
           </div>
@@ -164,7 +167,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
           <div className={`p-3 rounded-xl border text-xs flex items-center justify-between ${
             type === 'deposit' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'
           }`}>
-            <span>Saldo Akhir Setelah Ini:</span>
+            <span>{t.balanceRemaining}:</span>
             <span className="font-bold text-sm">
               {formatRupiah(projectedBalance)}
             </span>
@@ -173,7 +176,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
           {/* Tanggal & Keperluan */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">Tanggal Transaksi</label>
+              <label className="block text-xs font-semibold text-slate-700">{t.paymentDateLabel}</label>
               <input
                 type="date"
                 value={date}
@@ -183,10 +186,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">Keperluan / Keterangan</label>
+              <label className="block text-xs font-semibold text-slate-700">{t.notesLabel}</label>
               <input
                 type="text"
-                placeholder="Misal: untuk beli bibit / persiapan hajatan"
+                placeholder=""
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none"
@@ -203,7 +206,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               className="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500"
             />
             <span className="text-xs text-slate-700">
-              Kirim bukti mutasi saldo titipan via WhatsApp
+              {t.sendReceiptViaWa}
             </span>
           </label>
 
@@ -214,7 +217,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold transition"
             >
-              Batal
+              {t.cancelBtn}
             </button>
             <button
               type="submit"
@@ -228,7 +231,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               }`}
             >
               <Check className="w-4 h-4" />
-              <span>Simpan Mutasi Titipan</span>
+              <span>{t.saveDepositBtn}</span>
             </button>
           </div>
         </form>

@@ -4,12 +4,14 @@ import React, { useState } from 'react';
 import { X, CheckCircle, Percent, Sparkles, AlertCircle } from 'lucide-react';
 import { CreditItem } from '../types';
 import { formatRupiah } from '../lib/storage';
+import { TranslationDictionary } from '../lib/i18n';
 
 interface EarlySettlementModalProps {
   credit: CreditItem;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (discount: number, finalAmount: number, date: string, notes: string, sendWa: boolean) => void;
+  t: TranslationDictionary;
 }
 
 export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
@@ -17,10 +19,11 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
+  t,
 }) => {
   const [discount, setDiscount] = useState<number>(0);
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
-  const [notes, setNotes] = useState<string>('Pelunasan dipercepat (disepakati diskon bunga)');
+  const [notes, setNotes] = useState<string>('');
   const [sendWa, setSendWa] = useState<boolean>(true);
 
   if (!isOpen) return null;
@@ -41,7 +44,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-300" />
             <div>
-              <h3 className="font-bold text-base">Pelunasan Dipercepat</h3>
+              <h3 className="font-bold text-base">{t.earlySettlementModalTitle}</h3>
               <p className="text-xs text-emerald-200">
                 {credit.customerName} • {credit.itemName}
               </p>
@@ -60,22 +63,22 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
           <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900">
             <div className="font-semibold flex items-center gap-1.5 mb-1 text-emerald-950">
               <Sparkles className="w-4 h-4 text-emerald-600" />
-              Fitur Penyesuaian Profit Pelunasan Awal
+              {t.earlySettlementModalTitle}
             </div>
-            Berikan potongan/diskon margin keuntungan yang adil kepada nasabah karena melunasi seluruh sisa kredit lebih awal dari tenor.
+            {t.discountMarginPrompt}
           </div>
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
             <div className="flex justify-between">
-              <span className="text-slate-500">Total Kredit Awal:</span>
+              <span className="text-slate-500">{t.totalCreditPrice}:</span>
               <span className="font-semibold text-slate-700">{formatRupiah(credit.totalCreditPrice)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Margin Keuntungan Awal:</span>
+              <span className="text-slate-500">{t.agreedProfit}:</span>
               <span className="font-semibold text-emerald-700">+{formatRupiah(credit.profitNominal)}</span>
             </div>
             <div className="flex justify-between border-t border-slate-200 pt-1 font-bold text-slate-900">
-              <span>Sisa Tagihan Normal:</span>
+              <span>{t.remainingDebt}:</span>
               <span className="text-sm">{formatRupiah(currentRemaining)}</span>
             </div>
           </div>
@@ -83,7 +86,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
           {/* Potongan / Diskon Profit */}
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-700">
-              Diskon / Potongan Profit yang Diberikan (Rp)
+              {t.discountMarginPrompt}
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
@@ -96,7 +99,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
                 step="5000"
                 value={discount || ''}
                 onChange={(e) => setDiscount(Number(e.target.value))}
-                placeholder="0 jika tidak ada potongan"
+                placeholder="0"
                 className="w-full pl-10 pr-3 py-2.5 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 text-base focus:ring-2 focus:ring-emerald-500 focus:outline-none"
               />
             </div>
@@ -112,7 +115,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
                   }`}
                 >
-                  {d === 0 ? 'Tanpa Diskon' : `Diskon ${d / 1000}rb`}
+                  {d === 0 ? '-' : `${d / 1000}k`}
                 </button>
               ))}
             </div>
@@ -121,7 +124,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
           {/* Total Bersih yang Wajib Diterima */}
           <div className="bg-emerald-900 text-white p-4 rounded-xl shadow-inner space-y-1">
             <span className="text-xs text-emerald-300 font-medium block">
-              Total Bersih yang Diterima Hari Ini (Langsung Lunas):
+              {t.statusCompleted}:
             </span>
             <div className="text-2xl font-black text-amber-300">
               {formatRupiah(finalAmountToPay)}
@@ -131,7 +134,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
           {/* Tanggal & Keterangan */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">Tanggal Pelunasan</label>
+              <label className="block text-xs font-semibold text-slate-700">{t.paymentDateLabel}</label>
               <input
                 type="date"
                 value={date}
@@ -141,7 +144,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">Catatan Kesepakatan</label>
+              <label className="block text-xs font-semibold text-slate-700">{t.paymentNotesLabel}</label>
               <input
                 type="text"
                 value={notes}
@@ -160,7 +163,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
               className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
             />
             <span className="text-xs text-slate-700">
-              Kirim Surat Bukti Lunas ke WhatsApp nasabah
+              {t.sendReceiptViaWa}
             </span>
           </label>
 
@@ -171,14 +174,14 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold transition"
             >
-              Batal
+              {t.cancelBtn}
             </button>
             <button
               type="submit"
               className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 transition flex items-center gap-1.5"
             >
               <CheckCircle className="w-4 h-4" />
-              <span>Selesaikan Pelunasan</span>
+              <span>{t.saveEarlySettlementBtn}</span>
             </button>
           </div>
         </form>

@@ -63,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                 className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs flex items-center gap-1 transition"
-                title="Pilih Bahasa / Language"
+                title={t.selectLanguage}
               >
                 <Globe className="w-3.5 h-3.5 text-slate-500" />
                 <span className="font-bold text-[11px] uppercase tracking-wide">
@@ -83,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
                   />
                   <div className="absolute right-0 top-full mt-1.5 z-50 w-44 bg-white rounded-xl shadow-xl border border-slate-200 p-1 space-y-0.5 animate-in fade-in duration-150">
                     <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Pilih Bahasa
+                      {t.selectLanguage}
                     </div>
                     {LANGUAGE_OPTIONS.map((opt) => {
                       const isSelected = opt.code === language;
@@ -119,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Tombol Sensor Angka (Privacy Blur) */}
             <button
               onClick={() => setIsPrivacyMode(!isPrivacyMode)}
-              title={isPrivacyMode ? "Tampilkan Angka Saldo" : "Sembunyikan Angka (Sensor di Depan Orang)"}
+              title={isPrivacyMode ? t.showNumbers : t.hideNumbers}
               className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg border transition-all text-xs flex items-center gap-1.5 ${
                 isPrivacyMode
                   ? 'bg-amber-50 border-amber-300 text-amber-700 font-medium'
@@ -143,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onOpenSyncModal}
               className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs flex items-center gap-1.5 transition-colors"
-              title="Status Sinkronisasi Email & Cloud Backup"
+              title={t.syncModalTitle}
             >
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <Cloud className="w-4 h-4 text-emerald-600 hidden xs:block" />

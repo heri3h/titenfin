@@ -515,7 +515,7 @@ export default function Home() {
             {/* List Kartu Kredit Barang */}
             {filteredCredits.length === 0 ? (
               <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500 text-xs">
-                Tidak ada data akad kredit barang yang sesuai.
+                {t.noCreditData}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -669,9 +669,9 @@ export default function Home() {
             {/* Header & Action Bar */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">Buku Kas Saldo Titipan Uang</h3>
+                <h3 className="font-bold text-slate-900 text-sm">{t.depositLedgerTitle}</h3>
                 <p className="text-xs text-slate-500">
-                  Pencatatan setor berkali-kali & penarikan bertahap dengan saldo berjalan akurat.
+                  {t.depositLedgerDesc}
                 </p>
               </div>
               <button
@@ -704,14 +704,14 @@ export default function Home() {
                 )}
               </div>
               <span className="text-xs text-slate-400 whitespace-nowrap hidden sm:inline">
-                {filteredDeposits.length} Mutasi Ditemukan
+                {filteredDeposits.length} {t.foundItemsSuffix}
               </span>
             </div>
 
             {/* Rekap Saldo Per Penitip */}
             {filteredDepositorCustomers.length === 0 && searchQuery ? (
               <div className="bg-white rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400">
-                Tidak ada penitip uang yang cocok dengan pencarian "{searchQuery}".
+                {t.noDepositData}
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -759,15 +759,15 @@ export default function Home() {
               <div className="p-4 border-b border-slate-100 flex items-center justify-between">
                 <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-2">
                   <History className="w-4 h-4 text-slate-500" />
-                  Riwayat Mutasi Dana Titipan
+                  {t.passbookMutationHistory}
                 </h4>
-                <span className="text-xs text-slate-400 font-medium">{filteredDeposits.length} Catatan</span>
+                <span className="text-xs text-slate-400 font-medium">{filteredDeposits.length} {t.recordsCountSuffix}</span>
               </div>
 
               <div className="divide-y divide-slate-100">
                 {filteredDeposits.length === 0 ? (
                   <div className="p-8 text-center text-xs text-slate-400">
-                    {searchQuery ? `Tidak ada riwayat mutasi yang cocok dengan "${searchQuery}".` : 'Belum ada riwayat mutasi titipan uang.'}
+                    {t.noDepositData}
                   </div>
                 ) : (
                   filteredDeposits.map((d) => (
@@ -781,7 +781,7 @@ export default function Home() {
                         <div>
                           <div className="font-bold text-slate-900">{d.customerName}</div>
                           <div className="text-slate-500 text-[11px]">
-                            {d.date} • {d.notes || (d.type === 'deposit' ? 'Setor simpanan' : 'Tarik simpanan')}
+                            {d.date} • {d.notes || (d.type === 'deposit' ? t.depositMutationLabel : t.withdrawMutationLabel)}
                           </div>
                         </div>
                       </div>
@@ -791,7 +791,7 @@ export default function Home() {
                           {d.type === 'deposit' ? '+' : '-'}{formatRupiah(d.amount, isPrivacyMode)}
                         </div>
                         <div className="text-[10px] text-slate-400">
-                          Sisa Saldo: {formatRupiah(d.balanceAfter, isPrivacyMode)}
+                          {t.balanceRemaining}: {formatRupiah(d.balanceAfter, isPrivacyMode)}
                         </div>
                       </div>
                     </div>
@@ -807,9 +807,9 @@ export default function Home() {
           <div className="space-y-4">
             <div className="flex justify-between items-center bg-white p-3.5 rounded-xl border border-slate-200">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">Buku Kontak Nasabah & Pelanggan</h3>
+                <h3 className="font-bold text-slate-900 text-sm">{t.customerBookTitle}</h3>
                 <p className="text-xs text-slate-500">
-                  Data peminjam kredit dan pemilik dana titipan.
+                  {t.customerBookDesc}
                 </p>
               </div>
               <button
@@ -817,7 +817,7 @@ export default function Home() {
                 className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs transition"
               >
                 <Plus className="w-4 h-4" />
-                <span>+ Nasabah Baru</span>
+                <span>+ {t.customerModalTitle}</span>
               </button>
             </div>
 
@@ -848,7 +848,7 @@ export default function Home() {
 
             {filteredCustomers.length === 0 ? (
               <div className="bg-white rounded-xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-400">
-                {searchQuery ? `Tidak ada kontak nasabah yang cocok dengan "${searchQuery}".` : 'Belum ada data nasabah.'}
+                {t.noCustomerData}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -920,17 +920,17 @@ export default function Home() {
         {activeTab === 'capital' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-5">
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Rekonsiliasi Modal & Perputaran Kas Bersih</h3>
+              <h3 className="font-bold text-slate-900 text-base">{t.capitalReconTitle}</h3>
               <p className="text-xs text-slate-500">
-                Pemisahan akurat antara modal yang Anda tanam, laba yang sudah terealisasi, dan uang titipan orang lain.
+                {t.capitalReconDesc}
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-xs">
-                <span className="font-bold text-slate-800 text-sm block">Pengaturan Modal Sendiri</span>
+                <span className="font-bold text-slate-800 text-sm block">{t.ownCapitalSettings}</span>
                 <p className="text-slate-500">
-                  Ubah nominal modal dasar yang Anda sediakan untuk pembiayaan barang:
+                  {t.ownCapitalPrompt}
                 </p>
                 <div className="flex gap-2 items-center pt-1">
                   <span className="font-bold text-slate-700">Rp</span>
@@ -949,9 +949,9 @@ export default function Home() {
               </div>
 
               <div className="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 space-y-2 text-xs">
-                <span className="font-bold text-emerald-950 text-sm block">Kesehatan Likuiditas Kas</span>
+                <span className="font-bold text-emerald-950 text-sm block">{t.cashLiquidityTitle}</span>
                 <p className="text-emerald-900 leading-relaxed">
-                  Dengan sistem <strong>TitenFin</strong>, Anda terbebas dari jebakan kas semu. Uang titipan Rp {formatRupiah(summary.totalDeposits, isPrivacyMode)} senantiasa dipisahkan dari modal putar agar kepercayaan nasabah tetap terjaga 100%.
+                  {t.cashLiquidityDesc}
                 </p>
               </div>
             </div>
@@ -961,7 +961,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-2">
                   <History className="w-4 h-4 text-emerald-600" />
-                  Catatan Penerimaan Pembayaran Angsuran Masuk
+                  {t.incomingInstallmentsTitle}
                 </h4>
                 <div className="relative max-w-xs w-full">
                   <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
@@ -986,7 +986,7 @@ export default function Home() {
               <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
                 {filteredPayments.length === 0 ? (
                   <div className="p-6 text-center text-xs text-slate-400">
-                    {searchQuery ? `Tidak ada pembayaran yang cocok dengan "${searchQuery}".` : 'Belum ada catatan pembayaran angsuran.'}
+                    {t.noPaymentsData}
                   </div>
                 ) : (
                   filteredPayments.map((p) => {
@@ -1006,7 +1006,7 @@ export default function Home() {
                         </span>
                         {p.isEarlySettlement && (
                           <span className="block text-[10px] text-amber-600 font-semibold">
-                            Pelunasan Dipercepat (Diskon: {formatRupiah(p.discountGranted)})
+                            {t.earlySettlementBtn} ({formatRupiah(p.discountGranted)})
                           </span>
                         )}
                       </div>
@@ -1027,6 +1027,7 @@ export default function Home() {
           isOpen={!!selectedCreditForPayment}
           onClose={() => setSelectedCreditForPayment(null)}
           onSubmit={handleRecordPayment}
+          t={t}
         />
       )}
 
@@ -1036,6 +1037,7 @@ export default function Home() {
           isOpen={!!selectedCreditForEarlySettlement}
           onClose={() => setSelectedCreditForEarlySettlement(null)}
           onSubmit={handleEarlySettlement}
+          t={t}
         />
       )}
 
@@ -1048,6 +1050,7 @@ export default function Home() {
           setIsNewCreditModalOpen(false);
           setIsCustomerModalOpen(true);
         }}
+        t={t}
       />
 
       <DepositModal
@@ -1060,12 +1063,14 @@ export default function Home() {
           setIsDepositModalOpen(false);
           setIsCustomerModalOpen(true);
         }}
+        t={t}
       />
 
       <CustomerModal
         isOpen={isCustomerModalOpen}
         onClose={() => setIsCustomerModalOpen(false)}
         onSubmit={handleAddCustomer}
+        t={t}
       />
 
       <SyncEmailModal
@@ -1078,6 +1083,7 @@ export default function Home() {
         }}
         onExportBackup={handleExportBackup}
         onImportBackup={handleImportBackup}
+        t={t}
       />
 
       {/* MODAL DETAIL & AKSI CEPAT (SAAT JUDUL / NAMA DIKLIK) */}

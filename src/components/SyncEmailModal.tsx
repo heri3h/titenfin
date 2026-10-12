@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { X, Cloud, ShieldCheck, Mail, Download, Upload, CheckCircle2, RefreshCw } from 'lucide-react';
 
+import { TranslationDictionary } from '../lib/i18n';
+
 interface SyncEmailModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,6 +12,7 @@ interface SyncEmailModalProps {
   onSaveEmail: (email: string) => void;
   onExportBackup: () => void;
   onImportBackup: (file: File) => void;
+  t: TranslationDictionary;
 }
 
 export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
@@ -19,6 +22,7 @@ export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
   onSaveEmail,
   onExportBackup,
   onImportBackup,
+  t,
 }) => {
   const [emailInput, setEmailInput] = useState<string>(userEmail || 'heritri@titenfin.id');
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -51,9 +55,9 @@ export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
           <div className="flex items-center gap-2">
             <Cloud className="w-5 h-5 text-emerald-400" />
             <div>
-              <h3 className="font-bold text-base">Sinkronisasi & Keamanan Akun</h3>
+              <h3 className="font-bold text-base">{t.syncModalTitle}</h3>
               <p className="text-xs text-slate-300">
-                Pencadangan cloud aman berbasis email
+                {t.syncModalDesc}
               </p>
             </div>
           </div>
@@ -70,15 +74,15 @@ export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 flex items-start gap-2.5">
             <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <div>
-              <div className="font-bold text-emerald-950">Data Anda Tersinkronisasi Otomatis</div>
-              Setiap perubahan kredit dan titipan uang langsung diamankan ke akun email Anda, sehingga tidak akan hilang saat ganti perangkat.
+              <div className="font-bold text-emerald-950">{t.syncModalTitle}</div>
+              {t.syncModalDesc}
             </div>
           </div>
 
           {/* Email Form */}
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-700">
-              Alamat Email Akun Anda
+              Email
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -100,35 +104,35 @@ export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
             {isSyncing ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Menghubungkan ke Cloud...</span>
+                <span>Cloud...</span>
               </>
             ) : syncSuccess ? (
               <>
                 <CheckCircle2 className="w-4 h-4 text-white" />
-                <span>Data Tersinkron Sempurna!</span>
+                <span>OK!</span>
               </>
             ) : (
               <>
                 <Cloud className="w-4 h-4" />
-                <span>Sinkronkan Sekarang</span>
+                <span>{t.syncNowBtn}</span>
               </>
             )}
           </button>
 
           {/* Pencadangan Manual Mandiri */}
           <div className="border-t border-slate-200 pt-3 space-y-2">
-            <span className="text-xs font-bold text-slate-700 block">Cadangan File Manual (Offline)</span>
+            <span className="text-xs font-bold text-slate-700 block">{t.backupRestoreSection}</span>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={onExportBackup}
                 className="p-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition"
               >
                 <Download className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Unduh File (.json)</span>
+                <span>{t.downloadBackupBtn}</span>
               </button>
               <label className="p-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-center">
                 <Upload className="w-3.5 h-3.5 text-blue-600" />
-                <span>Pulihkan Cadangan</span>
+                <span>{t.restoreBackupBtn}</span>
                 <input
                   type="file"
                   accept=".json"

@@ -17,6 +17,7 @@ interface HeaderProps {
   onOpenSyncModal: () => void;
   onOpenNewCredit: () => void;
   onOpenNewDeposit: () => void;
+  onLogoClick?: () => void;
   onOpenLanding?: () => void;
   onLogout?: () => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
@@ -35,6 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSyncModal,
   onOpenNewCredit,
   onOpenNewDeposit,
+  onLogoClick,
   onOpenLanding,
   onLogout,
   onOpenAuth,
@@ -51,9 +53,9 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between gap-2.5">
           {/* Logo & Slogan */}
           <div
-            className={`flex items-center space-x-2.5 ${onOpenLanding ? 'cursor-pointer hover:opacity-90 transition' : ''}`}
-            onClick={onOpenLanding}
-            title={onOpenLanding ? 'Lihat Halaman Depan / Landing Page' : undefined}
+            className="flex items-center space-x-2.5 cursor-pointer hover:opacity-90 transition"
+            onClick={onLogoClick || onOpenLanding}
+            title="TitenFin Pro Dashboard"
           >
             <Logo size={36} />
             <div>

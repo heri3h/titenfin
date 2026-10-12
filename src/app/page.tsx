@@ -632,7 +632,16 @@ export default function Home() {
         onOpenSyncModal={() => setIsSyncModalOpen(true)}
         onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
         onOpenNewDeposit={() => setIsDepositModalOpen(true)}
-        onOpenLanding={handleLogout}
+        onLogoClick={() => {
+          setActiveTab('credits');
+          setSearchQuery('');
+          setCreditFilter('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenLanding={() => {
+          setViewMode('landing');
+          localStorage.setItem('titenfin_view_mode', 'landing');
+        }}
         onLogout={handleLogout}
         onOpenAuth={(mode) => {
           setAuthModalMode(mode);

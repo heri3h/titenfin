@@ -255,19 +255,31 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Tombol Status Sinkronisasi & Akun */}
             <button
               onClick={() => {
-                if (onOpenAuth && (!userEmail || userEmail === 'heritri@titenfin.id')) {
-                  onOpenAuth('login');
+                if (!userEmail) {
+                  if (onOpenAuth) onOpenAuth('login');
                 } else {
                   onOpenSyncModal();
                 }
               }}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs flex items-center gap-1.5 transition-colors"
-              title={t.syncModalTitle}
+              className={`px-2.5 py-1.5 rounded-lg border text-xs flex items-center gap-1.5 transition-colors ${
+                userEmail
+                  ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700'
+                  : 'border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold'
+              }`}
+              title={userEmail ? t.syncModalTitle : 'Masuk ke Akun Toko'}
             >
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <Cloud className="w-4 h-4 text-emerald-600 hidden xs:block" />
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  userEmail ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+                }`}
+              />
+              <Cloud
+                className={`w-4 h-4 hidden xs:block ${
+                  userEmail ? 'text-emerald-600' : 'text-emerald-700'
+                }`}
+              />
               <span className="max-w-[100px] sm:max-w-[140px] truncate font-medium">
-                {userEmail || t.syncEmail}
+                {userEmail || 'Masuk / Daftar'}
               </span>
             </button>
 

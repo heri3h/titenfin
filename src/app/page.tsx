@@ -60,7 +60,7 @@ export default function Home() {
   const [payments, setPayments] = useState<CreditPayment[]>([]);
   const [deposits, setDeposits] = useState<DepositTransaction[]>([]);
   const [initialCapital, setInitialCapital] = useState<number>(10000000);
-  const [userEmail, setUserEmail] = useState<string>('heritri@titenfin.id');
+  const [userEmail, setUserEmail] = useState<string>('');
 
   // Multilingual State (Auto-Detect Regional pada pertama kali buka, default internasional: en)
   const [language, setLanguage] = useState<Language>('en');
@@ -109,47 +109,38 @@ export default function Home() {
     setPayments(data.creditPayments);
     setDeposits(data.depositTxns);
     setInitialCapital(data.initialCapital);
-    const savedEmail = localStorage.getItem('titenfin_user_email');
-    if (savedEmail) setUserEmail(savedEmail);
+    const savedEmail = localStorage.getItem('titenfin_user_email') || '';
+    setUserEmail(savedEmail);
+
     const savedMode = localStorage.getItem('titenfin_view_mode') as 'landing' | 'dashboard' | null;
     if (savedMode === 'dashboard') {
       setViewMode('dashboard');
     }
 
-    // Background sync otomatis dengan database MariaDB di VPS
-    const targetEmail = savedEmail || 'heritri@titenfin.id';
-    fetch(`/api/sync?email=${encodeURIComponent(targetEmail)}`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0)) {
-          setCustomers(json.customers);
-          setCredits(json.creditItems);
-          setPayments(json.creditPayments);
-          setDeposits(json.depositTxns);
-          if (json.initialCapital) setInitialCapital(json.initialCapital);
-          saveStorageData(
-            json.customers,
-            json.creditItems,
-            json.creditPayments,
-            json.depositTxns,
-            json.initialCapital || data.initialCapital
-          );
-        } else if (json.success && (!json.customers || json.customers.length === 0) && data.customers.length > 0) {
-          // Jika di cloud VPS belum ada data tapi di lokal ada data awal, upload data lokal ke VPS
-          syncToCloud(
-            targetEmail,
-            data.customers,
-            data.creditItems,
-            data.creditPayments,
-            data.depositTxns,
-            data.initialCapital,
-            initialCurr
-          );
-        }
-      })
-      .catch(() => {
-        // Mode offline atau preview
-      });
+    // Background sync otomatis hanya jika pengguna sudah login
+    if (savedEmail) {
+      fetch(`/api/sync?email=${encodeURIComponent(savedEmail)}`)
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0)) {
+            setCustomers(json.customers);
+            setCredits(json.creditItems);
+            setPayments(json.creditPayments);
+            setDeposits(json.depositTxns);
+            if (json.initialCapital) setInitialCapital(json.initialCapital);
+            saveStorageData(
+              json.customers,
+              json.creditItems,
+              json.creditPayments,
+              json.depositTxns,
+              json.initialCapital || data.initialCapital
+            );
+          }
+        })
+        .catch(() => {
+          // Mode offline
+        });
+    }
   }, []);
 
   const handleChangeLanguage = (newLang: Language) => {
@@ -492,6 +483,9 @@ export default function Home() {
   const t = translations[language];
 
   const handleLogout = () => {
+    setUserEmail('');
+    localStorage.removeItem('titenfin_user_email');
+    localStorage.removeItem('titenfin_auth_token');
     setViewMode('landing');
     localStorage.setItem('titenfin_view_mode', 'landing');
   };
@@ -500,6 +494,8 @@ export default function Home() {
     setUserEmail(user.email);
     localStorage.setItem('titenfin_user_email', user.email);
     if (user.token) localStorage.setItem('titenfin_auth_token', user.token);
+    setViewMode('dashboard');
+    localStorage.setItem('titenfin_view_mode', 'dashboard');
 
     // Tarik data toko dari database MariaDB VPS untuk akun ini
     try {

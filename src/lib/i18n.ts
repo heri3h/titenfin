@@ -138,6 +138,7 @@ export interface TranslationDictionary {
 
   // Additional General & Form Keys
   selectLanguage: string;
+  logoutBtn: string;
   showNumbers: string;
   cancelBtn: string;
   saveBtn: string;
@@ -292,6 +293,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "Pilih Bahasa",
+    logoutBtn: "Keluar",
     showNumbers: "Tampilkan Angka",
     cancelBtn: "Batal",
     saveBtn: "Simpan",
@@ -443,6 +445,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "Pilih Basa",
+    logoutBtn: "Medal",
     showNumbers: "Tuduhake Angka",
     cancelBtn: "Batal",
     saveBtn: "Simpen",
@@ -594,6 +597,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "Select Language",
+    logoutBtn: "Logout",
     showNumbers: "Show Numbers",
     cancelBtn: "Cancel",
     saveBtn: "Save",
@@ -745,6 +749,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "选择语言",
+    logoutBtn: "退出登录",
     showNumbers: "显示金额",
     cancelBtn: "取消",
     saveBtn: "保存",
@@ -896,6 +901,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "भाषा चुनें",
+    logoutBtn: "लॉगआउट",
     showNumbers: "संख्या दिखाएं",
     cancelBtn: "रद्द करें",
     saveBtn: "सहेजें",
@@ -1047,6 +1053,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "Seleccionar idioma",
+    logoutBtn: "Cerrar sesión",
     showNumbers: "Mostrar números",
     cancelBtn: "Cancelar",
     saveBtn: "Guardar",
@@ -1198,6 +1205,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "اختر اللغة",
+    logoutBtn: "تسجيل الخروج",
     showNumbers: "إظهار الأرقام",
     cancelBtn: "إلغاء",
     saveBtn: "حفظ",
@@ -1349,6 +1357,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "ভাষা নির্বাচন করুন",
+    logoutBtn: "লগআউট",
     showNumbers: "সংখ্যা দেখান",
     cancelBtn: "বাতিল",
     saveBtn: "সংরক্ষণ করুন",
@@ -1500,6 +1509,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "Selecionar idioma",
+    logoutBtn: "Sair",
     showNumbers: "Mostrar números",
     cancelBtn: "Cancelar",
     saveBtn: "Salvar",
@@ -1651,6 +1661,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "Выбрать язык",
+    logoutBtn: "Выйти",
     showNumbers: "Показать числа",
     cancelBtn: "Отмена",
     saveBtn: "Сохранить",
@@ -1802,6 +1813,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "زبان منتخب کریں",
+    logoutBtn: "لاگ آؤٹ",
     showNumbers: "نمبر دکھائیں",
     cancelBtn: "منسوخ کریں",
     saveBtn: "محفوظ کریں",
@@ -1953,6 +1965,7 @@ export const translations: Record<Language, TranslationDictionary> = {
 
         // Extended General & Form Keys
     selectLanguage: "言語を選択",
+    logoutBtn: "ログアウト",
     showNumbers: "金額を表示",
     cancelBtn: "キャンセル",
     saveBtn: "保存",

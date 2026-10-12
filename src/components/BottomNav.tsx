@@ -9,7 +9,8 @@ import {
   Plus,
   ShoppingBag,
   UserPlus,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { translations } from '../lib/i18n';
 
@@ -19,6 +20,7 @@ interface BottomNavProps {
   onOpenNewCredit: () => void;
   onOpenDeposit: () => void;
   onOpenNewCustomer: () => void;
+  onLogout?: () => void;
   activeCreditsCount: number;
   t: (typeof translations)['id'];
 }
@@ -29,6 +31,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onOpenNewCredit,
   onOpenDeposit,
   onOpenNewCustomer,
+  onLogout,
   activeCreditsCount,
   t,
 }) => {
@@ -104,6 +107,24 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               <div className="text-[10px] text-slate-500">{t.quickNewCustomerDesc}</div>
             </div>
           </button>
+
+          {onLogout && (
+            <button
+              onClick={() => {
+                setIsQuickMenuOpen(false);
+                onLogout();
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 text-red-700 transition text-left group border-t border-slate-100"
+            >
+              <div className="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition">
+                <LogOut className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-xs font-bold leading-tight">{t.logoutBtn}</div>
+                <div className="text-[10px] text-red-500">Kembali ke halaman depan</div>
+              </div>
+            </button>
+          )}
         </div>
       )}
 

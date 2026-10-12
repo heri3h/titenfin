@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, EyeOff, Cloud, PlusCircle, Globe, Check } from 'lucide-react';
+import { Eye, EyeOff, Cloud, PlusCircle, Globe, Check, LogOut } from 'lucide-react';
 import { Language, LANGUAGE_OPTIONS, translations } from '../lib/i18n';
 import { Logo } from './Logo';
 
@@ -16,6 +16,7 @@ interface HeaderProps {
   onOpenNewCredit: () => void;
   onOpenNewDeposit: () => void;
   onOpenLanding?: () => void;
+  onLogout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -29,6 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNewCredit,
   onOpenNewDeposit,
   onOpenLanding,
+  onLogout,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
@@ -174,6 +176,18 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>{t.newDepositBtn}</span>
               </button>
             </div>
+
+            {/* Tombol Keluar / Logout */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="px-2.5 py-1.5 rounded-lg border border-red-200 bg-red-50/80 hover:bg-red-100 text-red-700 text-xs flex items-center gap-1.5 font-medium transition"
+                title={`${t.logoutBtn} (Ke Halaman Depan)`}
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-600" />
+                <span className="hidden sm:inline">{t.logoutBtn}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

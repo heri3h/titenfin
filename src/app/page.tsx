@@ -380,6 +380,11 @@ export default function Home() {
 
   const t = translations[language];
 
+  const handleLogout = () => {
+    setViewMode('landing');
+    localStorage.setItem('titenfin_view_mode', 'landing');
+  };
+
   if (!isClient) {
     return <div className="min-h-screen bg-slate-900" />;
   }
@@ -410,10 +415,8 @@ export default function Home() {
         onOpenSyncModal={() => setIsSyncModalOpen(true)}
         onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
         onOpenNewDeposit={() => setIsDepositModalOpen(true)}
-        onOpenLanding={() => {
-          setViewMode('landing');
-          localStorage.setItem('titenfin_view_mode', 'landing');
-        }}
+        onOpenLanding={handleLogout}
+        onLogout={handleLogout}
       />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-5 space-y-6">
@@ -1155,6 +1158,7 @@ export default function Home() {
         onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
         onOpenDeposit={() => setIsDepositModalOpen(true)}
         onOpenNewCustomer={() => setIsCustomerModalOpen(true)}
+        onLogout={handleLogout}
         activeCreditsCount={activeCredits.length}
         t={t}
       />

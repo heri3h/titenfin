@@ -588,6 +588,7 @@ export default function Home() {
           onClose={() => setIsAuthModalOpen(false)}
           onAuthSuccess={handleAuthSuccess}
           initialMode={authModalMode}
+          language={language}
         />
       </>
     );
@@ -1321,6 +1322,7 @@ export default function Home() {
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
         initialMode={authModalMode}
+        language={language}
       />
 
       {/* MODAL DETAIL & AKSI CEPAT (SAAT JUDUL / NAMA DIKLIK) */}

@@ -155,7 +155,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     ? 'border-emerald-500/60 bg-emerald-950/40 text-emerald-300 font-bold'
                     : 'border-slate-700 hover:border-slate-600 bg-slate-800 text-slate-200'
                 }`}
-                title="Pilih Mata Uang / Currency"
+                title={language === 'id' ? 'Pilih Mata Uang' : language === 'jv' ? 'Pilih Mata Uang' : 'Select Currency'}
               >
                 <Coins className="w-3.5 h-3.5 text-slate-400" />
                 <span className="font-bold text-[11px] uppercase tracking-wide">
@@ -174,7 +174,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   />
                   <div className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-40 py-1.5 max-h-80 overflow-y-auto">
                     <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-700/60">
-                      Mata Uang (12 Pilihan)
+                      {language === 'id' ? 'Mata Uang (12 Pilihan)' : language === 'jv' ? 'Mata Uang (12 Pilihan)' : 'Currencies (12 Options)'}
                     </div>
 
                     {/* Reset Otomatis Option */}
@@ -192,8 +192,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       <div className="flex items-center gap-2">
                         <span>✨</span>
                         <div className="text-left">
-                          <div className="leading-tight font-medium">Otomatis (Ikuti Bahasa)</div>
-                          <div className="text-[9px] text-slate-400">Default Negara</div>
+                          <div className="leading-tight font-medium">
+                            {language === 'id' ? 'Otomatis (Ikuti Bahasa)' : language === 'jv' ? 'Otomatis (Tuntun Basa)' : 'Automatic (Match Language)'}
+                          </div>
+                          <div className="text-[9px] text-slate-400">
+                            {language === 'id' ? 'Default Negara' : language === 'jv' ? 'Bawaan Negara' : 'Country Default'}
+                          </div>
                         </div>
                       </div>
                       {!isCustomCurrency && <span className="text-emerald-400 font-bold">✓</span>}

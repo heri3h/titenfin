@@ -3,14 +3,343 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShieldCheck, Mail, Lock, Eye, EyeOff, Sparkles, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Logo } from './Logo';
+import { Language } from '../lib/i18n';
 
 const GOOGLE_CLIENT_ID = '1040892445860-5s7tmth85je0e2aimdo7lfpbvjr31itc.apps.googleusercontent.com';
+
+const AUTH_TRANSLATIONS: Record<Language, {
+  subtitleLogin: string;
+  subtitleRegister: string;
+  tabLogin: string;
+  tabRegister: string;
+  googleContinue: string;
+  orUseEmail: string;
+  storeNameLabel: string;
+  storeNamePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  pinLabel: string;
+  pinHint: string;
+  confirmPinLabel: string;
+  submitLogin: string;
+  submitRegister: string;
+  processing: string;
+  noAccountPrompt: string;
+  registerLink: string;
+  haveAccountPrompt: string;
+  loginLink: string;
+  pinMismatch: string;
+  pinMinLength: string;
+  googleSuccess: string;
+}> = {
+  id: {
+    subtitleLogin: 'Masuk ke brankas kas & tagihan kredit usaha Anda',
+    subtitleRegister: 'Daftar akun baru untuk mulai mencatat keuangan amanah',
+    tabLogin: 'Masuk (Sign In)',
+    tabRegister: 'Daftar Toko Baru',
+    googleContinue: 'Lanjutkan dengan Google (1-Click)',
+    orUseEmail: 'atau gunakan email',
+    storeNameLabel: 'Nama Usaha / Toko / Pemilik',
+    storeNamePlaceholder: 'misal: Toko Berkah Mandiri',
+    emailLabel: 'Alamat Email Toko',
+    emailPlaceholder: 'toko@email.com',
+    pinLabel: 'PIN Keamanan Toko (6 Digit)',
+    pinHint: 'Minimal 6 angka/karakter',
+    confirmPinLabel: 'Ulangi PIN Keamanan',
+    submitLogin: 'Masuk ke Toko Saya',
+    submitRegister: 'Daftar Akun Toko Baru',
+    processing: 'Memproses Brankas...',
+    noAccountPrompt: 'Belum punya akun toko?',
+    registerLink: 'Daftar di sini',
+    haveAccountPrompt: 'Sudah memiliki akun toko?',
+    loginLink: 'Masuk di sini',
+    pinMismatch: 'Konfirmasi PIN tidak cocok!',
+    pinMinLength: 'PIN harus minimal 6 digit!',
+    googleSuccess: 'Berhasil masuk dengan Google!',
+  },
+  jv: {
+    subtitleLogin: 'Mlebet wonten brankas kas & piutang usaha panjenengan',
+    subtitleRegister: 'Daftar akun anyar kangge miwiti cathetan keuangan amanah',
+    tabLogin: 'Mlebu (Sign In)',
+    tabRegister: 'Daftar Toko Anyar',
+    googleContinue: 'Lajengaken mawi Google (1-Click)',
+    orUseEmail: 'utawi ginakaken email',
+    storeNameLabel: 'Asma Usaha / Toko / Juragan',
+    storeNamePlaceholder: 'tuladha: Toko Berkah Mandiri',
+    emailLabel: 'Alamat Email Toko',
+    emailPlaceholder: 'toko@email.com',
+    pinLabel: 'PIN Keamanan Toko (6 Digit)',
+    pinHint: 'Minimal 6 angka/karakter',
+    confirmPinLabel: 'Baleni PIN Keamanan',
+    submitLogin: 'Mlebet Toko Kula',
+    submitRegister: 'Daftar Akun Toko Anyar',
+    processing: 'Ngrampungaken Brankas...',
+    noAccountPrompt: 'Dereng gadhah akun toko?',
+    registerLink: 'Daftar wonten mriki',
+    haveAccountPrompt: 'Sampun gadhah akun toko?',
+    loginLink: 'Mlebu wonten mriki',
+    pinMismatch: 'Konfirmasi PIN mboten cocog!',
+    pinMinLength: 'PIN kedah minimal 6 digit!',
+    googleSuccess: 'Kasembadan mlebu mawi Google!',
+  },
+  en: {
+    subtitleLogin: 'Sign in to your store cash vault and credit accounts',
+    subtitleRegister: 'Create an account to start managing trustworthy finances',
+    tabLogin: 'Sign In',
+    tabRegister: 'Register New Store',
+    googleContinue: 'Continue with Google (1-Click)',
+    orUseEmail: 'or continue with email',
+    storeNameLabel: 'Business / Store / Owner Name',
+    storeNamePlaceholder: 'e.g. Acme Trading Store',
+    emailLabel: 'Store Email Address',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: 'Store Security PIN (6 Digits)',
+    pinHint: 'At least 6 digits/characters',
+    confirmPinLabel: 'Confirm Security PIN',
+    submitLogin: 'Sign In to My Store',
+    submitRegister: 'Register New Store Account',
+    processing: 'Processing Vault...',
+    noAccountPrompt: "Don't have a store account yet?",
+    registerLink: 'Sign up here',
+    haveAccountPrompt: 'Already have a store account?',
+    loginLink: 'Sign in here',
+    pinMismatch: 'PIN confirmation does not match!',
+    pinMinLength: 'PIN must be at least 6 digits!',
+    googleSuccess: 'Successfully signed in with Google!',
+  },
+  zh: {
+    subtitleLogin: '登录您的商户金库与应收分期账务',
+    subtitleRegister: '创建商户账户，开启严谨诚信记账',
+    tabLogin: '登录 (Sign In)',
+    tabRegister: '注册新商户',
+    googleContinue: '一键使用 Google 登录',
+    orUseEmail: '或使用邮箱与PIN',
+    storeNameLabel: '商户 / 店铺 / 店主名称',
+    storeNamePlaceholder: '例：诚信贸易店',
+    emailLabel: '店铺邮箱地址',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: '商户安全 PIN 码 (6位)',
+    pinHint: '至少6位数字或字符',
+    confirmPinLabel: '确认安全 PIN 码',
+    submitLogin: '登录我的店铺',
+    submitRegister: '注册新店铺账户',
+    processing: '金库处理中...',
+    noAccountPrompt: '还没有店铺账户？',
+    registerLink: '在此注册',
+    haveAccountPrompt: '已有店铺账户？',
+    loginLink: '在此登录',
+    pinMismatch: '两次输入的PIN不一致！',
+    pinMinLength: 'PIN码至少需要6位！',
+    googleSuccess: 'Google登录成功！',
+  },
+  hi: {
+    subtitleLogin: 'अपनी तिजोरी और उधारी खातों में साइन इन करें',
+    subtitleRegister: 'विश्वसनीय वित्तीय खाता शुरू करने के लिए पंजीकरण करें',
+    tabLogin: 'साइन इन',
+    tabRegister: 'नया स्टोर बनाएं',
+    googleContinue: 'Google से जारी रखें (1-क्लिक)',
+    orUseEmail: 'या ईमेल का उपयोग करें',
+    storeNameLabel: 'व्यवसाय / स्टोर / स्वामी का नाम',
+    storeNamePlaceholder: 'उदा. माँ कृपा ट्रेडर्स',
+    emailLabel: 'स्टोर ईमेल पता',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: 'स्टोर सुरक्षा पिन (6 अंक)',
+    pinHint: 'कम से कम 6 अंक',
+    confirmPinLabel: 'पिन दोहराएं',
+    submitLogin: 'मेरे स्टोर में प्रवेश करें',
+    submitRegister: 'नया खाता पंजीकृत करें',
+    processing: 'प्रक्रिया जारी है...',
+    noAccountPrompt: 'क्या खाता नहीं है?',
+    registerLink: 'यहाँ रजिस्टर करें',
+    haveAccountPrompt: 'पहले से खाता है?',
+    loginLink: 'यहाँ साइन इन करें',
+    pinMismatch: 'पिन मिलान नहीं हुआ!',
+    pinMinLength: 'पिन कम से कम 6 अंकों का होना चाहिए!',
+    googleSuccess: 'Google से सफलतापूर्वक साइन इन हुआ!',
+  },
+  es: {
+    subtitleLogin: 'Inicie sesión en su bóveda de efectivo y cuentas de crédito',
+    subtitleRegister: 'Cree una cuenta para gestionar sus finanzas con confianza',
+    tabLogin: 'Iniciar Sesión',
+    tabRegister: 'Registrar Tienda',
+    googleContinue: 'Continuar con Google (1 Clic)',
+    orUseEmail: 'o usar correo electrónico',
+    storeNameLabel: 'Nombre del Negocio / Tienda / Propietario',
+    storeNamePlaceholder: 'ej. Tienda Comercial Ejemplo',
+    emailLabel: 'Correo Electrónico de la Tienda',
+    emailPlaceholder: 'tienda@email.com',
+    pinLabel: 'PIN de Seguridad (6 Dígitos)',
+    pinHint: 'Mínimo 6 dígitos/caracteres',
+    confirmPinLabel: 'Confirmar PIN de Seguridad',
+    submitLogin: 'Entrar a Mi Tienda',
+    submitRegister: 'Registrar Nueva Tienda',
+    processing: 'Procesando Bóveda...',
+    noAccountPrompt: '¿No tiene una cuenta?',
+    registerLink: 'Regístrese aquí',
+    haveAccountPrompt: '¿Ya tiene una cuenta?',
+    loginLink: 'Inicie sesión aquí',
+    pinMismatch: '¡La confirmación del PIN no coincide!',
+    pinMinLength: '¡El PIN debe tener al menos 6 dígitos!',
+    googleSuccess: '¡Inicio de sesión exitoso con Google!',
+  },
+  ar: {
+    subtitleLogin: 'تسجيل الدخول إلى خزينة النقد وحسابات الائتمان',
+    subtitleRegister: 'إنشاء حساب جديد لبدء إدارة الأموال بأمانة',
+    tabLogin: 'تسجيل الدخول',
+    tabRegister: 'تسجيل متجر جديد',
+    googleContinue: 'المتابعة مع Google (نقرة واحدة)',
+    orUseEmail: 'أو باستخدام البريد الإلكتروني',
+    storeNameLabel: 'اسم المتجر / النشاط / المالك',
+    storeNamePlaceholder: 'مثال: متجر البركة',
+    emailLabel: 'البريد الإلكتروني للمتجر',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: 'رمز الأمان PIN (6 أرقام)',
+    pinHint: 'على الأقل 6 أرقام/أحرف',
+    confirmPinLabel: 'تأكيد رمز الأمان PIN',
+    submitLogin: 'الدخول إلى متجري',
+    submitRegister: 'تسجيل متجر جديد',
+    processing: 'جارٍ فتح الخزينة...',
+    noAccountPrompt: 'ليس لديك حساب متجر بعد؟',
+    registerLink: 'سجل هنا',
+    haveAccountPrompt: 'لديك حساب بالفعل؟',
+    loginLink: 'سجل الدخول هنا',
+    pinMismatch: 'تأكيد الرمز غير متطابق!',
+    pinMinLength: 'يجب أن يكون الرمز 6 أرقام على الأقل!',
+    googleSuccess: 'تم الدخول بنجاح عبر Google!',
+  },
+  bn: {
+    subtitleLogin: 'আপনার ক্যাশ ভল্ট এবং কিস্তির হিসাবে সাইন ইন করুন',
+    subtitleRegister: 'আমানত আর্থিক হিসাব শুরু করতে অ্যাকাউন্ট তৈরি করুন',
+    tabLogin: 'সাইন ইন',
+    tabRegister: 'নতুন দোকান নিবন্ধন',
+    googleContinue: 'Google দিয়ে চালিয়ে যান (১-ক্লিক)',
+    orUseEmail: 'অথবা ইমেইল ব্যবহার করুন',
+    storeNameLabel: 'ব্যবসা / দোকান / মালিকের নাম',
+    storeNamePlaceholder: 'উদাঃ বরকত ট্রেডার্স',
+    emailLabel: 'দোকানের ইমেইল ঠিকানা',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: 'নিরাপত্তা পিন (৬ সংখ্যা)',
+    pinHint: 'কমপক্ষে ৬ সংখ্যা',
+    confirmPinLabel: 'নিরাপত্তা পিন নিশ্চিত করুন',
+    submitLogin: 'আমার দোকানে প্রবেশ করুন',
+    submitRegister: 'নতুন দোকান নিবন্ধন করুন',
+    processing: 'ভল্ট প্রক্রিয়াকরণ হচ্ছে...',
+    noAccountPrompt: 'এখনও অ্যাকাউন্ট নেই?',
+    registerLink: 'এখানে নিবন্ধন করুন',
+    haveAccountPrompt: 'ইতিমধ্যে অ্যাকাউন্ট আছে?',
+    loginLink: 'এখানে সাইন ইন করুন',
+    pinMismatch: 'পিন মিলছে না!',
+    pinMinLength: 'পিন কমপক্ষে ৬ সংখ্যার হতে হবে!',
+    googleSuccess: 'Google দিয়ে সফলভাবে সাইন ইন হয়েছে!',
+  },
+  pt: {
+    subtitleLogin: 'Acesse seu cofre e controle de parcelas comerciais',
+    subtitleRegister: 'Crie uma conta para começar a gerenciar suas finanças',
+    tabLogin: 'Entrar',
+    tabRegister: 'Registrar Loja',
+    googleContinue: 'Continuar com Google (1 Clique)',
+    orUseEmail: 'ou use e-mail',
+    storeNameLabel: 'Nome do Negócio / Loja / Proprietário',
+    storeNamePlaceholder: 'ex: Loja Comercial Modelo',
+    emailLabel: 'E-mail da Loja',
+    emailPlaceholder: 'loja@email.com',
+    pinLabel: 'PIN de Segurança (6 Dígitos)',
+    pinHint: 'Mínimo de 6 dígitos',
+    confirmPinLabel: 'Confirmar PIN de Segurança',
+    submitLogin: 'Entrar na Minha Loja',
+    submitRegister: 'Cadastrar Nova Loja',
+    processing: 'Processando Cofre...',
+    noAccountPrompt: 'Não tem uma conta?',
+    registerLink: 'Cadastre-se aqui',
+    haveAccountPrompt: 'Já possui uma conta?',
+    loginLink: 'Entre aqui',
+    pinMismatch: 'A confirmação do PIN não coincide!',
+    pinMinLength: 'O PIN deve ter no mínimo 6 dígitos!',
+    googleSuccess: 'Conectado com sucesso pelo Google!',
+  },
+  ru: {
+    subtitleLogin: 'Войдите в кассу и журнал рассрочек вашего магазина',
+    subtitleRegister: 'Создайте аккаунт для честного учета финансов',
+    tabLogin: 'Войти',
+    tabRegister: 'Регистрация магазина',
+    googleContinue: 'Продолжить с Google (1 клик)',
+    orUseEmail: 'или используйте email',
+    storeNameLabel: 'Название магазина / владельца',
+    storeNamePlaceholder: 'напр.: ИП Иванов Торговля',
+    emailLabel: 'Электронная почта',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: 'PIN-код безопасности (6 цифр)',
+    pinHint: 'Минимум 6 цифр',
+    confirmPinLabel: 'Повторите PIN-код',
+    submitLogin: 'Войти в мой магазин',
+    submitRegister: 'Зарегистрировать магазин',
+    processing: 'Открытие сейфа...',
+    noAccountPrompt: 'Еще нет аккаунта?',
+    registerLink: 'Регистрация здесь',
+    haveAccountPrompt: 'Уже есть аккаунт?',
+    loginLink: 'Войти здесь',
+    pinMismatch: 'PIN-коды не совпадают!',
+    pinMinLength: 'PIN должен быть не менее 6 цифр!',
+    googleSuccess: 'Успешный вход через Google!',
+  },
+  ur: {
+    subtitleLogin: 'اپنے تجوری کیش اور قسطوں کے کھاتوں میں سائن ان کریں',
+    subtitleRegister: 'دیانت دارانہ مالیاتی نظام شروع کرنے کے لیے نیا اکاؤنٹ بنائیں',
+    tabLogin: 'سائن ان کریں',
+    tabRegister: 'نئی دکان رجسٹر کریں',
+    googleContinue: 'Google کے ساتھ جاری رکھیں (1-کلک)',
+    orUseEmail: 'یا ای میل استعمال کریں',
+    storeNameLabel: 'کاروبار / دکان / مالک کا نام',
+    storeNamePlaceholder: 'مثال: برکت ٹریڈرز',
+    emailLabel: 'دکان کا ای میل پتہ',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: 'سیکیورٹی پن (6 ہندسے)',
+    pinHint: 'کم از کم 6 ہندسے',
+    confirmPinLabel: 'سیکیورٹی پن دہرائیں',
+    submitLogin: 'میری دکان میں داخل ہوں',
+    submitRegister: 'نیا اکاؤنٹ رجسٹر کریں',
+    processing: 'تجوری کھولی جا رہی ہے...',
+    noAccountPrompt: 'کیا ابھی تک اکاؤنٹ نہیں ہے؟',
+    registerLink: 'یہاں رجسٹر کریں',
+    haveAccountPrompt: 'پہلے سے اکاؤنٹ موجود ہے؟',
+    loginLink: 'یہاں سائن ان کریں',
+    pinMismatch: 'پن کی تصدیق مماثل نہیں ہے!',
+    pinMinLength: 'پن کم از کم 6 ہندسوں کا ہونا چاہیے!',
+    googleSuccess: 'Google سے کامیابی سے سائن ان ہو گیا!',
+  },
+  ja: {
+    subtitleLogin: '店舗の資金金庫と分割払い管理にログイン',
+    subtitleRegister: '誠実な財務管理を始めるためにアカウントを作成',
+    tabLogin: 'ログイン',
+    tabRegister: '新規店舗登録',
+    googleContinue: 'Googleで続ける (1クリック)',
+    orUseEmail: 'またはメールアドレスを使用',
+    storeNameLabel: '屋号 / 店舗名 / オーナー名',
+    storeNamePlaceholder: '例: 誠実商店',
+    emailLabel: '店舗メールアドレス',
+    emailPlaceholder: 'store@email.com',
+    pinLabel: 'セキュリティPINコード (6桁)',
+    pinHint: '6桁以上の数字または文字',
+    confirmPinLabel: 'PINコード確認',
+    submitLogin: '店舗にログイン',
+    submitRegister: '新規店舗アカウント登録',
+    processing: '金庫を処理中...',
+    noAccountPrompt: 'アカウントをお持ちでないですか？',
+    registerLink: '新規登録はこちら',
+    haveAccountPrompt: 'すでにアカウントをお持ちですか？',
+    loginLink: 'ログインはこちら',
+    pinMismatch: 'PINコードが一致しません！',
+    pinMinLength: 'PINコードは6文字以上必要です！',
+    googleSuccess: 'Googleログインに成功しました！',
+  },
+};
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAuthSuccess: (user: { email: string; name: string; token: string }) => void;
   initialMode?: 'login' | 'register';
+  language?: Language;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -18,7 +347,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   onAuthSuccess,
   initialMode = 'login',
+  language = 'id',
 }) => {
+  const at = AUTH_TRANSLATIONS[language] || AUTH_TRANSLATIONS.en;
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -57,7 +388,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       if (data.success) {
         if (data.token) localStorage.setItem('titenfin_auth_token', data.token);
         if (data.user?.email) localStorage.setItem('titenfin_user_email', data.user.email);
-        setSuccessMessage('Berhasil masuk dengan Google!');
+        setSuccessMessage(at.googleSuccess);
         setTimeout(() => {
           setIsLoading(false);
           onAuthSuccess({
@@ -68,11 +399,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           onClose();
         }, 500);
       } else {
-        setErrorMessage(data.error || 'Gagal masuk dengan Google');
+        setErrorMessage(data.error || 'Authentication error');
         setIsLoading(false);
       }
     } catch {
-      setErrorMessage('Terjadi gangguan koneksi saat verifikasi Google.');
+      setErrorMessage('Connection error during authentication.');
       setIsLoading(false);
     }
   };
@@ -130,12 +461,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSuccessMessage('');
 
     if (mode === 'register' && pin !== confirmPin) {
-      setErrorMessage('Konfirmasi PIN tidak cocok!');
+      setErrorMessage(at.pinMismatch);
       return;
     }
 
     if (pin.length < 6) {
-      setErrorMessage('PIN harus minimal 6 digit!');
+      setErrorMessage(at.pinMinLength);
       return;
     }
 
@@ -215,9 +546,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </span>
           </h2>
           <p className="text-xs text-slate-300 mt-1 max-w-xs mx-auto">
-            {mode === 'login'
-              ? 'Masuk ke brankas kas & tagihan kredit usaha Anda'
-              : 'Daftar akun baru untuk mulai mencatat keuangan amanah'}
+            {mode === 'login' ? at.subtitleLogin : at.subtitleRegister}
           </p>
 
           {/* Tab Switcher */}
@@ -233,7 +562,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   : 'text-slate-300 hover:text-white'
               }`}
             >
-              Masuk (Sign In)
+              {at.tabLogin}
             </button>
             <button
               onClick={() => {
@@ -246,7 +575,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   : 'text-slate-300 hover:text-white'
               }`}
             >
-              Daftar Toko Baru
+              {at.tabRegister}
             </button>
           </div>
         </div>
@@ -295,7 +624,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>Lanjutkan dengan Google (1-Click)</span>
+              <span>{at.googleContinue}</span>
             </button>
           </div>
 
@@ -303,7 +632,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <div className="relative flex py-1 items-center">
             <div className="grow border-t border-slate-200"></div>
             <span className="shrink mx-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-              atau gunakan email
+              {at.orUseEmail}
             </span>
             <div className="grow border-t border-slate-200"></div>
           </div>
@@ -313,14 +642,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {mode === 'register' && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Nama Usaha / Toko / Pemilik
+                  {at.storeNameLabel}
                 </label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="misal: Toko Berkah Mandiri"
+                  placeholder={at.storeNamePlaceholder}
                   className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition"
                 />
               </div>
@@ -328,7 +657,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Alamat Email Toko
+                {at.emailLabel}
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -337,7 +666,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="toko@email.com"
+                  placeholder={at.emailPlaceholder}
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition"
                 />
               </div>
@@ -346,9 +675,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-semibold text-slate-700">
-                  PIN Keamanan Toko (6 Digit)
+                  {at.pinLabel}
                 </label>
-                <span className="text-[10px] text-slate-400">Minimal 6 angka/karakter</span>
+                <span className="text-[10px] text-slate-400">{at.pinHint}</span>
               </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -374,7 +703,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {mode === 'register' && (
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Ulangi PIN Keamanan
+                  {at.confirmPinLabel}
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -397,10 +726,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
             >
               {isLoading ? (
-                <span>Memproses Brankas...</span>
+                <span>{at.processing}</span>
               ) : (
                 <>
-                  <span>{mode === 'login' ? 'Masuk ke Toko Saya' : 'Daftar Akun Toko Baru'}</span>
+                  <span>{mode === 'login' ? at.submitLogin : at.submitRegister}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -411,7 +740,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <div className="text-center pt-2">
             {mode === 'login' ? (
               <p className="text-xs text-slate-500">
-                Belum punya akun toko?{' '}
+                {at.noAccountPrompt}{' '}
                 <button
                   type="button"
                   onClick={() => {
@@ -420,12 +749,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   }}
                   className="font-bold text-emerald-600 hover:text-emerald-700 underline"
                 >
-                  Daftar di sini
+                  {at.registerLink}
                 </button>
               </p>
             ) : (
               <p className="text-xs text-slate-500">
-                Sudah memiliki akun toko?{' '}
+                {at.haveAccountPrompt}{' '}
                 <button
                   type="button"
                   onClick={() => {
@@ -434,7 +763,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   }}
                   className="font-bold text-emerald-600 hover:text-emerald-700 underline"
                 >
-                  Masuk di sini
+                  {at.loginLink}
                 </button>
               </p>
             )}

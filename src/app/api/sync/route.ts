@@ -171,12 +171,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Upsert Customers
+    // 2. Upsert Customers & Prune Deletions
+    const currentCustIds = (customers as Customer[]).map((c) => c.id);
+    if (currentCustIds.length > 0) {
+      await pool.query(
+        'DELETE FROM customers WHERE user_id = ? AND id NOT IN (?)',
+        [userId, currentCustIds]
+      );
+    } else {
+      await pool.query(
+        'DELETE FROM customers WHERE user_id = ?',
+        [userId]
+      );
+    }
+
     for (const c of customers as Customer[]) {
       await pool.query(
         `INSERT INTO customers (id, user_id, name, phone, address, notes)
          VALUES (?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+           user_id = VALUES(user_id),
            name = VALUES(name),
            phone = VALUES(phone),
            address = VALUES(address),
@@ -185,7 +199,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Upsert Credit Items
+    // 3. Upsert Credit Items & Prune Deletions
+    const currentCreditIds = (creditItems as CreditItem[]).map((c) => c.id);
+    if (currentCreditIds.length > 0) {
+      await pool.query(
+        'DELETE FROM credit_items WHERE user_id = ? AND id NOT IN (?)',
+        [userId, currentCreditIds]
+      );
+    } else {
+      await pool.query(
+        'DELETE FROM credit_items WHERE user_id = ?',
+        [userId]
+      );
+    }
+
     for (const ci of creditItems as CreditItem[]) {
       await pool.query(
         `INSERT INTO credit_items (
@@ -194,6 +221,8 @@ export async function POST(request: NextRequest) {
            period, tenor_count, scheduled_amount, start_date, due_date, status, notes
          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+           user_id = VALUES(user_id),
+           customer_id = VALUES(customer_id),
            customer_name = VALUES(customer_name),
            item_name = VALUES(item_name),
            capital_price = VALUES(capital_price),
@@ -230,13 +259,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Upsert Credit Payments
+    // 4. Upsert Credit Payments & Prune Deletions
+    const currentPaymentIds = (creditPayments as CreditPayment[]).map((p) => p.id);
+    if (currentCreditIds.length > 0) {
+      if (currentPaymentIds.length > 0) {
+        await pool.query(
+          'DELETE FROM credit_payments WHERE credit_item_id IN (?) AND id NOT IN (?)',
+          [currentCreditIds, currentPaymentIds]
+        );
+      } else {
+        await pool.query(
+          'DELETE FROM credit_payments WHERE credit_item_id IN (?)',
+          [currentCreditIds]
+        );
+      }
+    }
+
     for (const p of creditPayments as CreditPayment[]) {
       await pool.query(
         `INSERT INTO credit_payments (
            id, credit_item_id, customer_id, date, amount, is_early_settlement, discount_granted, notes
          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+           credit_item_id = VALUES(credit_item_id),
+           customer_id = VALUES(customer_id),
            amount = VALUES(amount),
            is_early_settlement = VALUES(is_early_settlement),
            discount_granted = VALUES(discount_granted),
@@ -254,13 +300,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. Upsert Deposit Transactions
+    // 5. Upsert Deposit Transactions & Prune Deletions
+    const currentDepositIds = (depositTxns as DepositTransaction[]).map((d) => d.id);
+    if (currentCustIds.length > 0) {
+      if (currentDepositIds.length > 0) {
+        await pool.query(
+          'DELETE FROM deposit_transactions WHERE customer_id IN (?) AND id NOT IN (?)',
+          [currentCustIds, currentDepositIds]
+        );
+      } else {
+        await pool.query(
+          'DELETE FROM deposit_transactions WHERE customer_id IN (?)',
+          [currentCustIds]
+        );
+      }
+    }
+
     for (const dt of depositTxns as DepositTransaction[]) {
       await pool.query(
         `INSERT INTO deposit_transactions (
            id, customer_id, customer_name, date, type, amount, balance_after, notes
          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+           customer_id = VALUES(customer_id),
            customer_name = VALUES(customer_name),
            type = VALUES(type),
            amount = VALUES(amount),

@@ -24,6 +24,7 @@ import { Customer, CreditItem, CreditPayment, DepositTransaction, DepositType, C
 import {
   getStorageData,
   saveStorageData,
+  clearStorageData,
   getCustomerDepositBalance,
   calculateCashSummary,
   formatRupiah
@@ -126,18 +127,22 @@ export default function Home() {
       fetch(`/api/sync?email=${encodeURIComponent(savedEmail)}`)
         .then((res) => res.json())
         .then((json) => {
-          if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0 || json.depositTxns?.length > 0)) {
+          if (json.success) {
             setCustomers(json.customers || []);
             setCredits(json.creditItems || []);
             setPayments(json.creditPayments || []);
             setDeposits(json.depositTxns || []);
             if (json.initialCapital) setInitialCapital(json.initialCapital);
+            if (json.currency) {
+              setCurrency(json.currency as CurrencyCode);
+              setRuntimeCurrency(json.currency as CurrencyCode);
+            }
             saveStorageData(
               json.customers || [],
               json.creditItems || [],
               json.creditPayments || [],
               json.depositTxns || [],
-              json.initialCapital || data.initialCapital
+              json.initialCapital || 10000000
             );
           }
         })
@@ -145,11 +150,11 @@ export default function Home() {
           // Mode offline saat koneksi terputus
         });
     } else {
-      // Belum login: Pastikan landing page dan kosongkan session
+      // Belum login: Pastikan landing page dan kosongkan session serta local storage
       setUserEmail('');
       setViewMode('landing');
       localStorage.setItem('titenfin_view_mode', 'landing');
-      // Kosongkan data toko di memori agar aman
+      clearStorageData();
       setCustomers([]);
       setCredits([]);
       setPayments([]);
@@ -502,6 +507,7 @@ export default function Home() {
     localStorage.removeItem('titenfin_auth_token');
     setViewMode('landing');
     localStorage.setItem('titenfin_view_mode', 'landing');
+    clearStorageData();
     setCustomers([]);
     setCredits([]);
     setPayments([]);
@@ -538,14 +544,19 @@ export default function Home() {
           json.initialCapital || initialCapital
         );
       } else {
-        // Jika akun baru, buat data template awal bersih untuk toko ini dan simpan ke cloud
-        const initialData = getStorageData();
-        setCustomers(initialData.customers || []);
-        setCredits(initialData.creditItems || []);
-        setPayments(initialData.creditPayments || []);
-        setDeposits(initialData.depositTxns || []);
-        setInitialCapital(initialData.initialCapital || 10000000);
-        await syncToCloud(user.email, initialData.customers, initialData.creditItems, initialData.creditPayments, initialData.depositTxns, initialData.initialCapital, currency);
+        // Akun baru (atau belum ada transaksi): mulai dari nol 100% bersih
+        setCustomers([]);
+        setCredits([]);
+        setPayments([]);
+        setDeposits([]);
+        const initialCap = json.initialCapital || 10000000;
+        setInitialCapital(initialCap);
+        if (json.currency) {
+          setCurrency(json.currency as CurrencyCode);
+          setRuntimeCurrency(json.currency as CurrencyCode);
+        }
+        saveStorageData([], [], [], [], initialCap);
+        await syncToCloud(user.email, [], [], [], [], initialCap, (json.currency as CurrencyCode) || currency);
       }
     } catch (e) {
       console.warn('Gagal sync data setelah login', e);

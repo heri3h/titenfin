@@ -441,6 +441,17 @@ export default function Home() {
     reader.readAsText(file);
   };
 
+  // Kosongkan dan Reset Seluruh Data Toko ke Nol
+  const handleResetAllData = async () => {
+    clearStorageData();
+    setCustomers([]);
+    setCredits([]);
+    setPayments([]);
+    setDeposits([]);
+    saveStorageData([], [], [], [], initialCapital);
+    await syncToCloud(userEmail, [], [], [], [], initialCapital, currency);
+  };
+
   if (!isClient) return null;
 
   // Ringkasan 3 Kotak Kas
@@ -1324,6 +1335,7 @@ export default function Home() {
         }}
         onExportBackup={handleExportBackup}
         onImportBackup={handleImportBackup}
+        onResetAllData={handleResetAllData}
         t={t}
       />
 

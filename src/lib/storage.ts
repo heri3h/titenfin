@@ -25,6 +25,8 @@ export const clearStorageData = () => {
   localStorage.removeItem(STORAGE_KEYS.INITIAL_CAPITAL);
 };
 
+const DUMMY_IDS = new Set(['cust-1', 'cust-2', 'cust-3', 'cred-1', 'cred-2', 'pay-1', 'pay-2', 'pay-3', 'dep-1', 'dep-2', 'dep-3']);
+
 export const getStorageData = () => {
   if (typeof window === 'undefined') {
     return {
@@ -42,11 +44,25 @@ export const getStorageData = () => {
   const rawDeposits = localStorage.getItem(STORAGE_KEYS.DEPOSIT_TXNS);
   const rawCapital = localStorage.getItem(STORAGE_KEYS.INITIAL_CAPITAL);
 
+  let customers: Customer[] = rawCustomers ? JSON.parse(rawCustomers) : [];
+  let creditItems: CreditItem[] = rawCredits ? JSON.parse(rawCredits) : [];
+  let creditPayments: CreditPayment[] = rawPayments ? JSON.parse(rawPayments) : [];
+  let depositTxns: DepositTransaction[] = rawDeposits ? JSON.parse(rawDeposits) : [];
+
+  const hasDummyData = customers.some(c => DUMMY_IDS.has(c.id)) || creditItems.some(ci => DUMMY_IDS.has(ci.id));
+  if (hasDummyData) {
+    customers = customers.filter(c => !DUMMY_IDS.has(c.id));
+    creditItems = creditItems.filter(ci => !DUMMY_IDS.has(ci.id));
+    creditPayments = creditPayments.filter(p => !DUMMY_IDS.has(p.id) && !DUMMY_IDS.has(p.creditItemId));
+    depositTxns = depositTxns.filter(d => !DUMMY_IDS.has(d.id));
+    saveStorageData(customers, creditItems, creditPayments, depositTxns, rawCapital ? Number(rawCapital) : 10000000);
+  }
+
   return {
-    customers: rawCustomers ? JSON.parse(rawCustomers) : [],
-    creditItems: rawCredits ? JSON.parse(rawCredits) : [],
-    creditPayments: rawPayments ? JSON.parse(rawPayments) : [],
-    depositTxns: rawDeposits ? JSON.parse(rawDeposits) : [],
+    customers,
+    creditItems,
+    creditPayments,
+    depositTxns,
     initialCapital: rawCapital ? Number(rawCapital) : 10000000,
   };
 };

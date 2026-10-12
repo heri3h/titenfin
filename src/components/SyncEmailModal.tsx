@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Cloud, ShieldCheck, Mail, Download, Upload, CheckCircle2, RefreshCw } from 'lucide-react';
+import { X, Cloud, ShieldCheck, Mail, Download, Upload, CheckCircle2, RefreshCw, Trash2 } from 'lucide-react';
 
 import { TranslationDictionary } from '../lib/i18n';
 
@@ -12,6 +12,7 @@ interface SyncEmailModalProps {
   onSaveEmail: (email: string) => void;
   onExportBackup: () => void;
   onImportBackup: (file: File) => void;
+  onResetAllData?: () => void;
   t: TranslationDictionary;
 }
 
@@ -22,6 +23,7 @@ export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
   onSaveEmail,
   onExportBackup,
   onImportBackup,
+  onResetAllData,
   t,
 }) => {
   const [emailInput, setEmailInput] = useState<string>(userEmail || 'heritri@titenfin.id');
@@ -142,6 +144,25 @@ export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
               </label>
             </div>
           </div>
+
+          {/* Reset / Kosongkan Data Toko */}
+          {onResetAllData && (
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm('Apakah Anda yakin ingin mengosongkan semua data toko? Semua pelanggan, piutang, dan titipan akan dihapus bersih.')) {
+                    onResetAllData();
+                    onClose();
+                  }
+                }}
+                className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>Reset / Kosongkan Seluruh Data Toko</span>
+              </button>
+            </div>
+          )}
 
           {/* Footer Info */}
           <div className="text-[11px] text-slate-400 text-center pt-1">

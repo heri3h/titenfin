@@ -72,7 +72,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 hover:border-slate-600 bg-slate-800 text-slate-200 text-xs font-medium transition"
-                title="Pilih Bahasa / Select Language"
+                title={language === 'id' ? 'Pilih Bahasa' : language === 'jv' ? 'Pilih Basa' : 'Select Language'}
               >
                 <span className="text-sm">{currentLang.flag}</span>
                 <span className="hidden sm:inline">{currentLang.label}</span>
@@ -87,7 +87,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   />
                   <div className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-40 py-1.5 max-h-80 overflow-y-auto">
                     <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-700/60">
-                      Pilih Bahasa (12 Bahasa)
+                      {language === 'id' ? 'Pilih Bahasa (12 Bahasa)' : language === 'jv' ? 'Pilih Basa (12 Basa)' : 'Select Language (12 Languages)'}
                     </div>
                     {LANGUAGE_OPTIONS.map((item) => (
                       <button
@@ -199,7 +199,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <span className="text-[11px] font-mono text-slate-400 ml-2">app.titenfin.id</span>
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded">
-                Live Simulation
+                {t.simLiveSimulation}
               </span>
             </div>
 
@@ -207,39 +207,39 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               <div className="bg-slate-800/90 rounded-xl p-3.5 border border-slate-700">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">
-                  1. Kas Bersih Sendiri
+                  {t.simBox1Title}
                 </span>
                 <div className="text-xl font-black text-white">Rp 12.850.000</div>
-                <span className="text-[10px] text-emerald-400/90 font-medium">✓ Bebas Dibelanjakan</span>
+                <span className="text-[10px] text-emerald-400/90 font-medium">{t.simBox1Safe}</span>
               </div>
 
               <div className="bg-slate-800/90 rounded-xl p-3.5 border border-slate-700">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">
-                  2. Piutang di Luar
+                  {t.simBox2Title}
                 </span>
                 <div className="text-xl font-black text-white">Rp 8.400.000</div>
-                <span className="text-[10px] text-amber-400/90 font-medium">Sedang Diangsur (3 Nasabah)</span>
+                <span className="text-[10px] text-amber-400/90 font-medium">{t.simBox2Status}</span>
               </div>
 
               <div className="bg-slate-800/90 rounded-xl p-3.5 border border-teal-500/40 bg-teal-950/20">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300 block mb-1">
-                  3. Kas Titipan (Amanah)
+                  {t.simBox3Title}
                 </span>
                 <div className="text-xl font-black text-teal-200">Rp 4.500.000</div>
-                <span className="text-[10px] text-teal-400 font-medium">🔒 Uang Orang Lain (Jangan Dipakai!)</span>
+                <span className="text-[10px] text-teal-400 font-medium">{t.simBox3Warning}</span>
               </div>
             </div>
 
             {/* Total Kas Fisik Rekonsiliasi */}
             <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
               <span className="text-slate-400">
-                Total Uang Tunai Fisik di Dompet/Brankas: <strong>Rp 17.350.000</strong> (Kas Sendiri Rp 12,85jt + Titipan Rp 4,5jt)
+                {t.simTotalPhysicalCash} <strong>Rp 17.350.000</strong> {t.simTotalFormula}
               </span>
               <button
                 onClick={onEnterApp}
                 className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 self-start sm:self-auto"
               >
-                <span>Coba Sistem Ini Sekarang</span>
+                <span>{t.simTrySystemBtn}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -379,23 +379,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div className="flex-1 space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Identitas Brand Profesional & Terpercaya</span>
+                <span>{t.stickerBadge}</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-white leading-snug">
-                Logo Koin TitenFin: Siap untuk Cutting Sticker Armada & Toko Anda
+                {t.stickerTitle}
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Desain logo resmi <strong>TITENFIN</strong> dirancang dengan garis potong vektor presisi tinggi tanpa gradasi, siap diaplikasikan pada stiker kaca mobil operasional, helm, maupun etalase kasir toko Anda.
+                {t.stickerDesc}
               </p>
               <div className="flex flex-wrap gap-2 pt-2">
                 <span className="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700">
-                  ✓ Vector SVG Asli
+                  {t.stickerTag1}
                 </span>
                 <span className="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700">
-                  ✓ Plotter Cutter Ready
+                  {t.stickerTag2}
                 </span>
                 <span className="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700">
-                  ✓ Monokrom / Vinil Putih
+                  {t.stickerTag3}
                 </span>
               </div>
             </div>

@@ -55,6 +55,26 @@ export interface LandingTranslation {
   ctaButton: string;
   footerTagline: string;
   footerRights: string;
+
+  // Live Simulation
+  simLiveSimulation: string;
+  simBox1Title: string;
+  simBox1Safe: string;
+  simBox2Title: string;
+  simBox2Status: string;
+  simBox3Title: string;
+  simBox3Warning: string;
+  simTotalPhysicalCash: string;
+  simTotalFormula: string;
+  simTrySystemBtn: string;
+
+  // Sticker Section
+  stickerBadge: string;
+  stickerTitle: string;
+  stickerDesc: string;
+  stickerTag1: string;
+  stickerTag2: string;
+  stickerTag3: string;
 }
 
 export const landingTranslations: Record<Language, LandingTranslation> = {
@@ -109,6 +129,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'Buka Dashboard TitenFin Sekarang',
     footerTagline: 'Cermat Mengelola Kredit Barang & Menjaga Kas Titipan Amanah.',
     footerRights: 'Semua hak dilindungi undang-undang.',
+    simLiveSimulation: "Simulasi Langsung",
+    simBox1Title: "1. Kas Bersih Sendiri",
+    simBox1Safe: "✓ Bebas Dibelanjakan",
+    simBox2Title: "2. Piutang di Luar",
+    simBox2Status: "Sedang Diangsur (3 Nasabah)",
+    simBox3Title: "3. Kas Titipan (Amanah)",
+    simBox3Warning: "🔒 Uang Orang Lain (Jangan Dipakai!)",
+    simTotalPhysicalCash: "Total Uang Tunai Fisik di Dompet/Brankas:",
+    simTotalFormula: "(Kas Sendiri Rp 12,85jt + Titipan Rp 4,5jt)",
+    simTrySystemBtn: "Coba Sistem Ini Sekarang",
+    stickerBadge: "Identitas Brand Profesional & Terpercaya",
+    stickerTitle: "Logo Koin TitenFin: Siap untuk Cutting Sticker Armada & Toko Anda",
+    stickerDesc: "Desain logo resmi TITENFIN dirancang dengan garis potong vektor presisi tinggi tanpa gradasi, siap diaplikasikan pada stiker kaca mobil operasional, helm, maupun etalase kasir toko Anda.",
+    stickerTag1: "✓ Vector SVG Asli",
+    stickerTag2: "✓ Plotter Cutter Ready",
+    stickerTag3: "✓ Monokrom / Vinil Putih",
   },
 
   jv: {
@@ -162,6 +198,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'Bukak Dashboard TitenFin Sapunika',
     footerTagline: 'Cermat Ngatur Kredit Barang & Njagi Kas Titipan Amanah.',
     footerRights: 'Sedaya hak kareksa.',
+    simLiveSimulation: "Simulasi Langsung",
+    simBox1Title: "1. Kas Resik Piyambak",
+    simBox1Safe: "✓ Aman Dipun Blanjaaken",
+    simBox2Title: "2. Piutang ing Jawi",
+    simBox2Status: "Saweg Dipun Cicil (3 Pelanggan)",
+    simBox3Title: "3. Kas Titipan (Amanah)",
+    simBox3Warning: "🔒 Artanipun Tiyang Sanes (Sampun Ngantos Dipun Agem!)",
+    simTotalPhysicalCash: "Total Arta Kas Fisik ing Brankas:",
+    simTotalFormula: "(Kas Piyambak Rp 12,85jt + Titipan Rp 4,5jt)",
+    simTrySystemBtn: "Cobi Sistem Punika Sapunika",
+    stickerBadge: "Identitas Brand Profesional & Kapercados",
+    stickerTitle: "Logo Koin TitenFin: Sumadya kangge Cutting Sticker Armada & Toko",
+    stickerDesc: "Desain logo resmi TITENFIN dipundamel mawi garis vektor presisi tanpa gradasi, sumadya dipun tempel wonten kaca mobil, helm, lan etalase toko.",
+    stickerTag1: "✓ Vector SVG Asli",
+    stickerTag2: "✓ Plotter Cutter Ready",
+    stickerTag3: "✓ Monokrom / Vinil Pethak",
   },
 
   en: {
@@ -215,6 +267,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'Open TitenFin Dashboard Now',
     footerTagline: 'Meticulous Goods Financing & Trustworthy Custody Cash Management.',
     footerRights: 'All rights reserved.',
+    simLiveSimulation: "Live Simulation",
+    simBox1Title: "1. Net Own Cash",
+    simBox1Safe: "✓ Safe to Spend",
+    simBox2Title: "2. Active Receivables",
+    simBox2Status: "Active Installments (3 Customers)",
+    simBox3Title: "3. Custody Funds (Amanah)",
+    simBox3Warning: "🔒 Entrusted Money (Do Not Spend!)",
+    simTotalPhysicalCash: "Total Physical Cash in Wallet / Vault:",
+    simTotalFormula: "(Own Cash Rp 12.85M + Custody Rp 4.5M)",
+    simTrySystemBtn: "Try This System Now",
+    stickerBadge: "Professional & Trusted Brand Identity",
+    stickerTitle: "TitenFin Coin Logo: Ready for Fleet & Store Cutting Stickers",
+    stickerDesc: "The official TITENFIN logo is crafted with razor-sharp vector cut paths and zero gradients, ready for operational car decals, helmets, and store front acrylic.",
+    stickerTag1: "✓ Pure Vector SVG",
+    stickerTag2: "✓ Plotter Cutter Ready",
+    stickerTag3: "✓ Monochrome / White Vinyl",
   },
 
   zh: {
@@ -268,6 +336,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: '立即打开 TitenFin 控制台',
     footerTagline: '严谨商品分期与可信托管资金管理系统。',
     footerRights: '版权所有。',
+    simLiveSimulation: "实时模拟",
+    simBox1Title: "1. 纯自有现金",
+    simBox1Safe: "✓ 可安全支配",
+    simBox2Title: "2. 在途应收账款",
+    simBox2Status: "分期履约中 (3位客户)",
+    simBox3Title: "3. 托管资金 (诚信金)",
+    simBox3Warning: "🔒 客户寄存资金 (严禁挪用!)",
+    simTotalPhysicalCash: "金库/钱柜实际物理现金总额:",
+    simTotalFormula: "(自有现金 1285万 + 托管金 450万)",
+    simTrySystemBtn: "立即体验本系统",
+    stickerBadge: "专业可信的品牌标识",
+    stickerTitle: "TitenFin 硬币车贴徽标：适配车队与店面刻字贴纸",
+    stickerDesc: "TITENFIN 官方矢量徽标采用高精度切割路径设计，零渐变纯色，可完美输出车载贴纸、头盔贴及门店亚克力标识。",
+    stickerTag1: "✓ 纯正矢量 SVG",
+    stickerTag2: "✓ 适配刻字机 Cutter",
+    stickerTag3: "✓ 单色白底高透膜",
   },
 
   hi: {
@@ -321,6 +405,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'TitenFin डैशबोर्ड अभी खोलें',
     footerTagline: 'सावधानीपूर्वक सामान क्रेडिट और विश्वसनीय अमानत कैश प्रबंधन।',
     footerRights: 'सर्वाधिकार सुरक्षित।',
+    simLiveSimulation: "लाइव सिमुलेशन",
+    simBox1Title: "1. शुद्ध अपना कैश",
+    simBox1Safe: "✓ खर्च करने के लिए सुरक्षित",
+    simBox2Title: "2. कुल प्राप्य राशि",
+    simBox2Status: "सक्रिय किश्तें (3 ग्राहक)",
+    simBox3Title: "3. अमानत/जमा राशि",
+    simBox3Warning: "🔒 दूसरों की सुरक्षित जमा (खर्च न करें!)",
+    simTotalPhysicalCash: "तिजोरी में कुल भौतिक नकद राशि:",
+    simTotalFormula: "(अपना कैश 12.85M + अमानत 4.5M)",
+    simTrySystemBtn: "इस सिस्टम को अभी आज़माएं",
+    stickerBadge: "पेशेवर और विश्वसनीय ब्रांड पहचान",
+    stickerTitle: "TitenFin सिक्का लोगो: वाहन और दुकान कटिंग स्टिकर के लिए तैयार",
+    stickerDesc: "TITENFIN आधिकारिक लोगो उच्च परिशुद्धता वेक्टर कट लाइनों के साथ डिज़ाइन किया गया है, जो कार डिकल्स और स्टोरफ्रंट के लिए तैयार है।",
+    stickerTag1: "✓ शुद्ध वेक्टर SVG",
+    stickerTag2: "✓ प्लॉटर कटर तैयार",
+    stickerTag3: "✓ मोनोक्रोम / सफेद विनाइल",
   },
 
   es: {
@@ -374,6 +474,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'Abrir Panel de TitenFin Ahora',
     footerTagline: 'Gestión Meticulosa de Créditos y Fondos en Custodia Confiables.',
     footerRights: 'Todos los derechos reservados.',
+    simLiveSimulation: "Simulación en Vivo",
+    simBox1Title: "1. Efectivo Propio Neto",
+    simBox1Safe: "✓ Seguro para Gastar",
+    simBox2Title: "2. Cuentas por Cobrar",
+    simBox2Status: "En Cuotas Activas (3 Clientes)",
+    simBox3Title: "3. Fondos en Custodia",
+    simBox3Warning: "🔒 Dinero de Terceros (¡No Gastar!)",
+    simTotalPhysicalCash: "Efectivo Físico Total en Caja Fuerte:",
+    simTotalFormula: "(Efectivo Propio 12,85M + Custodia 4,5M)",
+    simTrySystemBtn: "Probar este Sistema Ahora",
+    stickerBadge: "Identidad de Marca Profesional y Confiable",
+    stickerTitle: "Logotipo TitenFin: Listo para Calcomanías y Rotulación",
+    stickerDesc: "Diseño de logotipo oficial con líneas vectoriales de corte limpio sin degradados, listo para calcomanías de automóviles y escaparates.",
+    stickerTag1: "✓ Vector SVG Puro",
+    stickerTag2: "✓ Listo para Plóter de Corte",
+    stickerTag3: "✓ Monocromo / Vinilo Blanco",
   },
 
   ar: {
@@ -427,6 +543,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'افتح لوحة تحكم TitenFin الآن',
     footerTagline: 'إدارة متقنة لتقسيط البضائع وحفظ أموال الأمانة.',
     footerRights: 'جميع الحقوق محفوظة.',
+    simLiveSimulation: "محاكاة حية",
+    simBox1Title: "1. النقد الصافي الخاص",
+    simBox1Safe: "✓ آمن للإنفاق",
+    simBox2Title: "2. الأقساط الجارية",
+    simBox2Status: "أقساط نشطة (3 عملاء)",
+    simBox3Title: "3. أموال الأمانة (الودائع)",
+    simBox3Warning: "🔒 أموال الآخرين (يحظر إنفاقها!)",
+    simTotalPhysicalCash: "إجمالي النقد الفعلي في الخزينة:",
+    simTotalFormula: "(النقد الخاص 12.85 مليون + الأمانات 4.5 مليون)",
+    simTrySystemBtn: "جرب هذا النظام الآن",
+    stickerBadge: "هوية تجارية احترافية وموثوقة",
+    stickerTitle: "شعار عملة TitenFin: جاهز لملصقات السيارات والمتاجر",
+    stickerDesc: "تم تصميم شعار TITENFIN الرسمي بمسارات قطع متجهية فائقة الدقة وبدون تدرجات، وهو جاهز لملصقات زجاج المركبات وواجهات المحلات.",
+    stickerTag1: "✓ ملف SVG متجهي نقي",
+    stickerTag2: "✓ جاهز لماكينات القطع (Plotter)",
+    stickerTag3: "✓ فينيل أحادي اللون / أبيض",
   },
 
   bn: {
@@ -480,6 +612,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'TitenFin ড্যাশবোর্ড এখনই খুলুন',
     footerTagline: 'নিখুঁত পণ্য কিস্তি ও নির্ভরযোগ্য আমানত ক্যাশ ব্যবস্থাপনা।',
     footerRights: 'সর্বস্বত্ব সংরক্ষিত।',
+    simLiveSimulation: "লাইভ সিমুলেশন",
+    simBox1Title: "১. নিজস্ব নিট ক্যাশ",
+    simBox1Safe: "✓ খরচের জন্য নিরাপদ",
+    simBox2Title: "২. চলমান বাকি টাকা",
+    simBox2Status: "সক্রিয় কিস্তি (৩ জন গ্রাহক)",
+    simBox3Title: "৩. আমানতের তহবিল",
+    simBox3Warning: "🔒 অন্যের গচ্ছিত টাকা (খরচ নিষিদ্ধ!)",
+    simTotalPhysicalCash: "ভল্ট/ক্যাশ বাক্সে মোট আসল নগদ:",
+    simTotalFormula: "(নিজস্ব ক্যাশ ১২.৮৫ লাখ + আমানত ৪.৫ লাখ)",
+    simTrySystemBtn: "এখনই এই সিস্টেম ব্যবহার করুন",
+    stickerBadge: "পেশাদার ও বিশ্বস্ত ব্র্যান্ড পরিচয়",
+    stickerTitle: "TitenFin কয়েন লোগো: গাড়ি ও দোকানের কাটিং স্টিকারের জন্য প্রস্তুত",
+    stickerDesc: "TITENFIN অফিশিয়াল লোগোটি উচ্চমানের ভেক্টর কাটিং পাথের সাহায্যে নিখুঁতভাবে তৈরি, যা ভিনাইল স্টিকার কাটার মেশিনের জন্য ১০০% প্রস্তুত।",
+    stickerTag1: "✓ পিওর ভেক্টর SVG",
+    stickerTag2: "✓ প্লটার কাটার রেডি",
+    stickerTag3: "✓ মনোক্রোম / সাদা ভিনাইল",
   },
 
   pt: {
@@ -533,6 +681,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'Abrir Painel TitenFin Agora',
     footerTagline: 'Gestão Meticulosa de Crediário e Custódia Confiável.',
     footerRights: 'Todos os direitos reservados.',
+    simLiveSimulation: "Simulação em Tempo Real",
+    simBox1Title: "1. Caixa Próprio Líquido",
+    simBox1Safe: "✓ Seguro para Gastar",
+    simBox2Title: "2. Contas a Receber",
+    simBox2Status: "Parcelamento Ativo (3 Clientes)",
+    simBox3Title: "3. Fundos em Custódia",
+    simBox3Warning: "🔒 Dinheiro Confiado (Não Gastar!)",
+    simTotalPhysicalCash: "Total de Dinheiro Físico no Caixa:",
+    simTotalFormula: "(Caixa Próprio 12,85M + Custódia 4,5M)",
+    simTrySystemBtn: "Experimente Este Sistema Agora",
+    stickerBadge: "Identidade de Marca Profissional e Confiável",
+    stickerTitle: "Logo Moeda TitenFin: Pronto para Adesivos de Corte em Frotas e Lojas",
+    stickerDesc: "O logotipo oficial da TITENFIN é projetado com linhas vetoriais de corte limpo sem gradientes, pronto para adesivos automotivos e vitrines.",
+    stickerTag1: "✓ Vetor SVG Puro",
+    stickerTag2: "✓ Pronto para Plotter de Corte",
+    stickerTag3: "✓ Monocromático / Vinil Branco",
   },
 
   ru: {
@@ -586,6 +750,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'Открыть панель TitenFin сейчас',
     footerTagline: 'Тщательный учет товарных рассрочек и надежное управление доверенными депозитами.',
     footerRights: 'Все права защищены.',
+    simLiveSimulation: "Интерактивная симуляция",
+    simBox1Title: "1. Чистые собственные средства",
+    simBox1Safe: "✓ Безопасно для трат",
+    simBox2Title: "2. Дебиторская задолженность",
+    simBox2Status: "Активные рассрочки (3 клиента)",
+    simBox3Title: "3. Доверенные депозиты",
+    simBox3Warning: "🔒 Чужие средства (Не тратить!)",
+    simTotalPhysicalCash: "Фактическая наличность в кассе/сейфе:",
+    simTotalFormula: "(Собственные 12,85 млн + Депозиты 4,5 млн)",
+    simTrySystemBtn: "Опробовать систему прямо сейчас",
+    stickerBadge: "Профессиональный и надежный бренд",
+    stickerTitle: "Логотип TitenFin: Готов для плоттерной резки на авто и витрины",
+    stickerDesc: "Официальный логотип TITENFIN спроектирован с чистыми векторными контурами реза без градиентов для плоттера и виниловых наклеек.",
+    stickerTag1: "✓ Векторный SVG",
+    stickerTag2: "✓ Для плоттерной резки",
+    stickerTag3: "✓ Монохромный / белый винил",
   },
 
   ur: {
@@ -639,6 +819,22 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: 'TitenFin ڈیش بورڈ ابھی کھولیں',
     footerTagline: 'محتاط سامان اقساط اور قابل اعتماد امانتی کیش مینجمنٹ۔',
     footerRights: 'جملہ حقوق محفوظ ہیں۔',
+    simLiveSimulation: "لائیو سمولیشن",
+    simBox1Title: "1. خالص اپنا کیش",
+    simBox1Safe: "✓ خرچ کے لیے محفوظ",
+    simBox2Title: "2. فعال وصولیاں",
+    simBox2Status: "فعال اقساط (3 گاہک)",
+    simBox3Title: "3. امانت فنڈز",
+    simBox3Warning: "🔒 دوسروں کی رقم (خرچ نہ کریں!)",
+    simTotalPhysicalCash: "تجوری میں کل نقد رقم:",
+    simTotalFormula: "(اپنا کیش 12.85M + امانت 4.5M)",
+    simTrySystemBtn: "یہ سسٹم ابھی آزمائیں",
+    stickerBadge: "پیشہ ورانہ اور قابل اعتماد شناخت",
+    stickerTitle: "TitenFin کوائن لوگو: گاڑیوں اور دکانوں کے کٹنگ اسٹیکرز کے لیے تیار",
+    stickerDesc: "TITENFIN کا آفیشل لوگو کٹنگ پلاٹر کے لیے بغیر کسی گریڈینٹ کے تیار کیا گیا ہے۔",
+    stickerTag1: "✓ خالص ویکٹر SVG",
+    stickerTag2: "✓ پلاٹر کٹر ریڈی",
+    stickerTag3: "✓ مونوکروم / سفید ونائل",
   },
 
   ja: {
@@ -692,5 +888,21 @@ export const landingTranslations: Record<Language, LandingTranslation> = {
     ctaButton: '今すぐ TitenFin を開く',
     footerTagline: '緻密な商品割賦管理と誠実な預り金キャッシュマネジメント。',
     footerRights: '無断転載を禁じます。',
+    simLiveSimulation: "ライブシミュレーション",
+    simBox1Title: "1. 純自己現金",
+    simBox1Safe: "✓ 自由に使用可能",
+    simBox2Title: "2. 回収中売掛金",
+    simBox2Status: "分割払い中 (3名)",
+    simBox3Title: "3. 預り金（信託マネー）",
+    simBox3Warning: "🔒 預かり資産（流用厳禁！）",
+    simTotalPhysicalCash: "金庫・レジ内の実保有現金合計:",
+    simTotalFormula: "(自己資金 1,285万 + 預り金 450万)",
+    simTrySystemBtn: "このシステムを今すぐ試す",
+    stickerBadge: "信頼性の高いプロフェッショナルブランド",
+    stickerTitle: "TitenFin コインロゴ：車両・店舗のカッティングステッカー対応",
+    stickerDesc: "TITENFIN公式ロゴはグラデーションのない高精度なベクターカットラインで設計され、社用車のデカールや店舗アクリルにそのまま使用できます。",
+    stickerTag1: "✓ 純正ベクターSVG",
+    stickerTag2: "✓ カッティングプロッター対応",
+    stickerTag3: "✓ モノクロ／ホワイトビニール",
   },
 };

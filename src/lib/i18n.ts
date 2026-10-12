@@ -1,4 +1,16 @@
-export type Language = 'id' | 'jv' | 'en';
+export type Language =
+  | 'id' // Bahasa Indonesia
+  | 'jv' // Basa Jawa
+  | 'en' // English (Global / USA)
+  | 'zh' // 简体中文 (Tiongkok / China)
+  | 'hi' // हिन्दी (India)
+  | 'es' // Español (Spanyol / Amerika Latin)
+  | 'ar' // العربية (Dunia Arab)
+  | 'bn' // বাংলা (Bangladesh)
+  | 'pt' // Português (Brasil / Portugal)
+  | 'ru' // Русский (Rusia)
+  | 'ur' // اردو (Pakistan)
+  | 'ja'; // 日本語 (Jepang)
 
 export interface LanguageOption {
   code: Language;
@@ -8,14 +20,131 @@ export interface LanguageOption {
 }
 
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
-  { code: 'id', label: 'Bahasa Indonesia', flag: '🇮🇩', regional: 'Nasional' },
+  { code: 'id', label: 'Bahasa Indonesia', flag: '🇮🇩', regional: 'Indonesia' },
   { code: 'jv', label: 'Basa Jawa', flag: 'ꦗ', regional: 'Jawa & Sekitarnya' },
-  { code: 'en', label: 'English', flag: '🇬🇧', regional: 'International' },
+  { code: 'en', label: 'English', flag: '🇬🇧', regional: 'International / USA' },
+  { code: 'zh', label: '简体中文', flag: '🇨🇳', regional: '中国 (China)' },
+  { code: 'hi', label: 'हिन्दी', flag: '🇮🇳', regional: 'भारत (India)' },
+  { code: 'es', label: 'Español', flag: '🇪🇸', regional: 'España / México' },
+  { code: 'ar', label: 'العربية', flag: '🇸🇦', regional: 'العالم العربي' },
+  { code: 'bn', label: 'বাংলা', flag: '🇧🇩', regional: 'বাংলাদেশ (Bangladesh)' },
+  { code: 'pt', label: 'Português', flag: '🇧🇷', regional: 'Brasil / Portugal' },
+  { code: 'ru', label: 'Русский', flag: '🇷🇺', regional: 'Россия (Russia)' },
+  { code: 'ur', label: 'اردو', flag: '🇵🇰', regional: 'پاکستان (Pakistan)' },
+  { code: 'ja', label: '日本語', flag: '🇯🇵', regional: '日本 (Japan)' },
 ];
 
-export const translations = {
+export interface TranslationDictionary {
+  // Header & Meta
+  appTitle: string;
+  appSlogan: string;
+  sensorActive: string;
+  hideNumbers: string;
+  syncEmail: string;
+  newCreditBtn: string;
+  newDepositBtn: string;
+
+  // 3 Kotak Kas
+  box1Title: string;
+  box1Badge: string;
+  box1Desc: string;
+  box2Title: string;
+  box2Desc: string;
+  box2BadgeSuffix: string;
+  box3Title: string;
+  box3BadgeSuffix: string;
+  box3Warning: string;
+  reconciliationLabel: string;
+
+  // Tabs
+  tabCredits: string;
+  tabDeposits: string;
+  tabCustomers: string;
+  tabCapital: string;
+
+  // Search & Filter
+  searchCreditPlaceholder: string;
+  searchDepositPlaceholder: string;
+  searchCustomerPlaceholder: string;
+  searchPaymentPlaceholder: string;
+  filterActive: string;
+  filterCompleted: string;
+  filterAll: string;
+  foundItemsSuffix: string;
+
+  // Card Badges & Actions
+  paidPercentSuffix: string;
+  statusCompleted: string;
+  statusActive: string;
+  payInstallmentBtn: string;
+  earlySettlementBtn: string;
+  sendReceiptWa: string;
+  sendSummaryWa: string;
+  viewDetailHint: string;
+  passbookHint: string;
+  profileHint: string;
+  totalAgreed: string;
+  remainingDebt: string;
+  targetInstallment: string;
+  estimatedDue: string;
+  collateralLabel: string;
+  heldDepositBalance: string;
+
+  // Bottom Nav & Quick Menu
+  quickMenuTitle: string;
+  quickNewCredit: string;
+  quickNewCreditDesc: string;
+  quickDeposit: string;
+  quickDepositDesc: string;
+  quickNewCustomer: string;
+  quickNewCustomerDesc: string;
+  navCredit: string;
+  navDeposit: string;
+  navCustomer: string;
+  navCapital: string;
+  fabAdd: string;
+  fabClose: string;
+
+  // Modal Detail & Dialogs
+  creditDetailTitle: string;
+  customerDetailTitle: string;
+  depositDetailTitle: string;
+  contractDetails: string;
+  contractStart: string;
+  costPrice: string;
+  agreedProfit: string;
+  totalCreditPrice: string;
+  downPayment: string;
+  paymentHistory: string;
+  installmentsRecorded: string;
+  noPaymentsYet: string;
+  quickActionsTitle: string;
+  recordPaymentAction: string;
+  earlySettleAction: string;
+  deleteCreditAction: string;
+  deleteCustomerAction: string;
+  depositWithdrawAction: string;
+  addressLabel: string;
+  notesLabel: string;
+  totalActiveDebt: string;
+  activeCreditsCountSuffix: string;
+  custodyFundNote: string;
+  creditListForCust: string;
+  noCreditsForCust: string;
+  passbookMutationHistory: string;
+  depositMutationLabel: string;
+  withdrawMutationLabel: string;
+  balanceRemaining: string;
+
+  // Alerts & Messages
+  confirmDeleteCredit: string;
+  confirmDeleteCustomer: string;
+  cannotDeleteCustomerWithDebt: string;
+  noPhoneAlert: string;
+}
+
+export const translations: Record<Language, TranslationDictionary> = {
   id: {
-    // Header & Meta
     appTitle: 'TitenFin',
     appSlogan: 'Cermat Mengelola Kredit & Kas Titipan',
     sensorActive: 'Sensor Aktif',
@@ -24,7 +153,6 @@ export const translations = {
     newCreditBtn: '+ Kredit Barang',
     newDepositBtn: '+ Titip Uang',
 
-    // 3 Kotak Kas
     box1Title: '1. Kas Bersih Sendiri',
     box1Badge: 'Aman Dibelanjakan',
     box1Desc: 'Modal berjalan + akumulasi keuntungan bersih yang sudah cair.',
@@ -36,13 +164,11 @@ export const translations = {
     box3Warning: 'Uang orang lain. Siap ditarik kapan saja, jangan dipakai belanja!',
     reconciliationLabel: 'Total uang tunai fisik yang harus ada di brankas/rekening Anda saat ini:',
 
-    // Tabs
     tabCredits: 'Kredit Barang',
     tabDeposits: 'Kas Titipan Uang',
     tabCustomers: 'Daftar Nasabah',
     tabCapital: 'Rekap Modal & Profit',
 
-    // Search & Filter
     searchCreditPlaceholder: 'Cari nama nasabah atau jenis barang...',
     searchDepositPlaceholder: 'Cari nama penitip, keperluan mutasi (panen, pupuk, belanja)...',
     searchCustomerPlaceholder: 'Cari nama nasabah, no WhatsApp, alamat dusun...',
@@ -52,7 +178,6 @@ export const translations = {
     filterAll: 'Semua',
     foundItemsSuffix: 'Ditemukan',
 
-    // Card Badges & Actions
     paidPercentSuffix: 'Terbayar',
     statusCompleted: 'LUNAS',
     statusActive: 'AKTIF',
@@ -63,8 +188,13 @@ export const translations = {
     viewDetailHint: 'Detail →',
     passbookHint: 'Buku Rekening →',
     profileHint: 'Profil →',
-    
-    // Bottom Nav & Quick Menu
+    totalAgreed: 'Total Akad (Modal + Untung)',
+    remainingDebt: 'Sisa Tagihan Belum Bayar',
+    targetInstallment: 'Target Angsuran',
+    estimatedDue: 'Estimasi Jatuh Tempo',
+    collateralLabel: 'Jaminan Ditahan:',
+    heldDepositBalance: 'Saldo Dititipkan:',
+
     quickMenuTitle: 'Transaksi Cepat',
     quickNewCredit: 'Akad Kredit Baru',
     quickNewCreditDesc: 'Kredit barang fleksibel',
@@ -79,14 +209,43 @@ export const translations = {
     fabAdd: 'Tambah',
     fabClose: 'Tutup',
 
-    // Modals
+    creditDetailTitle: 'Rincian Lengkap Akad Kredit',
+    customerDetailTitle: 'Profil & Rekam Jejak Nasabah',
+    depositDetailTitle: 'Buku Rekening Kas Titipan',
+    contractDetails: 'Rincian Kesepakatan Akad',
+    contractStart: 'Mulai Akad:',
+    costPrice: 'Harga Modal (Beli):',
+    agreedProfit: 'Margin Untung yang Disepakati:',
+    totalCreditPrice: 'Total Harga Kredit:',
+    downPayment: 'Uang Muka (DP):',
+    paymentHistory: 'Buku Riwayat Pembayaran',
+    installmentsRecorded: 'kali setor',
+    noPaymentsYet: 'Belum ada catatan pembayaran angsuran masuk untuk akad ini.',
+    quickActionsTitle: 'Tindakan / Aksi Cepat:',
+    recordPaymentAction: 'Catat Cicilan Masuk',
+    earlySettleAction: 'Pelunasan Dipercepat',
+    deleteCreditAction: 'Hapus Akad Ini',
+    deleteCustomerAction: 'Hapus Nasabah',
+    depositWithdrawAction: 'Setor / Tarik Uang',
+    addressLabel: 'Alamat:',
+    notesLabel: 'Catatan:',
+    totalActiveDebt: 'Total Sisa Hutang:',
+    activeCreditsCountSuffix: 'akad kredit aktif',
+    custodyFundNote: 'Dana simpanan amanah',
+    creditListForCust: 'Daftar Kredit Barang',
+    noCreditsForCust: 'Nasabah ini belum memiliki riwayat kredit barang.',
+    passbookMutationHistory: 'Riwayat Mutasi Transaksi',
+    depositMutationLabel: 'Setoran Titipan',
+    withdrawMutationLabel: 'Penarikan Titipan',
+    balanceRemaining: 'Sisa Saldo:',
+
     confirmDeleteCredit: 'Apakah Anda yakin ingin menghapus catatan akad kredit barang ini?',
     confirmDeleteCustomer: 'Hapus kontak nasabah ini?',
     cannotDeleteCustomerWithDebt: 'Nasabah tidak dapat dihapus karena masih memiliki tagihan kredit aktif atau saldo titipan uang!',
+    noPhoneAlert: 'Nomor WhatsApp belum terdaftar!',
   },
 
   jv: {
-    // Header & Meta
     appTitle: 'TitenFin',
     appSlogan: 'Titen Ngopeni Kredit & Dhuwit Titipan',
     sensorActive: 'Sensor Murup',
@@ -95,7 +254,6 @@ export const translations = {
     newCreditBtn: '+ Nyicil Barang',
     newDepositBtn: '+ Titip Dhuwit',
 
-    // 3 Kotak Kas
     box1Title: '1. Dhuwit Kas Pribadi',
     box1Badge: 'Keno Dibelanjakne',
     box1Desc: 'Modal muter + kumpulane bathi resik sing wis cair.',
@@ -107,13 +265,11 @@ export const translations = {
     box3Warning: 'Dhuwite liyan. Keno dijupuk kapan wae, ojo dibelanjakne pribadi!',
     reconciliationLabel: 'Total dhuwit cash sing wajib ana neng dompet/rekening saiki:',
 
-    // Tabs
     tabCredits: 'Kredit Barang',
     tabDeposits: 'Dhuwit Titipan',
     tabCustomers: 'Daftar Nasabah',
     tabCapital: 'Rekap Modal & Bathi',
 
-    // Search & Filter
     searchCreditPlaceholder: 'Goleki jeneng nasabah utawa barang...',
     searchDepositPlaceholder: 'Goleki jeneng penitip, kaperluan (rabuk, panen, blanja)...',
     searchCustomerPlaceholder: 'Goleki jeneng nasabah, no WA, utawa dusun...',
@@ -123,7 +279,6 @@ export const translations = {
     filterAll: 'Kabeh',
     foundItemsSuffix: 'Ketemu',
 
-    // Card Badges & Actions
     paidPercentSuffix: 'Kecicil',
     statusCompleted: 'LUNAS',
     statusActive: 'ISIH NYICIL',
@@ -134,8 +289,13 @@ export const translations = {
     viewDetailHint: 'Rincian →',
     passbookHint: 'Buku Tabungan →',
     profileHint: 'Profil →',
+    totalAgreed: 'Total Akad (Modal + Bathi)',
+    remainingDebt: 'Turahan Tagihan Durung Dibayar',
+    targetInstallment: 'Target Angsuran',
+    estimatedDue: 'Kiro-kiro Wektu Lunas',
+    collateralLabel: 'Gadean / Jaminan:',
+    heldDepositBalance: 'Dhuwit Dititipake:',
 
-    // Bottom Nav & Quick Menu
     quickMenuTitle: 'Transaksi Cepet',
     quickNewCredit: 'Akad Kredit Anyar',
     quickNewCreditDesc: 'Kredit barang luwes',
@@ -150,14 +310,43 @@ export const translations = {
     fabAdd: 'Tambah',
     fabClose: 'Tutup',
 
-    // Modals
+    creditDetailTitle: 'Rincian Lengkap Akad Kredit',
+    customerDetailTitle: 'Profil & Rekam Jejak Nasabah',
+    depositDetailTitle: 'Buku Rekening Dhuwit Titipan',
+    contractDetails: 'Rincian Rembukan Akad',
+    contractStart: 'Wiwitan Akad:',
+    costPrice: 'Rego Kulakan (Modal):',
+    agreedProfit: 'Bathi sing Disepakati:',
+    totalCreditPrice: 'Total Rego Kredit:',
+    downPayment: 'Dhuwit DP:',
+    paymentHistory: 'Buku Catetan Cicilan',
+    installmentsRecorded: 'kali nyetor',
+    noPaymentsYet: 'Durung ana catetan cicilan mlebu kanggo barang iki.',
+    quickActionsTitle: 'Tindakan / Aksi Cepet:',
+    recordPaymentAction: 'Catet Cicilan Mlebu',
+    earlySettleAction: 'Pelunasan Gasik (Diskon)',
+    deleteCreditAction: 'Busek Akad Iki',
+    deleteCustomerAction: 'Busek Nasabah',
+    depositWithdrawAction: 'Setor / Jupuk Dhuwit',
+    addressLabel: 'Alamat:',
+    notesLabel: 'Catetan:',
+    totalActiveDebt: 'Total Turahan Utang:',
+    activeCreditsCountSuffix: 'akad isih mlaku',
+    custodyFundNote: 'Dhuwit titipan amanah',
+    creditListForCust: 'Daftar Kredit Barang',
+    noCreditsForCust: 'Nasabah iki durung tau njupuk kredit barang.',
+    passbookMutationHistory: 'Riwayat Mlebu-Metu Dhuwit',
+    depositMutationLabel: 'Setoran Titipan',
+    withdrawMutationLabel: 'Jupuk Titipan',
+    balanceRemaining: 'Sisa Saldo:',
+
     confirmDeleteCredit: 'Opo sampeyan yakin arep mbusak catetan akad kredit barang iki?',
     confirmDeleteCustomer: 'Busek kontak nasabah iki?',
     cannotDeleteCustomerWithDebt: 'Nasabah ora keno dibusek amarga isih duwe utang kredit utawa saldo dhuwit titipan!',
+    noPhoneAlert: 'Nomer WhatsApp durung kadaptar!',
   },
 
   en: {
-    // Header & Meta
     appTitle: 'TitenFin',
     appSlogan: 'Precise Merchandise Credit & Custody Fund Ledger',
     sensorActive: 'Privacy Blur On',
@@ -166,7 +355,6 @@ export const translations = {
     newCreditBtn: '+ Item Financing',
     newDepositBtn: '+ Deposit Fund',
 
-    // 3 Kotak Kas
     box1Title: '1. Net Own Cash',
     box1Badge: 'Safe to Spend',
     box1Desc: 'Working capital + realized accumulated net profit.',
@@ -178,13 +366,11 @@ export const translations = {
     box3Warning: 'Third-party funds. Retrievable anytime, do not spend for personal use!',
     reconciliationLabel: 'Total physical cash that must be held in vault/wallet right now:',
 
-    // Tabs
     tabCredits: 'Item Financing',
     tabDeposits: 'Custody Funds',
     tabCustomers: 'Customer Directory',
     tabCapital: 'Capital & Arrears',
 
-    // Search & Filter
     searchCreditPlaceholder: 'Search customer name or item model...',
     searchDepositPlaceholder: 'Search depositor name, mutation note (harvest, supplies)...',
     searchCustomerPlaceholder: 'Search customer, phone number, address...',
@@ -194,7 +380,6 @@ export const translations = {
     filterAll: 'All',
     foundItemsSuffix: 'Found',
 
-    // Card Badges & Actions
     paidPercentSuffix: 'Paid',
     statusCompleted: 'SETTLED',
     statusActive: 'ACTIVE',
@@ -205,8 +390,13 @@ export const translations = {
     viewDetailHint: 'Details →',
     passbookHint: 'Passbook →',
     profileHint: 'Profile →',
+    totalAgreed: 'Total Contract (Principal + Profit)',
+    remainingDebt: 'Remaining Outstanding Debt',
+    targetInstallment: 'Scheduled Installment',
+    estimatedDue: 'Estimated Maturity',
+    collateralLabel: 'Held Collateral:',
+    heldDepositBalance: 'Deposited Balance:',
 
-    // Bottom Nav & Quick Menu
     quickMenuTitle: 'Quick Actions',
     quickNewCredit: 'New Credit Agreement',
     quickNewCreditDesc: 'Flexible item financing',
@@ -221,10 +411,949 @@ export const translations = {
     fabAdd: 'Add',
     fabClose: 'Close',
 
-    // Modals
+    creditDetailTitle: 'Credit Agreement Details',
+    customerDetailTitle: 'Customer Profile & Financial History',
+    depositDetailTitle: 'Custody Fund Passbook',
+    contractDetails: 'Agreement Summary',
+    contractStart: 'Start Date:',
+    costPrice: 'Capital (Cost Price):',
+    agreedProfit: 'Agreed Profit Margin:',
+    totalCreditPrice: 'Total Contract Price:',
+    downPayment: 'Down Payment (DP):',
+    paymentHistory: 'Installment Payment History',
+    installmentsRecorded: 'payments recorded',
+    noPaymentsYet: 'No installment payments recorded yet for this agreement.',
+    quickActionsTitle: 'Quick Actions:',
+    recordPaymentAction: 'Record Installment',
+    earlySettleAction: 'Early Settlement',
+    deleteCreditAction: 'Delete Agreement',
+    deleteCustomerAction: 'Delete Customer',
+    depositWithdrawAction: 'Deposit / Withdraw',
+    addressLabel: 'Address:',
+    notesLabel: 'Notes:',
+    totalActiveDebt: 'Total Active Debt:',
+    activeCreditsCountSuffix: 'active agreements',
+    custodyFundNote: 'Custody sacred trust funds',
+    creditListForCust: 'Item Financing History',
+    noCreditsForCust: 'This client has no merchandise credit history.',
+    passbookMutationHistory: 'Transaction Mutation Log',
+    depositMutationLabel: 'Custody Deposit',
+    withdrawMutationLabel: 'Custody Withdrawal',
+    balanceRemaining: 'Balance Left:',
+
     confirmDeleteCredit: 'Are you sure you want to delete this credit agreement record?',
     confirmDeleteCustomer: 'Delete this customer record?',
     cannotDeleteCustomerWithDebt: 'Customer cannot be deleted while they have active debt or custody fund balance!',
+    noPhoneAlert: 'WhatsApp phone number not registered!',
+  },
+
+  zh: {
+    appTitle: 'TitenFin',
+    appSlogan: '精确实物分期与委托资金账本',
+    sensorActive: '隐私模式已开',
+    hideNumbers: '隐藏金额',
+    syncEmail: '邮箱同步',
+    newCreditBtn: '+ 新增商品分期',
+    newDepositBtn: '+ 存入委托金',
+
+    box1Title: '1. 自有净现金',
+    box1Badge: '可安全支配',
+    box1Desc: '营运本金 + 已结算实现的纯利润累计。',
+    box2Title: '2. 外部应收账款',
+    box2Desc: '客户正在按期偿还的分期余款（本金 + 利润）。',
+    box2BadgeSuffix: '笔活跃合同',
+    box3Title: '3. 委托保管金 (信托资金)',
+    box3BadgeSuffix: '位委托人',
+    box3Warning: '他人委托寄存之款项，可随时支取，切勿挪作个人消费！',
+    reconciliationLabel: '当前金库/账户中必须持有的实际现金总额：',
+
+    tabCredits: '商品分期',
+    tabDeposits: '委托保管金',
+    tabCustomers: '客户名录',
+    tabCapital: '本金与流水',
+
+    searchCreditPlaceholder: '搜索客户姓名或商品型号...',
+    searchDepositPlaceholder: '搜索委托人姓名、流水用途（化肥、丰收、采购）...',
+    searchCustomerPlaceholder: '搜索客户姓名、手机号、村镇地址...',
+    searchPaymentPlaceholder: '按姓名 / 商品 / 日期筛选流水...',
+    filterActive: '还款中',
+    filterCompleted: '已结清',
+    filterAll: '全部',
+    foundItemsSuffix: '条结果',
+
+    paidPercentSuffix: '已还',
+    statusCompleted: '已结清',
+    statusActive: '还款中',
+    payInstallmentBtn: '记录还款',
+    earlySettlementBtn: '提前结清 (折扣)',
+    sendReceiptWa: '发送微信/WA收据',
+    sendSummaryWa: '发送对账汇总',
+    viewDetailHint: '详情 →',
+    passbookHint: '存折明细 →',
+    profileHint: '档案 →',
+    totalAgreed: '合同总金额 (本金 + 利润)',
+    remainingDebt: '未结清待收欠款',
+    targetInstallment: '每期应还款额',
+    estimatedDue: '预计到期日',
+    collateralLabel: '留存抵押物：',
+    heldDepositBalance: '委托在押余额：',
+
+    quickMenuTitle: '快捷操作',
+    quickNewCredit: '新分期合同',
+    quickNewCreditDesc: '灵活商品赊销分期',
+    quickDeposit: '委托资金变动',
+    quickDepositDesc: '存入或支取保管金',
+    quickNewCustomer: '录入新客户',
+    quickNewCustomerDesc: '联系人名册与档案',
+    navCredit: '分期',
+    navDeposit: '委托金',
+    navCustomer: '客户',
+    navCapital: '资本',
+    fabAdd: '新增',
+    fabClose: '关闭',
+
+    creditDetailTitle: '分期合同完整明细',
+    customerDetailTitle: '客户档案与往来账目',
+    depositDetailTitle: '委托保管金存折',
+    contractDetails: '合同约定摘要',
+    contractStart: '起步日期：',
+    costPrice: '进货成本 (本金)：',
+    agreedProfit: '约定利润差价：',
+    totalCreditPrice: '分期总售价：',
+    downPayment: '首付金额 (定金)：',
+    paymentHistory: '每期还款明细账本',
+    installmentsRecorded: '次入账还款',
+    noPaymentsYet: '该分期合同暂无入账记录。',
+    quickActionsTitle: '快捷操作项：',
+    recordPaymentAction: '录入当期还款',
+    earlySettleAction: '提前结清优惠',
+    deleteCreditAction: '删除此合同',
+    deleteCustomerAction: '删除客户档案',
+    depositWithdrawAction: '存入 / 支取现金',
+    addressLabel: '地址：',
+    notesLabel: '备注：',
+    totalActiveDebt: '在还欠款总额：',
+    activeCreditsCountSuffix: '笔进行中分期',
+    custodyFundNote: '信托代管专户资金',
+    creditListForCust: '该客户分期合同列表',
+    noCreditsForCust: '该客户暂无商品分期赊账记录。',
+    passbookMutationHistory: '收支流水记录',
+    depositMutationLabel: '存入保管金',
+    withdrawMutationLabel: '支取保管金',
+    balanceRemaining: '结余金额：',
+
+    confirmDeleteCredit: '确定要删除此笔商品分期合同记录吗？',
+    confirmDeleteCustomer: '确定删除此客户档案吗？',
+    cannotDeleteCustomerWithDebt: '无法删除该客户，因为其仍有未结清分期或委托金余额！',
+    noPhoneAlert: '客户手机号码未登记！',
+  },
+
+  hi: {
+    appTitle: 'TitenFin',
+    appSlogan: 'सटीक वस्तु किस्त व अमानत राशि खाता',
+    sensorActive: 'प्राइवेसी चालू',
+    hideNumbers: 'राशि छिपाएं',
+    syncEmail: 'ईमेल सिंक',
+    newCreditBtn: '+ वस्तु किस्त',
+    newDepositBtn: '+ अमानत जमा',
+
+    box1Title: '1. स्वयं का शुद्ध कैश',
+    box1Badge: 'खर्च हेतु सुरक्षित',
+    box1Desc: 'चालू पूंजी + प्राप्त हुआ शुद्ध लाभ।',
+    box2Title: '2. कुल बाहरी उधारी (किस्त)',
+    box2Desc: 'वस्तुओं की बकाया राशि जो ग्राहकों से किस्तों में आनी है।',
+    box2BadgeSuffix: 'सक्रिय खाते',
+    box3Title: '3. अमानत राशि (धरोहर)',
+    box3BadgeSuffix: 'जमाकर्ता',
+    box3Warning: 'यह दूसरों का पैसा है, कभी भी मांगा जा सकता है। निजी खर्च में न लगाएं!',
+    reconciliationLabel: 'वर्तमान में तिजोरी/खाते में मौजूद रहने वाला कुल भौतिक कैश:',
+
+    tabCredits: 'वस्तु किस्त',
+    tabDeposits: 'अमानत खाता',
+    tabCustomers: 'ग्राहक सूची',
+    tabCapital: 'पूंजी व बहीखाता',
+
+    searchCreditPlaceholder: 'ग्राहक का नाम या सामान खोजें...',
+    searchDepositPlaceholder: 'जमाकर्ता, लेन-देन कारण (खाद, फसल) खोजें...',
+    searchCustomerPlaceholder: 'ग्राहक नाम, फोन नंबर, पता खोजें...',
+    searchPaymentPlaceholder: 'नाम / सामान / तारीख से खोजें...',
+    filterActive: 'सक्रिय',
+    filterCompleted: 'पूर्ण चुकता',
+    filterAll: 'सभी',
+    foundItemsSuffix: 'मिले',
+
+    paidPercentSuffix: 'जमा हुआ',
+    statusCompleted: 'पूर्ण चुकता',
+    statusActive: 'सक्रिय',
+    payInstallmentBtn: 'किस्त दर्ज करें',
+    earlySettlementBtn: 'समय पूर्व चुकता (छूट)',
+    sendReceiptWa: 'WA रसीद भेजें',
+    sendSummaryWa: 'विवरण भेजें',
+    viewDetailHint: 'विवरण →',
+    passbookHint: 'पासबुक →',
+    profileHint: 'प्रोफाइल →',
+    totalAgreed: 'कुल तय राशि (लागत + मुनाफा)',
+    remainingDebt: 'शेष बकाया राशि',
+    targetInstallment: 'नियत किस्त राशि',
+    estimatedDue: 'अंतिम तारीख',
+    collateralLabel: 'रखी गई गारंटी/गिरवी:',
+    heldDepositBalance: 'जमा अमानत शेष:',
+
+    quickMenuTitle: 'त्वरित कार्य',
+    quickNewCredit: 'नया किस्त खाता',
+    quickNewCreditDesc: 'आसान वस्तु किस्त योजना',
+    quickDeposit: 'अमानत लेन-देन',
+    quickDepositDesc: 'पैसे जमा या निकासी',
+    quickNewCustomer: 'नया ग्राहक जोड़ें',
+    quickNewCustomerDesc: 'संपर्क व इतिहास',
+    navCredit: 'किस्त',
+    navDeposit: 'अमानत',
+    navCustomer: 'ग्राहक',
+    navCapital: 'पूंजी',
+    fabAdd: 'जोड़ें',
+    fabClose: 'बंद',
+
+    creditDetailTitle: 'किस्त खाते का पूरा विवरण',
+    customerDetailTitle: 'ग्राहक प्रोफाइल व लेन-देन इतिहास',
+    depositDetailTitle: 'अमानत पासबुक बहीखाता',
+    contractDetails: 'समझौते का विवरण',
+    contractStart: 'प्रारंभ तिथि:',
+    costPrice: 'लागत मूल्य (खरीद):',
+    agreedProfit: 'तय मुनाफा राशि:',
+    totalCreditPrice: 'कुल किस्त मूल्य:',
+    downPayment: 'डाउन पेमेंट (अग्रिम):',
+    paymentHistory: 'किस्त भुगतान इतिहास',
+    installmentsRecorded: 'किस्तें जमा हुईं',
+    noPaymentsYet: 'इस खाते में अभी कोई किस्त जमा नहीं हुई है।',
+    quickActionsTitle: 'त्वरित कार्रवाई:',
+    recordPaymentAction: 'किस्त जमा करें',
+    earlySettleAction: 'छूट के साथ पूर्ण चुकता',
+    deleteCreditAction: 'यह खाता हटाएं',
+    deleteCustomerAction: 'ग्राहक हटाएं',
+    depositWithdrawAction: 'जमा / निकासी',
+    addressLabel: 'पता:',
+    notesLabel: 'टिप्पणी:',
+    totalActiveDebt: 'कुल बकाया ऋण:',
+    activeCreditsCountSuffix: 'सक्रिय किस्त खाते',
+    custodyFundNote: 'धरोहर अमानत राशि',
+    creditListForCust: 'ग्राहक की किस्त सूची',
+    noCreditsForCust: 'इस ग्राहक का कोई किस्त खाता नहीं है।',
+    passbookMutationHistory: 'लेन-देन पासबुक विवरण',
+    depositMutationLabel: 'अमानत जमा (+)',
+    withdrawMutationLabel: 'अमानत निकासी (-)',
+    balanceRemaining: 'शेष राशि:',
+
+    confirmDeleteCredit: 'क्या आप इस किस्त खाते को हटाना चाहते हैं?',
+    confirmDeleteCustomer: 'इस ग्राहक को सूची से हटाएं?',
+    cannotDeleteCustomerWithDebt: 'ग्राहक को नहीं हटाया जा सकता क्योंकि बकाया या अमानत शेष है!',
+    noPhoneAlert: 'व्हाट्सएप फोन नंबर दर्ज नहीं है!',
+  },
+
+  es: {
+    appTitle: 'TitenFin',
+    appSlogan: 'Control Preciso de Ventas a Crédito y Fondos en Custodia',
+    sensorActive: 'Modo Privacidad Activo',
+    hideNumbers: 'Ocultar Saldos',
+    syncEmail: 'Sincronizar Correo',
+    newCreditBtn: '+ Venta a Crédito',
+    newDepositBtn: '+ Recibir Depósito',
+
+    box1Title: '1. Efectivo Neto Propio',
+    box1Badge: 'Disponible para Gastar',
+    box1Desc: 'Capital de trabajo activo + ganancia neta acumulada ya cobrada.',
+    box2Title: '2. Cuentas por Cobrar',
+    box2Desc: 'Saldo pendiente de clientes en cuotas activas (capital + margen).',
+    box2BadgeSuffix: 'Créditos Activos',
+    box3Title: '3. Fondos en Custodia (Ahorros Ajenos)',
+    box3BadgeSuffix: 'Depositantes',
+    box3Warning: 'Dinero de terceros entregado en confianza. ¡No gastar en uso personal!',
+    reconciliationLabel: 'Efectivo físico total que debe existir en caja/banco ahora mismo:',
+
+    tabCredits: 'Créditos de Bienes',
+    tabDeposits: 'Fondos en Custodia',
+    tabCustomers: 'Lista de Clientes',
+    tabCapital: 'Capital y Balance',
+
+    searchCreditPlaceholder: 'Buscar cliente o artículo a crédito...',
+    searchDepositPlaceholder: 'Buscar depositante o motivo (cosecha, insumos, compras)...',
+    searchCustomerPlaceholder: 'Buscar cliente, WhatsApp o domicilio...',
+    searchPaymentPlaceholder: 'Filtrar por nombre / producto / fecha...',
+    filterActive: 'Activo',
+    filterCompleted: 'Liquidado',
+    filterAll: 'Todos',
+    foundItemsSuffix: 'Encontrados',
+
+    paidPercentSuffix: 'Pagado',
+    statusCompleted: 'LIQUIDADO',
+    statusActive: 'ACTIVO',
+    payInstallmentBtn: 'Abonar Cuota',
+    earlySettlementBtn: 'Liquidar Anticipado (Descuento)',
+    sendReceiptWa: 'Enviar Recibo por WA',
+    sendSummaryWa: 'Enviar Resumen por WA',
+    viewDetailHint: 'Ver Detalle →',
+    passbookHint: 'Libreta →',
+    profileHint: 'Perfil →',
+    totalAgreed: 'Total Pactado (Costo + Ganancia)',
+    remainingDebt: 'Saldo Pendiente por Cobrar',
+    targetInstallment: 'Cuota Programada',
+    estimatedDue: 'Vencimiento Estimado',
+    collateralLabel: 'Garantía Retenida:',
+    heldDepositBalance: 'Saldo en Custodia:',
+
+    quickMenuTitle: 'Acciones Rápidas',
+    quickNewCredit: 'Nuevo Contrato de Crédito',
+    quickNewCreditDesc: 'Financiamiento flexible de productos',
+    quickDeposit: 'Movimiento de Custodia',
+    quickDepositDesc: 'Depósito o retiro de fondos',
+    quickNewCustomer: 'Registrar Cliente',
+    quickNewCustomerDesc: 'Directorio y antecedentes',
+    navCredit: 'Créditos',
+    navDeposit: 'Custodia',
+    navCustomer: 'Clientes',
+    navCapital: 'Capital',
+    fabAdd: 'Nuevo',
+    fabClose: 'Cerrar',
+
+    creditDetailTitle: 'Detalle del Acuerdo de Crédito',
+    customerDetailTitle: 'Ficha del Cliente e Historial Financiero',
+    depositDetailTitle: 'Libreta de Fondos en Custodia',
+    contractDetails: 'Resumen del Acuerdo',
+    contractStart: 'Fecha de Inicio:',
+    costPrice: 'Costo Original (Compra):',
+    agreedProfit: 'Margen de Ganancia Acordado:',
+    totalCreditPrice: 'Precio Total a Crédito:',
+    downPayment: 'Enganche Inicial (Anticipo):',
+    paymentHistory: 'Historial de Abonos y Cuotas',
+    installmentsRecorded: 'abonos registrados',
+    noPaymentsYet: 'No hay abonos registrados todavía para este contrato.',
+    quickActionsTitle: 'Acciones Rápidas:',
+    recordPaymentAction: 'Registrar Abono',
+    earlySettleAction: 'Liquidación Anticipada con Descuento',
+    deleteCreditAction: 'Eliminar este Crédito',
+    deleteCustomerAction: 'Eliminar Cliente',
+    depositWithdrawAction: 'Depositar / Retirar',
+    addressLabel: 'Dirección:',
+    notesLabel: 'Notas:',
+    totalActiveDebt: 'Deuda Total Activa:',
+    activeCreditsCountSuffix: 'créditos en curso',
+    custodyFundNote: 'Fondo sagrado en custodia',
+    creditListForCust: 'Créditos Otorgados al Cliente',
+    noCreditsForCust: 'Este cliente no tiene compras a crédito registradas.',
+    passbookMutationHistory: 'Libro de Movimientos',
+    depositMutationLabel: 'Depósito a Custodia (+)',
+    withdrawMutationLabel: 'Retiro de Custodia (-)',
+    balanceRemaining: 'Saldo Restante:',
+
+    confirmDeleteCredit: '¿Está seguro de eliminar este registro de crédito?',
+    confirmDeleteCustomer: '¿Eliminar a este cliente?',
+    cannotDeleteCustomerWithDebt: '¡No se puede eliminar el cliente porque aún tiene saldo pendiente o dinero en custodia!',
+    noPhoneAlert: '¡Número de WhatsApp no registrado!',
+  },
+
+  ar: {
+    appTitle: 'TitenFin',
+    appSlogan: 'دفتر محاسبي دقيق لتقسيط البضائع وودائع الأمانة',
+    sensorActive: 'الخصوصية مفعّلة',
+    hideNumbers: 'إخفاء الأرقام',
+    syncEmail: 'مزامنة البريد',
+    newCreditBtn: '+ بيع بالتقسيط',
+    newDepositBtn: '+ إيداع أمانة',
+
+    box1Title: '١. النقد الصافي الخاص',
+    box1Badge: 'آمن للإنفاق',
+    box1Desc: 'رأس المال المتداول + إجمالي الأرباح الصافية المحصلة.',
+    box2Title: '٢. إجمالي الديون الخارجية',
+    box2Desc: 'المبالغ المتبقية للتقسيط لدى العملاء (الأصل + الربح).',
+    box2BadgeSuffix: 'عقود نشطة',
+    box3Title: '٣. أموال الأمانة (الودائع)',
+    box3BadgeSuffix: 'مودعين',
+    box3Warning: 'أموال للغير محفوظة كأمانة، يحق سحبها بأي وقت. تجنب إنفاقها شخصياً!',
+    reconciliationLabel: 'إجمالي النقد الفعلي الذي يجب توفره بالخزينة حالياً:',
+
+    tabCredits: 'بيع بالتقسيط',
+    tabDeposits: 'صندوق الأمانات',
+    tabCustomers: 'سجل العملاء',
+    tabCapital: 'رأس المال والأرباح',
+
+    searchCreditPlaceholder: 'ابحث عن اسم العميل أو نوع البضاعة...',
+    searchDepositPlaceholder: 'ابحث عن المودع أو سبب الحركة (حصاد، بضائع)...',
+    searchCustomerPlaceholder: 'ابحث بالاسم أو رقم الهاتف أو العنوان...',
+    searchPaymentPlaceholder: 'تصفية حسب الاسم / البضاعة / التاريخ...',
+    filterActive: 'نشط',
+    filterCompleted: 'مسدد بالكامل',
+    filterAll: 'الكل',
+    foundItemsSuffix: 'نتيجة',
+
+    paidPercentSuffix: 'مسدد',
+    statusCompleted: 'مسدد بالكامل',
+    statusActive: 'نشط',
+    payInstallmentBtn: 'تسجيل قسط',
+    earlySettlementBtn: 'سداد مبكر (خصم)',
+    sendReceiptWa: 'إرسال إيصال واتساب',
+    sendSummaryWa: 'إرسال كشف حساب واتساب',
+    viewDetailHint: 'التفاصيل ←',
+    passbookHint: 'دفتر الحساب ←',
+    profileHint: 'الملف الشخصي ←',
+    totalAgreed: 'إجمالي العقد (رأس المال + الربح)',
+    remainingDebt: 'المبلغ المتبقي المطلوب',
+    targetInstallment: 'قيمة القسط المحدد',
+    estimatedDue: 'تاريخ الاستحقاق التقريبي',
+    collateralLabel: 'الضمانات المحتجزة:',
+    heldDepositBalance: 'رصيد الأمانة المحفوظ:',
+
+    quickMenuTitle: 'إجراءات سريعة',
+    quickNewCredit: 'عقد تقسيط جديد',
+    quickNewCreditDesc: 'تقسيط بضائع مرن',
+    quickDeposit: 'حركة أمانة مالية',
+    quickDepositDesc: 'إيداع أو سحب وديعة',
+    quickNewCustomer: 'إضافة عميل جديد',
+    quickNewCustomerDesc: 'جهات الاتصال والسجلات',
+    navCredit: 'التقسيط',
+    navDeposit: 'الأمانات',
+    navCustomer: 'العملاء',
+    navCapital: 'رأس المال',
+    fabAdd: 'إضافة',
+    fabClose: 'إغلاق',
+
+    creditDetailTitle: 'تفاصيل عقد التقسيط كاملاً',
+    customerDetailTitle: 'ملف العميل وسجله المالي',
+    depositDetailTitle: 'دفتر ودائع الأمانة',
+    contractDetails: 'ملخص بنود الاتفاق',
+    contractStart: 'تاريخ البداية:',
+    costPrice: 'تكلفة الشراء (الأصل):',
+    agreedProfit: 'هامش الربح المتفق عليه:',
+    totalCreditPrice: 'إجمالي سعر التقسيط:',
+    downPayment: 'الدفعة الأولى (المقدم):',
+    paymentHistory: 'سجل دفعات الأقساط',
+    installmentsRecorded: 'دفعات مسجلة',
+    noPaymentsYet: 'لا توجد دفعات أقساط مسجلة لهذا العقد حتى الآن.',
+    quickActionsTitle: 'الإجراءات السريعة:',
+    recordPaymentAction: 'تسجيل دفعة قسط',
+    earlySettleAction: 'تسوية مبكرة بخصم',
+    deleteCreditAction: 'حذف هذا العقد',
+    deleteCustomerAction: 'حذف العميل',
+    depositWithdrawAction: 'إيداع / سحب أمانة',
+    addressLabel: 'العنوان:',
+    notesLabel: 'ملاحظات:',
+    totalActiveDebt: 'إجمالي الديون القائمة:',
+    activeCreditsCountSuffix: 'عقود نشطة قيد السداد',
+    custodyFundNote: 'أموال أمانة شرعية محفوظة',
+    creditListForCust: 'قائمة تقسيط العميل',
+    noCreditsForCust: 'ليس لدى هذا العميل أي سجلات تقسيط.',
+    passbookMutationHistory: 'سجل حركات الإيداع والسحب',
+    depositMutationLabel: 'إيداع أمانة (+)',
+    withdrawMutationLabel: 'سحب أمانة (-)',
+    balanceRemaining: 'الرصيد المتبقي:',
+
+    confirmDeleteCredit: 'هل أنت متأكد من حذف عقد التقسيط هذا؟',
+    confirmDeleteCustomer: 'حذف بيانات هذا العميل نهائياً؟',
+    cannotDeleteCustomerWithDebt: 'لا يمكن حذف العميل لوجود مديونية نشطة أو رصيد أمانة متبقي!',
+    noPhoneAlert: 'رقم الواتساب غير مسجل!',
+  },
+
+  bn: {
+    appTitle: 'TitenFin',
+    appSlogan: 'সঠিক কিস্তি বিক্রয় ও গচ্ছিত আমানত খতিয়ান',
+    sensorActive: 'প্রাইভেসি চালু',
+    hideNumbers: 'টাকা লুকান',
+    syncEmail: 'ইমেইল সিঙ্ক',
+    newCreditBtn: '+ কিস্তি চুক্তি',
+    newDepositBtn: '+ আমানত গ্রহণ',
+
+    box1Title: '১. নিজের আসল নগদ তহবিল',
+    box1Badge: 'ব্যয়ের জন্য নিরাপদ',
+    box1Desc: 'চলতি মূলধন + আদায়কৃত মোট অর্জিত নিট মুনাফা।',
+    box2Title: '২. বাইরের মোট বাকি (কিস্তি)',
+    box2Desc: 'গ্রাহকদের কাছে থাকা পণ্যের বাকি টাকা (আসল + লাভ)।',
+    box2BadgeSuffix: 'সক্রিয় কিস্তি',
+    box3Title: '৩. গচ্ছিত আমানত (আমানত তহবিল)',
+    box3BadgeSuffix: 'আমানতকারী',
+    box3Warning: 'অন্যের বিশ্বস্ত গচ্ছিত টাকা। যেকোনো সময় ফেরতযোগ্য, ব্যক্তিগত খরচ করবেন না!',
+    reconciliationLabel: 'বর্তমানে সিন্দুকে/হাতে মোট যে পরিমাণ নগদ টাকা থাকা আবশ্যক:',
+
+    tabCredits: 'কিস্তিতে পণ্য',
+    tabDeposits: 'গচ্ছিত আমানত',
+    tabCustomers: 'গ্রাহক খতিয়ান',
+    tabCapital: 'মূলধন ও হিসাব',
+
+    searchCreditPlaceholder: 'গ্রাহকের নাম বা পণ্যের বিবরণ খুঁজুন...',
+    searchDepositPlaceholder: 'আমানতকারী বা জমার কারণ (ফসল, সার, বাজার) খুঁজুন...',
+    searchCustomerPlaceholder: 'গ্রাহকের নাম, ফোন নম্বর, ঠিকানা খুঁজুন...',
+    searchPaymentPlaceholder: 'নাম / পণ্য / তারিখ দিয়ে খুঁজুন...',
+    filterActive: 'চলমান',
+    filterCompleted: 'পরিশোধিত',
+    filterAll: 'সবগুলো',
+    foundItemsSuffix: 'টি পাওয়া গেছে',
+
+    paidPercentSuffix: 'পরিশোধিত',
+    statusCompleted: 'পরিশোধিত',
+    statusActive: 'চলমান',
+    payInstallmentBtn: 'কিস্তি জমা নিন',
+    earlySettlementBtn: 'এককালীন পরিশোধ (ছাড়)',
+    sendReceiptWa: 'WA রসিদ পাঠান',
+    sendSummaryWa: 'WA হিসাব পাঠান',
+    viewDetailHint: 'বিস্তারিত →',
+    passbookHint: 'পাসবই →',
+    profileHint: 'প্রোফাইল →',
+    totalAgreed: 'মোট চুক্তি মূল্য (মূলধন + লাভ)',
+    remainingDebt: 'অবশিষ্ট বাকি পাওনা',
+    targetInstallment: 'ধার্যকৃত কিস্তির পরিমাণ',
+    estimatedDue: 'সম্ভাব্য শেষ তারিখ',
+    collateralLabel: 'জামানত রাখা জিনিস:',
+    heldDepositBalance: 'গচ্ছিত জমার পরিমাণ:',
+
+    quickMenuTitle: 'দ্রুত লেনদেন',
+    quickNewCredit: 'নতুন কিস্তি চুক্তি',
+    quickNewCreditDesc: 'সহজ কিস্তি সুবিধা',
+    quickDeposit: 'আমানত লেনদেন',
+    quickDepositDesc: 'টাকা জমা বা উত্তোলন',
+    quickNewCustomer: 'নতুন গ্রাহক যোগ',
+    quickNewCustomerDesc: 'যোগাযোগ ও ইতিহাস',
+    navCredit: 'কিস্তি',
+    navDeposit: 'আমানত',
+    navCustomer: 'গ্রাহক',
+    navCapital: 'মূলধন',
+    fabAdd: 'যোগ',
+    fabClose: 'বন্ধ',
+
+    creditDetailTitle: 'কিস্তি চুক্তির সম্পূর্ণ বিবরণ',
+    customerDetailTitle: 'গ্রাহকের পরিচিতি ও লেনদেন বিবরণী',
+    depositDetailTitle: 'গচ্ছিত আমানত পাসবই',
+    contractDetails: 'চুক্তির শর্তাবলি',
+    contractStart: 'শুরুর তারিখ:',
+    costPrice: 'ক্রয়মূল্য (আসল খরচ):',
+    agreedProfit: 'ধার্যকৃত মুনাফা:',
+    totalCreditPrice: 'মোট কিস্তি মূল্য:',
+    downPayment: 'অগ্রিম জমা (ডাউন পেমেন্ট):',
+    paymentHistory: 'কিস্তি পরিশোধের ইতিহাস',
+    installmentsRecorded: 'বার কিস্তি জমা হয়েছে',
+    noPaymentsYet: 'এই চুক্তিতে এখনো কোনো কিস্তি জমা হয়নি।',
+    quickActionsTitle: 'দ্রুত পদক্ষেপ:',
+    recordPaymentAction: 'কিস্তি জমা লিপিবদ্ধ করুন',
+    earlySettleAction: 'ছাড়সহ এককালীন পরিশোধ',
+    deleteCreditAction: 'এই চুক্তি মুছুন',
+    deleteCustomerAction: 'গ্রাহক মুছুন',
+    depositWithdrawAction: 'জমা / উত্তোলন',
+    addressLabel: 'ঠিকানা:',
+    notesLabel: 'নোট:',
+    totalActiveDebt: 'মোট চলতি পাওনা:',
+    activeCreditsCountSuffix: 'টি কিস্তি চালু রয়েছে',
+    custodyFundNote: 'আমানতের বিশ্বস্ত তহবিল',
+    creditListForCust: 'এই গ্রাহকের কিস্তির তালিকা',
+    noCreditsForCust: 'এই গ্রাহকের কোনো পণ্যের কিস্তি চলমান নেই।',
+    passbookMutationHistory: 'জমা-খরচ হিসাব খতিয়ান',
+    depositMutationLabel: 'আমানত জমা (+)',
+    withdrawMutationLabel: 'আমানত উত্তোলন (-)',
+    balanceRemaining: 'অবশিষ্ট ব্যালেন্স:',
+
+    confirmDeleteCredit: 'আপনি কি এই কিস্তি চুক্তির রেকর্ডটি মুছে ফেলতে চান?',
+    confirmDeleteCustomer: 'এই গ্রাহককে মুছে ফেলতে চান?',
+    cannotDeleteCustomerWithDebt: 'গ্রাহককে মুছে ফেলা যাবে না কারণ বাকি পাওনা বা আমানতের ব্যালেন্স রয়েছে!',
+    noPhoneAlert: 'হোয়াটসঅ্যাপ নম্বর নিবন্ধিত নেই!',
+  },
+
+  pt: {
+    appTitle: 'TitenFin',
+    appSlogan: 'Controle Preciso de Crediário e Fundos em Custódia',
+    sensorActive: 'Privacidade Ativa',
+    hideNumbers: 'Ocultar Valores',
+    syncEmail: 'Sincronizar E-mail',
+    newCreditBtn: '+ Novo Crediário',
+    newDepositBtn: '+ Guardar Dinheiro',
+
+    box1Title: '1. Caixa Líquido Próprio',
+    box1Badge: 'Livre para Gastar',
+    box1Desc: 'Capital de giro ativo + lucro líquido acumulado já recebido.',
+    box2Title: '2. Total a Receber na Praça',
+    box2Desc: 'Saldo devedor parcelado com clientes (custo + margem).',
+    box2BadgeSuffix: 'Contratos Ativos',
+    box3Title: '3. Dinheiro em Custódia (Amanah)',
+    box3BadgeSuffix: 'Depositantes',
+    box3Warning: 'Dinheiro de terceiros sob sua guarda. Resgatável a qualquer hora, não gaste!',
+    reconciliationLabel: 'Dinheiro físico total que deve estar no caixa/conta agora:',
+
+    tabCredits: 'Crediário de Bens',
+    tabDeposits: 'Caixa de Custódia',
+    tabCustomers: 'Lista de Clientes',
+    tabCapital: 'Capital e Giro',
+
+    searchCreditPlaceholder: 'Buscar cliente ou mercadoria...',
+    searchDepositPlaceholder: 'Buscar depositante ou motivo (safra, insumos, compras)...',
+    searchCustomerPlaceholder: 'Buscar cliente, WhatsApp, endereço...',
+    searchPaymentPlaceholder: 'Filtrar por nome / produto / data...',
+    filterActive: 'Ativo',
+    filterCompleted: 'Quitado',
+    filterAll: 'Todos',
+    foundItemsSuffix: 'Encontrados',
+
+    paidPercentSuffix: 'Pago',
+    statusCompleted: 'QUITADO',
+    statusActive: 'ATIVO',
+    payInstallmentBtn: 'Registrar Parcela',
+    earlySettlementBtn: 'Quitar com Desconto',
+    sendReceiptWa: 'Enviar Recibo por WA',
+    sendSummaryWa: 'Enviar Resumo por WA',
+    viewDetailHint: 'Detalhes →',
+    passbookHint: 'Extrato →',
+    profileHint: 'Perfil →',
+    totalAgreed: 'Total Negociado (Custo + Lucro)',
+    remainingDebt: 'Saldo Devedor Restante',
+    targetInstallment: 'Valor da Parcela',
+    estimatedDue: 'Previsão de Vencimento',
+    collateralLabel: 'Garantia Retida:',
+    heldDepositBalance: 'Saldo Guardado:',
+
+    quickMenuTitle: 'Ações Rápidas',
+    quickNewCredit: 'Novo Crediário',
+    quickNewCreditDesc: 'Financiamento flexível de bens',
+    quickDeposit: 'Movimento de Custódia',
+    quickDepositDesc: 'Guardar ou retirar dinheiro',
+    quickNewCustomer: 'Cadastrar Cliente',
+    quickNewCustomerDesc: 'Contatos e histórico',
+    navCredit: 'Crediário',
+    navDeposit: 'Custódia',
+    navCustomer: 'Clientes',
+    navCapital: 'Capital',
+    fabAdd: 'Novo',
+    fabClose: 'Fechar',
+
+    creditDetailTitle: 'Detalhes do Contrato de Crediário',
+    customerDetailTitle: 'Ficha do Cliente e Histórico Financeiro',
+    depositDetailTitle: 'Extrato de Dinheiro em Custódia',
+    contractDetails: 'Resumo do Acordo',
+    contractStart: 'Início:',
+    costPrice: 'Preço de Custo (Compra):',
+    agreedProfit: 'Margem de Lucro Combinada:',
+    totalCreditPrice: 'Valor Total a Prazo:',
+    downPayment: 'Entrada Inicial:',
+    paymentHistory: 'Histórico de Parcelas Pagas',
+    installmentsRecorded: 'pagamentos registrados',
+    noPaymentsYet: 'Nenhum pagamento registrado ainda para este crediário.',
+    quickActionsTitle: 'Ações Rápidas:',
+    recordPaymentAction: 'Registrar Parcela',
+    earlySettleAction: 'Quitação Antecipada com Desconto',
+    deleteCreditAction: 'Excluir Contrato',
+    deleteCustomerAction: 'Excluir Cliente',
+    depositWithdrawAction: 'Depositar / Retirar',
+    addressLabel: 'Endereço:',
+    notesLabel: 'Observações:',
+    totalActiveDebt: 'Dívida Ativa Total:',
+    activeCreditsCountSuffix: 'crediários ativos',
+    custodyFundNote: 'Fundo sagrado em custódia',
+    creditListForCust: 'Crediários do Cliente',
+    noCreditsForCust: 'Este cliente não possui histórico de crediário.',
+    passbookMutationHistory: 'Extrato de Entradas e Saídas',
+    depositMutationLabel: 'Depósito em Custódia (+)',
+    withdrawMutationLabel: 'Retirada de Custódia (-)',
+    balanceRemaining: 'Saldo Restante:',
+
+    confirmDeleteCredit: 'Tem certeza de que deseja excluir este crediário?',
+    confirmDeleteCustomer: 'Excluir este cliente do cadastro?',
+    cannotDeleteCustomerWithDebt: 'Não é possível excluir o cliente pois há dívidas ativas ou saldo guardado!',
+    noPhoneAlert: 'Número de WhatsApp não cadastrado!',
+  },
+
+  ru: {
+    appTitle: 'TitenFin',
+    appSlogan: 'Точный учет товарной рассрочки и доверительных фондов',
+    sensorActive: 'Приватность вкл',
+    hideNumbers: 'Скрыть суммы',
+    syncEmail: 'Синхронизация с почтой',
+    newCreditBtn: '+ Товар в рассрочку',
+    newDepositBtn: '+ Принять вклад',
+
+    box1Title: '1. Собственные чистые средства',
+    box1Badge: 'Доступно к расходу',
+    box1Desc: 'Оборотный капитал + полученная чистая прибыль.',
+    box2Title: '2. Дебиторская задолженность',
+    box2Desc: 'Остаток долга клиентов по текущим рассрочкам (себестоимость + наценка).',
+    box2BadgeSuffix: 'активных договоров',
+    box3Title: '3. Доверительные средства (Аманат)',
+    box3BadgeSuffix: 'вкладчиков',
+    box3Warning: 'Деньги третьих лиц на хранении. Подлежат выдаче в любой момент, не тратьте!',
+    reconciliationLabel: 'Фактический остаток наличных, который обязан быть в кассе/сейфе:',
+
+    tabCredits: 'Товарная рассрочка',
+    tabDeposits: 'Касса хранения',
+    tabCustomers: 'База клиентов',
+    tabCapital: 'Капитал и баланс',
+
+    searchCreditPlaceholder: 'Поиск клиента или товара...',
+    searchDepositPlaceholder: 'Поиск вкладчика или цели (урожай, закупки)...',
+    searchCustomerPlaceholder: 'Поиск клиента по имени, WhatsApp, адресу...',
+    searchPaymentPlaceholder: 'Фильтр по имени / товару / дате...',
+    filterActive: 'Активные',
+    filterCompleted: 'Выплачено',
+    filterAll: 'Все',
+    foundItemsSuffix: 'найдено',
+
+    paidPercentSuffix: 'выплачено',
+    statusCompleted: 'ВЫПЛАЧЕНО',
+    statusActive: 'АКТИВЕН',
+    payInstallmentBtn: 'Внести платеж',
+    earlySettlementBtn: 'Досрочное погашение (скидка)',
+    sendReceiptWa: 'Чек в WhatsApp',
+    sendSummaryWa: 'Отчет в WhatsApp',
+    viewDetailHint: 'Подробнее →',
+    passbookHint: 'Счет-книжка →',
+    profileHint: 'Профиль →',
+    totalAgreed: 'Сумма договора (себестоимость + наценка)',
+    remainingDebt: 'Остаток задолженности',
+    targetInstallment: 'Плановый платеж',
+    estimatedDue: 'Срок погашения',
+    collateralLabel: 'Принятый залог:',
+    heldDepositBalance: 'Средств на хранении:',
+
+    quickMenuTitle: 'Быстрые действия',
+    quickNewCredit: 'Новая рассрочка',
+    quickNewCreditDesc: 'Гибкая товарная рассрочка',
+    quickDeposit: 'Операция по хранению',
+    quickDepositDesc: 'Прием или выдача средств',
+    quickNewCustomer: 'Добавить клиента',
+    quickNewCustomerDesc: 'Контакты и история',
+    navCredit: 'Рассрочка',
+    navDeposit: 'Хранение',
+    navCustomer: 'Клиенты',
+    navCapital: 'Капитал',
+    fabAdd: 'Создать',
+    fabClose: 'Закрыть',
+
+    creditDetailTitle: 'Детали договора рассрочки',
+    customerDetailTitle: 'Профиль клиента и история операций',
+    depositDetailTitle: 'Книжка доверительных средств',
+    contractDetails: 'Условия договора',
+    contractStart: 'Дата начала:',
+    costPrice: 'Себестоимость (закупка):',
+    agreedProfit: 'Согласованная наценка:',
+    totalCreditPrice: 'Итоговая стоимость:',
+    downPayment: 'Первоначальный взнос:',
+    paymentHistory: 'История платежей',
+    installmentsRecorded: 'платежей внесено',
+    noPaymentsYet: 'По этому договору платежей еще не поступало.',
+    quickActionsTitle: 'Быстрые действия:',
+    recordPaymentAction: 'Принять платеж',
+    earlySettleAction: 'Досрочное погашение со скидкой',
+    deleteCreditAction: 'Удалить договор',
+    deleteCustomerAction: 'Удалить клиента',
+    depositWithdrawAction: 'Внести / Выдать',
+    addressLabel: 'Адрес:',
+    notesLabel: 'Заметки:',
+    totalActiveDebt: 'Общий активный долг:',
+    activeCreditsCountSuffix: 'активных договоров',
+    custodyFundNote: 'Священный фонд доверительного хранения',
+    creditListForCust: 'Договоры клиента',
+    noCreditsForCust: 'У этого клиента нет истории рассрочек.',
+    passbookMutationHistory: 'История прихода и расхода',
+    depositMutationLabel: 'Внесение на хранение (+)',
+    withdrawMutationLabel: 'Выдача с хранения (-)',
+    balanceRemaining: 'Остаток средств:',
+
+    confirmDeleteCredit: 'Вы уверены, что хотите удалить этот договор?',
+    confirmDeleteCustomer: 'Удалить этого клиента?',
+    cannotDeleteCustomerWithDebt: 'Невозможно удалить клиента с непогашенным долгом или средствами на хранении!',
+    noPhoneAlert: 'Номер WhatsApp не указан!',
+  },
+
+  ur: {
+    appTitle: 'TitenFin',
+    appSlogan: 'اشیاء کی قسطوں اور امانت رقوم کا مکمل درست کھاتہ',
+    sensorActive: 'پرائیویسی آن',
+    hideNumbers: 'رقم چھپائیں',
+    syncEmail: 'ای میل مطابقت',
+    newCreditBtn: '+ اشیاء قسط',
+    newDepositBtn: '+ امانت جمع',
+
+    box1Title: '۱. اپنی خالص نقد رقم',
+    box1Badge: 'خرچ کیلئے محفوظ',
+    box1Desc: 'گردشی سرمایہ + موصول شدہ خالص منافع۔',
+    box2Title: '۲. کل بیرونی بقایا جات (اقساط)',
+    box2Desc: 'اشیاء کی بقایا رقم جو گاہکوں سے اقساط میں آنی ہے۔',
+    box2BadgeSuffix: 'فعال کھاتے',
+    box3Title: '۳. امانت رقم (امانت فنڈ)',
+    box3BadgeSuffix: 'امانت دار',
+    box3Warning: 'یہ دوسروں کی امانت ہے، کبھی بھی طلب کی جا سکتی ہے۔ ذاتی خرچ میں نہ لگائیں!',
+    reconciliationLabel: 'اس وقت تجوری/کھاتے میں موجود رہنے والی کل نقد رقم:',
+
+    tabCredits: 'قسطوں پر اشیاء',
+    tabDeposits: 'امانت کھاتہ',
+    tabCustomers: 'گاہکوں کی فہرست',
+    tabCapital: 'سرمایہ و کھاتہ',
+
+    searchCreditPlaceholder: 'گاہک کا نام یا چیز تلاش کریں...',
+    searchDepositPlaceholder: 'امانت دار، مقصد (کھاد، فصل، خریداری) تلاش کریں...',
+    searchCustomerPlaceholder: 'نام، فون نمبر، پتہ تلاش کریں...',
+    searchPaymentPlaceholder: 'نام / چیز / تاریخ سے فلٹر کریں...',
+    filterActive: 'جاری',
+    filterCompleted: 'مکمل ادا شدہ',
+    filterAll: 'تمام',
+    foundItemsSuffix: 'ملے',
+
+    paidPercentSuffix: 'ادا شدہ',
+    statusCompleted: 'مکمل ادا شدہ',
+    statusActive: 'جاری',
+    payInstallmentBtn: 'قسط درج کریں',
+    earlySettlementBtn: 'قبل از وقت ادائیگی (رعایت)',
+    sendReceiptWa: 'WA رسید بھیجیں',
+    sendSummaryWa: 'تفصیل بھیجیں',
+    viewDetailHint: 'تفصیلات ←',
+    passbookHint: 'پاس بک ←',
+    profileHint: 'پروفائل ←',
+    totalAgreed: 'کل طے شدہ رقم (لاگت + منافع)',
+    remainingDebt: 'بقایا واجب الادا رقم',
+    targetInstallment: 'مقررہ قسط کی رقم',
+    estimatedDue: 'آخری تاریخ',
+    collateralLabel: 'بطور ضمانت رکھی گئی چیز:',
+    heldDepositBalance: 'محفوظ امانت رقم:',
+
+    quickMenuTitle: 'فوری اقدامات',
+    quickNewCredit: 'نیا قسط معاہدہ',
+    quickNewCreditDesc: 'آسان قسطوں کا نظام',
+    quickDeposit: 'امانت لین دین',
+    quickDepositDesc: 'رقم جمع یا واپسی',
+    quickNewCustomer: 'نیا گاہک درج کریں',
+    quickNewCustomerDesc: 'رابطے اور ریکارڈ',
+    navCredit: 'اقساط',
+    navDeposit: 'امانت',
+    navCustomer: 'گاہک',
+    navCapital: 'سرمایہ',
+    fabAdd: 'شامل کریں',
+    fabClose: 'بند کریں',
+
+    creditDetailTitle: 'قسط معاہدے کی مکمل تفصیلات',
+    customerDetailTitle: 'گاہک کا پروفائل اور مالی ریکارڈ',
+    depositDetailTitle: 'امانت پاس بک کھاتہ',
+    contractDetails: 'معاہدے کا خلاصہ',
+    contractStart: 'آغاز کی تاریخ:',
+    costPrice: 'لاگت قیمت (خرید):',
+    agreedProfit: 'طے شدہ منافع:',
+    totalCreditPrice: 'کل قسط قیمت:',
+    downPayment: 'ابتدائی پیشگی رقم:',
+    paymentHistory: 'اقساط ادائیگی کا ریکارڈ',
+    installmentsRecorded: 'اقساط موصول ہوئیں',
+    noPaymentsYet: 'اس معاہدے میں ابھی تک کوئی قسط درج نہیں ہوئی۔',
+    quickActionsTitle: 'فوری کارروائی:',
+    recordPaymentAction: 'قسط موصول درج کریں',
+    earlySettleAction: 'رعایت کے ساتھ مکمل ادائیگی',
+    deleteCreditAction: 'یہ معاہدہ ختم کریں',
+    deleteCustomerAction: 'گاہک کو حذف کریں',
+    depositWithdrawAction: 'جمع / واپسی',
+    addressLabel: 'پتہ:',
+    notesLabel: 'نوٹس:',
+    totalActiveDebt: 'کل فعال بقایا قرض:',
+    activeCreditsCountSuffix: 'فعال قسط معاہدے',
+    custodyFundNote: 'محفوظ امانت فنڈ',
+    creditListForCust: 'اس گاہک کے اقساط کی فہرست',
+    noCreditsForCust: 'اس گاہک کا کوئی قسط ریکارڈ موجود نہیں ہے۔',
+    passbookMutationHistory: 'لین دین کی تفصیلات',
+    depositMutationLabel: 'امانت جمع (+)',
+    withdrawMutationLabel: 'امانت واپسی (-)',
+    balanceRemaining: 'بقایا رقم:',
+
+    confirmDeleteCredit: 'کیا آپ واقعی اس قسط معاہدے کو ختم کرنا چاہتے ہیں؟',
+    confirmDeleteCustomer: 'اس گاہک کو فہرست سے حذف کریں؟',
+    cannotDeleteCustomerWithDebt: 'گاہک کو حذف نہیں کیا جا سکتا کیونکہ اس پر بقایا جات یا امانت بیلنس موجود ہے!',
+    noPhoneAlert: 'واٹس ایپ فون نمبر درج نہیں ہے!',
+  },
+
+  ja: {
+    appTitle: 'TitenFin',
+    appSlogan: '商品分割払い＆預かり預金管理台帳',
+    sensorActive: 'プライバシー保護中',
+    hideNumbers: '金額を非表示',
+    syncEmail: 'メール同期',
+    newCreditBtn: '+ 分割払い契約',
+    newDepositBtn: '+ 預かり金受入',
+
+    box1Title: '1. 自己純現預金',
+    box1Badge: '支出可能',
+    box1Desc: '運転資金 ＋ 回収済みの純利益累計。',
+    box2Title: '2. 外部売掛金残高',
+    box2Desc: '顧客が現在分割返済中の未回収残高（原価 ＋ 利益）。',
+    box2BadgeSuffix: '件の契約中',
+    box3Title: '3. 預かり預金 (信託資金)',
+    box3BadgeSuffix: '名の預託者',
+    box3Warning: '他人からの大切な預かり資金です。随時引き出し可能なため、個人支出には絶対流用しないでください！',
+    reconciliationLabel: '現在金庫/口座に存在すべき物理的現金の合計：',
+
+    tabCredits: '商品分割払い',
+    tabDeposits: '預かり預金',
+    tabCustomers: '顧客台帳',
+    tabCapital: '資本と収支',
+
+    searchCreditPlaceholder: '顧客名または商品名で検索...',
+    searchDepositPlaceholder: '預託者名または用途（収穫、資材、買い物）を検索...',
+    searchCustomerPlaceholder: '顧客名、電話番号、住所で検索...',
+    searchPaymentPlaceholder: '名前 / 商品 / 日付で絞り込み...',
+    filterActive: '返済中',
+    filterCompleted: '完済済',
+    filterAll: 'すべて',
+    foundItemsSuffix: '件該当',
+
+    paidPercentSuffix: '返済済',
+    statusCompleted: '完済',
+    statusActive: '返済中',
+    payInstallmentBtn: '返済を記録',
+    earlySettlementBtn: '早期一括完済 (割引)',
+    sendReceiptWa: 'WA領収書送信',
+    sendSummaryWa: 'WA明細送信',
+    viewDetailHint: '詳細 →',
+    passbookHint: '通帳 →',
+    profileHint: '台帳 →',
+    totalAgreed: '契約総額 (原価 + 利益)',
+    remainingDebt: '未払残高',
+    targetInstallment: '約定返済額',
+    estimatedDue: '完済予定期日',
+    collateralLabel: '受託担保品：',
+    heldDepositBalance: 'お預かり残高：',
+
+    quickMenuTitle: 'クイック操作',
+    quickNewCredit: '新規分割払い契約',
+    quickNewCreditDesc: '柔軟な商品分割払い設定',
+    quickDeposit: '預かり金の入出金',
+    quickDepositDesc: '預金受託または払戻し',
+    quickNewCustomer: '新規顧客登録',
+    quickNewCustomerDesc: '連絡先と利用履歴',
+    navCredit: '分割払い',
+    navDeposit: '預かり金',
+    navCustomer: '顧客',
+    navCapital: '資本',
+    fabAdd: '追加',
+    fabClose: '閉じる',
+
+    creditDetailTitle: '分割払い契約詳細',
+    customerDetailTitle: '顧客台帳＆取引履歴',
+    depositDetailTitle: '預かり金通帳明細',
+    contractDetails: '契約合意概要',
+    contractStart: '契約開始日：',
+    costPrice: '仕入原価：',
+    agreedProfit: '合意済利益額：',
+    totalCreditPrice: '分割払総額：',
+    downPayment: '頭金 (手付金)：',
+    paymentHistory: '分割返済履歴台帳',
+    installmentsRecorded: '回の返済入金',
+    noPaymentsYet: 'この契約に対する返済記録はまだありません。',
+    quickActionsTitle: 'クイックアクション：',
+    recordPaymentAction: '返済入金を記録',
+    earlySettleAction: '割引付き早期一括完済',
+    deleteCreditAction: 'この契約を削除',
+    deleteCustomerAction: '顧客を削除',
+    depositWithdrawAction: '入金 / 出金',
+    addressLabel: '住所：',
+    notesLabel: '備考：',
+    totalActiveDebt: '未返済債権総額：',
+    activeCreditsCountSuffix: '件の進行中契約',
+    custodyFundNote: '受託信託預かり資金',
+    creditListForCust: 'この顧客の契約一覧',
+    noCreditsForCust: 'この顧客の分割払い履歴はありません。',
+    passbookMutationHistory: '入出金履歴明細',
+    depositMutationLabel: '預かり金受入 (+)',
+    withdrawMutationLabel: '預かり金払戻 (-)',
+    balanceRemaining: '現在残高：',
+
+    confirmDeleteCredit: 'この分割払い契約を削除してもよろしいですか？',
+    confirmDeleteCustomer: 'この顧客を台帳から削除しますか？',
+    cannotDeleteCustomerWithDebt: '未払い残高または預かり金がある顧客は削除できません！',
+    noPhoneAlert: 'WhatsApp電話番号が未登録です！',
   },
 };
 
@@ -240,7 +1369,10 @@ export const detectUserLanguage = (): Language => {
 
   // 1. Cek apakah pengguna sudah pernah memilih secara manual
   const savedLang = localStorage.getItem(STORAGE_LANG_KEY) as Language | null;
-  if (savedLang && (savedLang === 'id' || savedLang === 'jv' || savedLang === 'en')) {
+  const validLanguages: Language[] = [
+    'id', 'jv', 'en', 'zh', 'hi', 'es', 'ar', 'bn', 'pt', 'ru', 'ur', 'ja'
+  ];
+  if (savedLang && validLanguages.includes(savedLang)) {
     return savedLang;
   }
 
@@ -249,12 +1381,17 @@ export const detectUserLanguage = (): Language => {
     const browserLang = (navigator.language || (navigator.languages && navigator.languages[0]) || '').toLowerCase();
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
 
-    // Jika bahasa browser diawali 'jv' (Javanese)
-    if (browserLang.startsWith('jv')) {
-      return 'jv';
-    }
+    if (browserLang.startsWith('jv')) return 'jv';
+    if (browserLang.startsWith('zh')) return 'zh';
+    if (browserLang.startsWith('hi')) return 'hi';
+    if (browserLang.startsWith('es')) return 'es';
+    if (browserLang.startsWith('ar')) return 'ar';
+    if (browserLang.startsWith('bn')) return 'bn';
+    if (browserLang.startsWith('pt')) return 'pt';
+    if (browserLang.startsWith('ru')) return 'ru';
+    if (browserLang.startsWith('ur')) return 'ur';
+    if (browserLang.startsWith('ja')) return 'ja';
 
-    // Jika bahasa browser diawali 'id' atau 'in' (Indonesian), atau timezone WIB/WITA/WIT
     if (
       browserLang.startsWith('id') ||
       browserLang.startsWith('in') ||
@@ -265,12 +1402,9 @@ export const detectUserLanguage = (): Language => {
       return 'id';
     }
 
-    // Default jika pengguna dari luar negeri / bahasa sistem internasional
-    if (browserLang.startsWith('en')) {
-      return 'en';
-    }
+    if (browserLang.startsWith('en')) return 'en';
 
-    return 'id'; // default fallback ramah
+    return 'id'; // default fallback
   } catch {
     return 'id';
   }

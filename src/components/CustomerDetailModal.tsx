@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Customer, CreditItem, DepositTransaction } from '../types';
 import { formatRupiah, getCustomerDepositBalance } from '../lib/storage';
+import { TranslationDictionary } from '../lib/i18n';
 
 interface CustomerDetailModalProps {
   customer: Customer | null;
@@ -27,6 +28,7 @@ interface CustomerDetailModalProps {
   onNewDepositForCustomer: (customerId: string) => void;
   onSelectCreditDetail: (credit: CreditItem) => void;
   onDeleteCustomer: (customerId: string) => void;
+  t: TranslationDictionary;
 }
 
 export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
@@ -39,6 +41,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   onNewDepositForCustomer,
   onSelectCreditDetail,
   onDeleteCustomer,
+  t,
 }) => {
   if (!isOpen || !customer) return null;
 
@@ -50,7 +53,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
 
   const handleOpenWa = () => {
     if (!customer.phone) {
-      alert('Nomor WhatsApp belum terdaftar!');
+      alert(t.noPhoneAlert);
       return;
     }
     const cleanPhone = customer.phone.replace(/^0/, '62').replace(/\D/g, '');
@@ -60,10 +63,10 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
 
   const handleDelete = () => {
     if (totalDebt > 0 || depositBalance > 0) {
-      alert('Nasabah tidak dapat dihapus karena masih memiliki tagihan kredit aktif atau saldo titipan uang!');
+      alert(t.cannotDeleteCustomerWithDebt);
       return;
     }
-    if (confirm(`Hapus kontak nasabah "${customer.name}"?`)) {
+    if (confirm(t.confirmDeleteCustomer.replace('{name}', customer.name))) {
       onDeleteCustomer(customer.id);
       onClose();
     }
@@ -102,7 +105,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 text-xs space-y-1.5">
             <div className="flex items-start gap-2 text-slate-700">
               <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-              <span><strong>Alamat:</strong> {customer.address || 'Alamat belum dilengkapi'}</span>
+              <span><strong>{t.addressLabel}:</strong> {customer.address || '-'}</span>
             </div>
             {customer.notes && (
               <div className="flex items-start gap-2 text-slate-500 italic pt-1 border-t border-slate-200/60">
@@ -115,22 +118,22 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
           {/* Kotak Ringkasan Finansial Nasabah */}
           <div className="grid grid-cols-2 gap-2.5">
             <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs">
-              <span className="text-emerald-800 block text-[11px] font-semibold">Total Sisa Hutang:</span>
+              <span className="text-emerald-800 block text-[11px] font-semibold">{t.totalActiveDebt}:</span>
               <div className="text-base font-black text-emerald-950 mt-0.5">
                 {formatRupiah(totalDebt)}
               </div>
               <span className="text-[10px] text-emerald-700 block mt-0.5">
-                {activeCredits.length} akad kredit aktif
+                {activeCredits.length} {t.activeCreditsCountSuffix}
               </span>
             </div>
 
             <div className="bg-teal-50 p-3 rounded-xl border border-teal-200 text-xs">
-              <span className="text-teal-800 block text-[11px] font-semibold">Saldo Uang Dititipkan:</span>
+              <span className="text-teal-800 block text-[11px] font-semibold">{t.heldDepositBalance}:</span>
               <div className="text-base font-black text-teal-950 mt-0.5">
                 {formatRupiah(depositBalance)}
               </div>
               <span className="text-[10px] text-teal-700 block mt-0.5">
-                Dana simpanan amanah
+                {t.custodyFundNote}
               </span>
             </div>
           </div>
@@ -140,13 +143,13 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             <div className="flex justify-between items-center text-xs font-bold text-slate-800">
               <span className="flex items-center gap-1.5">
                 <CreditCard className="w-4 h-4 text-emerald-600" />
-                Daftar Kredit Barang ({custCredits.length})
+                {t.creditListForCust} ({custCredits.length})
               </span>
             </div>
 
             {custCredits.length === 0 ? (
               <div className="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-center text-xs text-slate-400">
-                Nasabah ini belum memiliki riwayat kredit barang.
+                {t.noCreditsForCust}
               </div>
             ) : (
               <div className="space-y-1.5">
@@ -162,13 +165,13 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                     <div>
                       <span className="font-bold text-slate-900 block">{cred.itemName}</span>
                       <span className="text-[11px] text-slate-400">
-                        Total {formatRupiah(cred.totalCreditPrice)} • Sisa {formatRupiah(cred.remainingAmount)}
+                        {formatRupiah(cred.totalCreditPrice)} • {formatRupiah(cred.remainingAmount)}
                       </span>
                     </div>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       cred.status === 'completed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-800'
                     }`}>
-                      {cred.status === 'completed' ? 'LUNAS' : 'AKTIF'}
+                      {cred.status === 'completed' ? t.statusCompleted : t.statusActive}
                     </span>
                   </div>
                 ))}
@@ -178,7 +181,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
 
           {/* GRUP AKSI CEPAT NASABAH */}
           <div className="pt-2 border-t border-slate-200 space-y-2">
-            <span className="text-xs font-bold text-slate-700 block">Tindakan / Aksi Cepat:</span>
+            <span className="text-xs font-bold text-slate-700 block">{t.quickActionsTitle}:</span>
 
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -189,7 +192,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 className="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center justify-center gap-1.5"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>+ Kredit Barang</span>
+                <span>{t.newCreditBtn}</span>
               </button>
 
               <button
@@ -200,7 +203,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 className="py-2.5 px-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center justify-center gap-1.5"
               >
                 <Landmark className="w-4 h-4" />
-                <span>+ Setor / Tarik</span>
+                <span>{t.depositWithdrawAction}</span>
               </button>
             </div>
 
@@ -211,7 +214,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   className="py-2 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5"
                 >
                   <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Chat WhatsApp</span>
+                  <span>{t.sendSummaryWa}</span>
                 </button>
               )}
 
@@ -220,7 +223,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 className="py-2 px-3 border border-red-200 hover:bg-red-50 text-red-700 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Hapus Nasabah</span>
+                <span>{t.deleteCustomerAction}</span>
               </button>
             </div>
           </div>

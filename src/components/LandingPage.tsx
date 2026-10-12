@@ -38,6 +38,7 @@ interface LandingPageProps {
   currency: CurrencyCode;
   onChangeCurrency: (code: CurrencyCode | null) => void;
   isCustomCurrency?: boolean;
+  onOpenAuth?: (mode: 'login' | 'register') => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
@@ -47,6 +48,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   currency,
   onChangeCurrency,
   isCustomCurrency = false,
+  onOpenAuth,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isCurrencyMenuOpen, setIsCurrencyMenuOpen] = useState(false);
@@ -214,6 +216,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </>
               )}
             </div>
+
+            {/* Tombol Masuk / Login */}
+            {onOpenAuth && (
+              <button
+                onClick={() => onOpenAuth('login')}
+                className="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                title="Masuk ke Akun Toko"
+              >
+                <span>Masuk</span>
+              </button>
+            )}
 
             {/* Primary CTA Button */}
             <button

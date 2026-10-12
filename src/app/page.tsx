@@ -41,6 +41,7 @@ import { CreditDetailModal } from '../components/CreditDetailModal';
 import { CustomerDetailModal } from '../components/CustomerDetailModal';
 import { DepositDetailModal } from '../components/DepositDetailModal';
 import { LandingPage } from '../components/LandingPage';
+import { AuthModal } from '../components/AuthModal';
 import { detectUserLanguage, saveUserLanguage, translations, Language } from '../lib/i18n';
 import {
   CurrencyCode,
@@ -76,6 +77,8 @@ export default function Home() {
 
   // Modal States
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [isNewCreditModalOpen, setIsNewCreditModalOpen] = useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
@@ -493,6 +496,41 @@ export default function Home() {
     localStorage.setItem('titenfin_view_mode', 'landing');
   };
 
+  const handleAuthSuccess = async (user: { email: string; name: string; token: string }) => {
+    setUserEmail(user.email);
+    localStorage.setItem('titenfin_user_email', user.email);
+    if (user.token) localStorage.setItem('titenfin_auth_token', user.token);
+
+    // Tarik data toko dari database MariaDB VPS untuk akun ini
+    try {
+      const res = await fetch(`/api/sync?email=${encodeURIComponent(user.email)}`);
+      const json = await res.json();
+      if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0)) {
+        setCustomers(json.customers);
+        setCredits(json.creditItems);
+        setPayments(json.creditPayments);
+        setDeposits(json.depositTxns);
+        if (json.initialCapital) setInitialCapital(json.initialCapital);
+        if (json.currency) {
+          setCurrency(json.currency as CurrencyCode);
+          setRuntimeCurrency(json.currency as CurrencyCode);
+        }
+        saveStorageData(
+          json.customers,
+          json.creditItems,
+          json.creditPayments,
+          json.depositTxns,
+          json.initialCapital || initialCapital
+        );
+      } else {
+        // Jika akun baru, sync data default saat ini ke cloud
+        syncToCloud(user.email, customers, credits, payments, deposits, initialCapital, currency);
+      }
+    } catch (e) {
+      console.warn('Gagal sync data setelah login', e);
+    }
+  };
+
   if (!isClient) {
     return <div className="min-h-screen bg-slate-900" />;
   }
@@ -509,6 +547,10 @@ export default function Home() {
         currency={currency}
         onChangeCurrency={handleChangeCurrency}
         isCustomCurrency={isCustomCurrency}
+        onOpenAuth={(mode) => {
+          setAuthModalMode(mode);
+          setIsAuthModalOpen(true);
+        }}
       />
     );
   }
@@ -531,6 +573,10 @@ export default function Home() {
         onOpenNewDeposit={() => setIsDepositModalOpen(true)}
         onOpenLanding={handleLogout}
         onLogout={handleLogout}
+        onOpenAuth={(mode) => {
+          setAuthModalMode(mode);
+          setIsAuthModalOpen(true);
+        }}
       />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-5 space-y-6">
@@ -1229,6 +1275,14 @@ export default function Home() {
         onExportBackup={handleExportBackup}
         onImportBackup={handleImportBackup}
         t={t}
+      />
+
+      {/* MODAL MASUK / DAFTAR (1-CLICK GOOGLE & EMAIL) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+        initialMode={authModalMode}
       />
 
       {/* MODAL DETAIL & AKSI CEPAT (SAAT JUDUL / NAMA DIKLIK) */}

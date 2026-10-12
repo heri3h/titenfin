@@ -19,6 +19,7 @@ interface HeaderProps {
   onOpenNewDeposit: () => void;
   onOpenLanding?: () => void;
   onLogout?: () => void;
+  onOpenAuth?: (mode: 'login' | 'register') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -36,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNewDeposit,
   onOpenLanding,
   onLogout,
+  onOpenAuth,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isCurrencyMenuOpen, setIsCurrencyMenuOpen] = useState(false);
@@ -250,9 +252,15 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </button>
 
-            {/* Tombol Status Sinkronisasi Email */}
+            {/* Tombol Status Sinkronisasi & Akun */}
             <button
-              onClick={onOpenSyncModal}
+              onClick={() => {
+                if (onOpenAuth && (!userEmail || userEmail === 'heritri@titenfin.id')) {
+                  onOpenAuth('login');
+                } else {
+                  onOpenSyncModal();
+                }
+              }}
               className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs flex items-center gap-1.5 transition-colors"
               title={t.syncModalTitle}
             >

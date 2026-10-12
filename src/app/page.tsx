@@ -579,6 +579,7 @@ export default function Home() {
             setAuthModalMode(mode);
             setIsAuthModalOpen(true);
           }}
+          userEmail={userEmail}
         />
 
         {/* MODAL MASUK / DAFTAR (1-CLICK GOOGLE & EMAIL) */}

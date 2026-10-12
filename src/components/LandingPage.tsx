@@ -39,6 +39,7 @@ interface LandingPageProps {
   onChangeCurrency: (code: CurrencyCode | null) => void;
   isCustomCurrency?: boolean;
   onOpenAuth?: (mode: 'login' | 'register') => void;
+  userEmail?: string;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
@@ -49,6 +50,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onChangeCurrency,
   isCustomCurrency = false,
   onOpenAuth,
+  userEmail = '',
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isCurrencyMenuOpen, setIsCurrencyMenuOpen] = useState(false);
@@ -56,13 +58,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const currentLang = LANGUAGE_OPTIONS.find((l) => l.code === language) || LANGUAGE_OPTIONS[0];
   const currentCurrencyObj = getCurrencyOption(currency);
 
+  const handlePrimaryAction = () => {
+    if (!userEmail && onOpenAuth) {
+      onOpenAuth('register');
+    } else {
+      onEnterApp();
+    }
+  };
+
+  const getPrimaryButtonLabel = () => {
+    if (userEmail) return t.openDashboard;
+    if (language === 'id') return 'Daftar Gratis';
+    if (language === 'jv') return 'Daftar Gratis';
+    return 'Sign Up Free';
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 selection:bg-emerald-500 selection:text-white font-sans antialiased">
       {/* 1. NAVBAR */}
       <nav className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           {/* Brand Logo */}
-          <div className="flex items-center gap-2 cursor-pointer" onClick={onEnterApp}>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={handlePrimaryAction}>
             <Logo size={36} color="#10b981" />
             <span className="font-black text-xl tracking-wider text-white">
               TITEN<span className="text-emerald-400">FIN</span>
@@ -217,8 +234,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               )}
             </div>
 
-            {/* Tombol Masuk / Login */}
-            {onOpenAuth && (
+            {/* Tombol Masuk / Login (Khusus bagi yang sudah memiliki akun) */}
+            {!userEmail && onOpenAuth && (
               <button
                 onClick={() => onOpenAuth('login')}
                 className="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1"
@@ -228,12 +245,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </button>
             )}
 
-            {/* Primary CTA Button */}
+            {/* Primary CTA Button: Jika belum login -> "Daftar Gratis" (tab register). Jika sudah login -> "Buka Dashboard" */}
             <button
-              onClick={onEnterApp}
+              onClick={handlePrimaryAction}
               className="px-3.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-lg text-xs font-black flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]"
             >
-              <span>{t.openDashboard}</span>
+              <span>{getPrimaryButtonLabel()}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -266,10 +283,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14">
             <button
-              onClick={onEnterApp}
+              onClick={handlePrimaryAction}
               className="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-sm font-black flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/25 transition-all hover:scale-105"
             >
-              <span>{t.heroCtaPrimary}</span>
+              <span>{userEmail ? t.openDashboard : (language === 'id' ? 'Daftar Sekarang — Gratis' : language === 'jv' ? 'Daftar Saiki — Gratis' : 'Get Started Free')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <a
@@ -356,7 +373,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 {t.simTotalPhysicalCash} <strong>{formatCurrency(17350000, currency)}</strong> {t.simTotalFormula}
               </span>
               <button
-                onClick={onEnterApp}
+                onClick={handlePrimaryAction}
                 className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 self-start sm:self-auto"
               >
                 <span>{t.simTrySystemBtn}</span>
@@ -548,10 +565,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           <div className="pt-4">
             <button
-              onClick={onEnterApp}
+              onClick={handlePrimaryAction}
               className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-base font-black inline-flex items-center gap-2.5 shadow-2xl shadow-emerald-500/30 transition-all hover:scale-105"
             >
-              <span>{t.ctaButton}</span>
+              <span>{userEmail ? t.openDashboard : (language === 'id' ? 'Daftar Sekarang — Gratis' : language === 'jv' ? 'Daftar Saiki — Gratis' : 'Get Started Free')}</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>

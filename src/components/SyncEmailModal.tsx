@@ -166,7 +166,7 @@ export const SyncEmailModal: React.FC<SyncEmailModalProps> = ({
 
           {/* Footer Info */}
           <div className="text-[11px] text-slate-400 text-center pt-1">
-            Status: Terenkripsi SSL/TLS 256-bit • ID: TF-PRO-{Date.now().toString().slice(-6)}
+            Status: Terenkripsi SSL/TLS 256-bit • ID: TF-{Date.now().toString().slice(-6)}
           </div>
         </div>
       </div>

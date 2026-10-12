@@ -55,18 +55,13 @@ export const Header: React.FC<HeaderProps> = ({
           <div
             className="flex items-center space-x-2.5 cursor-pointer hover:opacity-90 transition"
             onClick={onLogoClick || onOpenLanding}
-            title="TitenFin Pro Dashboard"
+            title="TitenFin Dashboard"
           >
             <Logo size={36} />
             <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-xl font-bold tracking-tight text-slate-900">
-                  Titen<span className="text-emerald-600">Fin</span>
-                </h1>
-                <span className="text-[10px] font-semibold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">
-                  Pro
-                </span>
-              </div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">
+                Titen<span className="text-emerald-600">Fin</span>
+              </h1>
               <p className="text-xs text-slate-500 hidden sm:block">
                 {t.appSlogan}
               </p>

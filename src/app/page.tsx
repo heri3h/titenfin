@@ -112,6 +112,41 @@ export default function Home() {
     if (savedMode === 'dashboard') {
       setViewMode('dashboard');
     }
+
+    // Background sync otomatis dengan database MariaDB di VPS
+    const targetEmail = savedEmail || 'heritri@titenfin.id';
+    fetch(`/api/sync?email=${encodeURIComponent(targetEmail)}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && (json.customers?.length > 0 || json.creditItems?.length > 0)) {
+          setCustomers(json.customers);
+          setCredits(json.creditItems);
+          setPayments(json.creditPayments);
+          setDeposits(json.depositTxns);
+          if (json.initialCapital) setInitialCapital(json.initialCapital);
+          saveStorageData(
+            json.customers,
+            json.creditItems,
+            json.creditPayments,
+            json.depositTxns,
+            json.initialCapital || data.initialCapital
+          );
+        } else if (json.success && (!json.customers || json.customers.length === 0) && data.customers.length > 0) {
+          // Jika di cloud VPS belum ada data tapi di lokal ada data awal, upload data lokal ke VPS
+          syncToCloud(
+            targetEmail,
+            data.customers,
+            data.creditItems,
+            data.creditPayments,
+            data.depositTxns,
+            data.initialCapital,
+            initialCurr
+          );
+        }
+      })
+      .catch(() => {
+        // Mode offline atau preview
+      });
   }, []);
 
   const handleChangeLanguage = (newLang: Language) => {
@@ -142,7 +177,36 @@ export default function Home() {
     }
   };
 
-  // Save changes to storage
+  // Helper sync ke Cloud MariaDB VPS
+  const syncToCloud = async (
+    email = userEmail,
+    newCust = customers,
+    newCred = credits,
+    newPay = payments,
+    newDep = deposits,
+    newCap = initialCapital,
+    newCurr = currency
+  ) => {
+    try {
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          currency: newCurr,
+          initialCapital: newCap,
+          customers: newCust,
+          creditItems: newCred,
+          creditPayments: newPay,
+          depositTxns: newDep,
+        }),
+      });
+    } catch (err) {
+      console.warn('Background sync deferred (offline atau server tidak terjangkau)', err);
+    }
+  };
+
+  // Save changes to storage & background sync ke cloud
   const syncAndSave = (
     newCust = customers,
     newCred = credits,
@@ -156,6 +220,7 @@ export default function Home() {
     setDeposits(newDep);
     setInitialCapital(newCap);
     saveStorageData(newCust, newCred, newPay, newDep, newCap);
+    syncToCloud(userEmail, newCust, newCred, newPay, newDep, newCap, currency);
   };
 
   // Helper untuk kirim pesan WhatsApp
@@ -1156,9 +1221,10 @@ export default function Home() {
         isOpen={isSyncModalOpen}
         onClose={() => setIsSyncModalOpen(false)}
         userEmail={userEmail}
-        onSaveEmail={(email) => {
+        onSaveEmail={async (email) => {
           setUserEmail(email);
           localStorage.setItem('titenfin_user_email', email);
+          await syncToCloud(email, customers, credits, payments, deposits, initialCapital, currency);
         }}
         onExportBackup={handleExportBackup}
         onImportBackup={handleImportBackup}

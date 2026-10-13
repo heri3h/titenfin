@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, UserPlus, Phone, MapPin, Check } from 'lucide-react';
+import { X, UserPlus, Phone, MapPin, Check, Contact } from 'lucide-react';
 import { Customer } from '../types';
 import { TranslationDictionary } from '../lib/i18n';
 
@@ -24,6 +24,46 @@ export const CustomerModal: React.FC<CustomerModalProps> = ({
   const [notes, setNotes] = useState<string>('');
 
   if (!isOpen) return null;
+
+  const handlePickContact = async () => {
+    // Check if Contact Picker API is supported in this browser
+    if (
+      typeof window !== 'undefined' &&
+      'contacts' in navigator &&
+      'ContactsManager' in window &&
+      typeof (navigator as any).contacts?.select === 'function'
+    ) {
+      try {
+        const props = ['name', 'tel'];
+        const contacts = await (navigator as any).contacts.select(props, { multiple: false });
+        if (contacts && contacts.length > 0) {
+          const c = contacts[0];
+          if (c.tel && c.tel.length > 0) {
+            // Clean phone number: keep digits and convert +62 to 08
+            const rawTel = c.tel[0].trim();
+            let clean = rawTel.replace(/[^\d+]/g, '');
+            if (clean.startsWith('+62')) {
+              clean = '0' + clean.slice(3);
+            } else if (clean.startsWith('62')) {
+              clean = '0' + clean.slice(2);
+            }
+            setPhone(clean);
+          }
+          // If name is empty, auto-fill contact name
+          if (c.name && c.name.length > 0 && !name.trim()) {
+            setName(c.name[0]);
+          }
+        }
+      } catch (err: any) {
+        // AbortError is thrown when user closes without selecting
+        if (err?.name !== 'AbortError') {
+          console.warn('Contact picker error:', err);
+        }
+      }
+    } else {
+      alert(t.pickContactUnsupported);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,14 +112,23 @@ export const CustomerModal: React.FC<CustomerModalProps> = ({
           <div className="space-y-1">
             <label className="block text-xs font-semibold text-slate-700">{t.phoneLabel}</label>
             <div className="relative">
-              <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="tel"
                 placeholder="0812xxxx"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                className="w-full pl-9 pr-10 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
               />
+              <button
+                type="button"
+                onClick={handlePickContact}
+                title={t.pickContactTooltip}
+                aria-label={t.pickContactTooltip}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+              >
+                <Contact className="w-4 h-4" />
+              </button>
             </div>
           </div>
 

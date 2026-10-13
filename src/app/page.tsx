@@ -1392,6 +1392,16 @@ export default function Home() {
         t={t}
       />
 
+      {/* Footer Link & Legal */}
+      <footer className="pb-24 pt-6 text-center text-[11px] text-slate-400 space-y-1">
+        <p>© 2026 TitenFin by Mbelik Dev • Pembukuan Kredit & Kas Titipan</p>
+        <div className="flex items-center justify-center gap-3">
+          <a href="/privacy" className="hover:text-emerald-600 underline transition font-medium">
+            Kebijakan Privasi & Perlindungan Data
+          </a>
+        </div>
+      </footer>
+
       {/* Bar Navigasi Bawah & Menu Aksi Cepat (Mobile-Friendly & Luwes) */}
       <BottomNav
         activeTab={activeTab}

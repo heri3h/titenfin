@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
+import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister';
 
 export const metadata: Metadata = {
   title: 'TitenFin - Cermat Kelola Kredit Barang & Kas Titipan',
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className="bg-slate-50 min-h-screen text-slate-900 antialiased selection:bg-emerald-500 selection:text-white">
+        <ServiceWorkerRegister />
         {children}
         {/* Google Identity Services 1-Click Library */}
         <Script

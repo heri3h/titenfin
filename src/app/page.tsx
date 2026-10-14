@@ -513,6 +513,9 @@ export default function Home() {
   const t = translations[language];
 
   const handleLogout = () => {
+    if (typeof window !== 'undefined' && !window.confirm(t.confirmLogout)) {
+      return;
+    }
     setUserEmail('');
     localStorage.removeItem('titenfin_user_email');
     localStorage.removeItem('titenfin_auth_token');

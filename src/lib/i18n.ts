@@ -193,6 +193,7 @@ export interface TranslationDictionary {
   // Alerts & Messages
   confirmDeleteCredit: string;
   confirmDeleteCustomer: string;
+  confirmLogout: string;
   cannotDeleteCustomerWithDebt: string;
   noPhoneAlert: string;
 }
@@ -348,6 +349,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "Pulihkan dari File JSON",
     confirmDeleteCredit: 'Apakah Anda yakin ingin menghapus catatan akad kredit barang ini?',
     confirmDeleteCustomer: 'Hapus kontak nasabah ini?',
+    confirmLogout: "Apakah Anda yakin ingin keluar dari akun TitenFin?",
     cannotDeleteCustomerWithDebt: 'Nasabah tidak dapat dihapus karena masih memiliki tagihan kredit aktif atau saldo titipan uang!',
     noPhoneAlert: 'Nomor WhatsApp belum terdaftar!',
   },
@@ -502,6 +504,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "Pulihake saka Berkas JSON",
     confirmDeleteCredit: 'Opo sampeyan yakin arep mbusak catetan akad kredit barang iki?',
     confirmDeleteCustomer: 'Busek kontak nasabah iki?',
+    confirmLogout: "Opo sampeyan yakin arep metu seko akun TitenFin?",
     cannotDeleteCustomerWithDebt: 'Nasabah ora keno dibusek amarga isih duwe utang kredit utawa saldo dhuwit titipan!',
     noPhoneAlert: 'Nomer WhatsApp durung kadaptar!',
   },
@@ -656,6 +659,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "Restore from JSON File",
     confirmDeleteCredit: 'Are you sure you want to delete this credit agreement record?',
     confirmDeleteCustomer: 'Delete this customer record?',
+    confirmLogout: "Are you sure you want to log out of your TitenFin account?",
     cannotDeleteCustomerWithDebt: 'Customer cannot be deleted while they have active debt or custody fund balance!',
     noPhoneAlert: 'WhatsApp phone number not registered!',
   },
@@ -810,6 +814,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "从 JSON 文件恢复",
     confirmDeleteCredit: '确定要删除此笔商品分期合同记录吗？',
     confirmDeleteCustomer: '确定删除此客户档案吗？',
+    confirmLogout: "您确定要退出 TitenFin 账户吗？",
     cannotDeleteCustomerWithDebt: '无法删除该客户，因为其仍有未结清分期或委托金余额！',
     noPhoneAlert: '客户手机号码未登记！',
   },
@@ -964,6 +969,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "JSON फ़ाइल से पुनर्स्थापित करें",
     confirmDeleteCredit: 'क्या आप इस किस्त खाते को हटाना चाहते हैं?',
     confirmDeleteCustomer: 'इस ग्राहक को सूची से हटाएं?',
+    confirmLogout: "क्या आप वाकई अपने TitenFin खाते से लॉग आउट करना चाहते हैं?",
     cannotDeleteCustomerWithDebt: 'ग्राहक को नहीं हटाया जा सकता क्योंकि बकाया या अमानत शेष है!',
     noPhoneAlert: 'व्हाट्सएप फोन नंबर दर्ज नहीं है!',
   },
@@ -1118,6 +1124,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "Restaurar desde Archivo JSON",
     confirmDeleteCredit: '¿Está seguro de eliminar este registro de crédito?',
     confirmDeleteCustomer: '¿Eliminar a este cliente?',
+    confirmLogout: "¿Está seguro de que desea cerrar sesión en su cuenta de TitenFin?",
     cannotDeleteCustomerWithDebt: '¡No se puede eliminar el cliente porque aún tiene saldo pendiente o dinero en custodia!',
     noPhoneAlert: '¡Número de WhatsApp no registrado!',
   },
@@ -1272,6 +1279,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "استعادة من ملف JSON",
     confirmDeleteCredit: 'هل أنت متأكد من حذف عقد التقسيط هذا؟',
     confirmDeleteCustomer: 'حذف بيانات هذا العميل نهائياً؟',
+    confirmLogout: "هل أنت متأكد من تسجيل الخروج من حساب TitenFin الخاص بك؟",
     cannotDeleteCustomerWithDebt: 'لا يمكن حذف العميل لوجود مديونية نشطة أو رصيد أمانة متبقي!',
     noPhoneAlert: 'رقم الواتساب غير مسجل!',
   },
@@ -1426,6 +1434,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "JSON ফাইল থেকে পুনরুদ্ধার করুন",
     confirmDeleteCredit: 'আপনি কি এই কিস্তি চুক্তির রেকর্ডটি মুছে ফেলতে চান?',
     confirmDeleteCustomer: 'এই গ্রাহককে মুছে ফেলতে চান?',
+    confirmLogout: "আপনি কি নিশ্চিত যে আপনি আপনার TitenFin অ্যাকাউন্ট থেকে লগ আউট করতে চান?",
     cannotDeleteCustomerWithDebt: 'গ্রাহককে মুছে ফেলা যাবে না কারণ বাকি পাওনা বা আমানতের ব্যালেন্স রয়েছে!',
     noPhoneAlert: 'হোয়াটসঅ্যাপ নম্বর নিবন্ধিত নেই!',
   },
@@ -1580,6 +1589,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "Restaurar de Arquivo JSON",
     confirmDeleteCredit: 'Tem certeza de que deseja excluir este crediário?',
     confirmDeleteCustomer: 'Excluir este cliente do cadastro?',
+    confirmLogout: "Tem certeza de que deseja sair da sua conta TitenFin?",
     cannotDeleteCustomerWithDebt: 'Não é possível excluir o cliente pois há dívidas ativas ou saldo guardado!',
     noPhoneAlert: 'Número de WhatsApp não cadastrado!',
   },
@@ -1734,6 +1744,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "Восстановить из файла JSON",
     confirmDeleteCredit: 'Вы уверены, что хотите удалить этот договор?',
     confirmDeleteCustomer: 'Удалить этого клиента?',
+    confirmLogout: "Вы уверены, что хотите выйти из своей учетной записи TitenFin?",
     cannotDeleteCustomerWithDebt: 'Невозможно удалить клиента с непогашенным долгом или средствами на хранении!',
     noPhoneAlert: 'Номер WhatsApp не указан!',
   },
@@ -1888,6 +1899,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "JSON فائل سے بحال کریں",
     confirmDeleteCredit: 'کیا آپ واقعی اس قسط معاہدے کو ختم کرنا چاہتے ہیں؟',
     confirmDeleteCustomer: 'اس گاہک کو فہرست سے حذف کریں؟',
+    confirmLogout: "کیا آپ واقعی اپنے TitenFin اکاؤنٹ سے لاگ آؤٹ کرنا چاہتے ہیں؟",
     cannotDeleteCustomerWithDebt: 'گاہک کو حذف نہیں کیا جا سکتا کیونکہ اس پر بقایا جات یا امانت بیلنس موجود ہے!',
     noPhoneAlert: 'واٹس ایپ فون نمبر درج نہیں ہے!',
   },
@@ -2042,6 +2054,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     restoreBackupBtn: "JSONファイルから復元",
     confirmDeleteCredit: 'この分割払い契約を削除してもよろしいですか？',
     confirmDeleteCustomer: 'この顧客を台帳から削除しますか？',
+    confirmLogout: "TitenFinアカウントからログアウトしてもよろしいですか？",
     cannotDeleteCustomerWithDebt: '未払い残高または預かり金がある顧客は削除できません！',
     noPhoneAlert: 'WhatsApp電話番号が未登録です！',
   },

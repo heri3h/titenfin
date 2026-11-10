@@ -85,8 +85,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </span>
               <input
                 type="number"
-                min="1000"
-                step="1000"
+                min="1"
+                step="any"
                 value={amount || ''}
                 onChange={(e) => setAmount(Number(e.target.value))}
                 placeholder="250000"

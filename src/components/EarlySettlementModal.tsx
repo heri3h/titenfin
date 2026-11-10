@@ -96,7 +96,7 @@ export const EarlySettlementModal: React.FC<EarlySettlementModalProps> = ({
                 type="number"
                 min="0"
                 max={currentRemaining}
-                step="5000"
+                step="any"
                 value={discount || ''}
                 onChange={(e) => setDiscount(Number(e.target.value))}
                 placeholder="0"

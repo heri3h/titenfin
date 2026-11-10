@@ -1199,7 +1199,8 @@ export default function Home() {
                   <span className="font-bold text-slate-700">Rp</span>
                   <input
                     type="number"
-                    step="1000000"
+                    min="0"
+                    step="any"
                     value={initialCapital}
                     onChange={(e) => {
                       const val = Number(e.target.value);

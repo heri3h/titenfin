@@ -144,8 +144,8 @@ export const DepositModal: React.FC<DepositModalProps> = ({
               </span>
               <input
                 type="number"
-                min="1000"
-                step="5000"
+                min="1"
+                step="any"
                 value={amount || ''}
                 onChange={(e) => setAmount(Number(e.target.value))}
                 placeholder="500000"

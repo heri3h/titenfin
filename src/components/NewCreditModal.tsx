@@ -149,8 +149,8 @@ export const NewCreditModal: React.FC<NewCreditModalProps> = ({
               <label className="block text-xs font-semibold text-slate-700">{t.capitalPriceLabel} (Rp)</label>
               <input
                 type="number"
-                min="1000"
-                step="1000"
+                min="1"
+                step="any"
                 placeholder="2000000"
                 value={capitalPrice || ''}
                 onChange={(e) => setCapitalPrice(Number(e.target.value))}
@@ -182,7 +182,7 @@ export const NewCreditModal: React.FC<NewCreditModalProps> = ({
               <input
                 type="number"
                 min="0"
-                step={profitType === 'percent' ? '1' : '1000'}
+                step="any"
                 value={profitValue || ''}
                 onChange={(e) => setProfitValue(Number(e.target.value))}
                 className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
@@ -198,7 +198,7 @@ export const NewCreditModal: React.FC<NewCreditModalProps> = ({
               <input
                 type="number"
                 min="0"
-                step="5000"
+                step="any"
                 value={downPayment || ''}
                 onChange={(e) => setDownPayment(Number(e.target.value))}
                 placeholder="0"

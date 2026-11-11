@@ -123,14 +123,10 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
     }
 
     let detailMsg = '';
-    if (data.type === 'installment') {
-      detailMsg = `Barang: *${data.itemName || '-'}*\nNominal Cicilan: *${formatRupiah(data.amount)}*\nSisa Tagihan: *${
-        data.remainingAmount !== undefined
-          ? data.remainingAmount === 0
-            ? 'Rp 0 (LUNAS 🎉)'
-            : formatRupiah(data.remainingAmount)
-          : '-'
-      }*`;
+    if (data.type === 'installment' || data.type === 'credit_payment') {
+      detailMsg = `Barang: *${data.itemName || '-'}*\nNominal Cicilan: *${formatRupiah(data.amount)}*${
+        data.remainingAmount === 0 ? '\nStatus: *LUNAS SELESAI 🎉*' : ''
+      }`;
     } else if (data.type === 'settlement') {
       detailMsg = `Barang: *${data.itemName || '-'}*\nDiskon Potongan: *${formatRupiah(data.discount || 0)}*\nTotal Pelunasan: *${formatRupiah(data.amount)}*\nStatus: *LUNAS SELESAI 🎉*`;
     } else if (data.type === 'deposit') {
@@ -319,12 +315,12 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
               </div>
             )}
 
-            {/* Sisa Tagihan (jika kredit) */}
-            {data.remainingAmount !== undefined && (
-              <div className="flex items-center justify-between py-1 bg-slate-50 px-2.5 rounded-lg border border-slate-100">
-                <span className="text-slate-500 font-medium text-[11px]">Sisa Tagihan</span>
-                <span className={`font-black text-[12px] ${data.remainingAmount === 0 ? 'text-emerald-700' : 'text-slate-900'}`}>
-                  {data.remainingAmount === 0 ? 'Rp 0 (LUNAS 🎉)' : formatRupiah(data.remainingAmount)}
+            {/* Status Lunas jika akad selesai */}
+            {(data.remainingAmount === 0 || data.type === 'settlement') && (
+              <div className="flex items-center justify-between py-1 bg-emerald-50 px-2.5 rounded-lg border border-emerald-100">
+                <span className="text-emerald-700 font-medium text-[11px]">Status</span>
+                <span className="font-bold text-emerald-700 text-[11px]">
+                  LUNAS SELESAI 🎉
                 </span>
               </div>
             )}

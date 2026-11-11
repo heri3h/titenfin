@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Landmark, ArrowDownLeft, ArrowUpRight, Check, AlertCircle } from 'lucide-react';
 import { Customer, DepositType } from '../types';
 import { formatRupiah } from '../lib/storage';
@@ -13,6 +13,7 @@ interface DepositModalProps {
   getCustomerBalance: (custId: string) => number;
   onSubmit: (customerId: string, type: DepositType, amount: number, date: string, notes: string, sendWa: boolean) => void;
   onAddNewCustomer: () => void;
+  initialCustomerId?: string;
   t: TranslationDictionary;
 }
 
@@ -23,14 +24,25 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   getCustomerBalance,
   onSubmit,
   onAddNewCustomer,
+  initialCustomerId,
   t,
 }) => {
-  const [customerId, setCustomerId] = useState<string>(customers[0]?.id || '');
+  const [customerId, setCustomerId] = useState<string>(initialCustomerId || customers[0]?.id || '');
   const [type, setType] = useState<DepositType>('deposit');
   const [amount, setAmount] = useState<number>(500000);
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState<string>('');
   const [sendWa, setSendWa] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (isOpen && customers.length > 0) {
+      if (initialCustomerId && customers.some(c => c.id === initialCustomerId)) {
+        setCustomerId(initialCustomerId);
+      } else if (!customerId || !customers.some(c => c.id === customerId)) {
+        setCustomerId(customers[0].id);
+      }
+    }
+  }, [isOpen, initialCustomerId, customers, customerId]);
 
   if (!isOpen) return null;
 

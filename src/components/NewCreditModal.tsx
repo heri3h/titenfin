@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Calculator, Calendar, FileText, Check } from 'lucide-react';
 import { Customer, InstallmentPeriod, CreditItem } from '../types';
 import { formatRupiah } from '../lib/storage';
@@ -12,6 +12,7 @@ interface NewCreditModalProps {
   onClose: () => void;
   onSubmit: (newCredit: Omit<CreditItem, 'id' | 'createdAt' | 'status'>) => void;
   onAddNewCustomer: () => void;
+  initialCustomerId?: string;
   t: TranslationDictionary;
 }
 
@@ -21,9 +22,10 @@ export const NewCreditModal: React.FC<NewCreditModalProps> = ({
   onClose,
   onSubmit,
   onAddNewCustomer,
+  initialCustomerId,
   t,
 }) => {
-  const [customerId, setCustomerId] = useState<string>(customers[0]?.id || '');
+  const [customerId, setCustomerId] = useState<string>(initialCustomerId || customers[0]?.id || '');
   const [itemName, setItemName] = useState<string>('');
   const [capitalPrice, setCapitalPrice] = useState<number>(0);
   const [profitType, setProfitType] = useState<'nominal' | 'percent'>('nominal');
@@ -34,6 +36,16 @@ export const NewCreditModal: React.FC<NewCreditModalProps> = ({
   const [startDate, setStartDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [collateralNotes, setCollateralNotes] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
+
+  useEffect(() => {
+    if (isOpen && customers.length > 0) {
+      if (initialCustomerId && customers.some(c => c.id === initialCustomerId)) {
+        setCustomerId(initialCustomerId);
+      } else if (!customerId || !customers.some(c => c.id === customerId)) {
+        setCustomerId(customers[0].id);
+      }
+    }
+  }, [isOpen, initialCustomerId, customers, customerId]);
 
   if (!isOpen) return null;
 

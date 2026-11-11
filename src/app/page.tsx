@@ -83,6 +83,7 @@ export default function Home() {
   const [isNewCreditModalOpen, setIsNewCreditModalOpen] = useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [selectedCustomerIdForAction, setSelectedCustomerIdForAction] = useState<string>('');
   
   const [selectedCreditForPayment, setSelectedCreditForPayment] = useState<CreditItem | null>(null);
   const [selectedCreditForEarlySettlement, setSelectedCreditForEarlySettlement] = useState<CreditItem | null>(null);
@@ -329,6 +330,7 @@ export default function Home() {
     };
     syncAndSave(customers, [newCredit, ...credits], payments, deposits);
     setIsNewCreditModalOpen(false);
+    setSelectedCustomerIdForAction('');
   };
 
   // HANDLER: Titip Uang (Setor / Tarik)
@@ -360,6 +362,7 @@ export default function Home() {
     const updatedDeposits = [newTxn, ...deposits];
     syncAndSave(customers, credits, payments, updatedDeposits);
     setIsDepositModalOpen(false);
+    setSelectedCustomerIdForAction('');
 
     if (sendWa && cust.phone) {
       const typeLabel = type === 'deposit' ? 'SETORAN TITIPAN (+)' : 'PENARIKAN TITIPAN (-)';
@@ -633,8 +636,14 @@ export default function Home() {
         isCustomCurrency={isCustomCurrency}
         t={t}
         onOpenSyncModal={() => setIsSyncModalOpen(true)}
-        onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
-        onOpenNewDeposit={() => setIsDepositModalOpen(true)}
+        onOpenNewCredit={() => {
+          setSelectedCustomerIdForAction('');
+          setIsNewCreditModalOpen(true);
+        }}
+        onOpenNewDeposit={() => {
+          setSelectedCustomerIdForAction('');
+          setIsDepositModalOpen(true);
+        }}
         onLogoClick={() => {
           setActiveTab('credits');
           setSearchQuery('');
@@ -766,7 +775,10 @@ export default function Home() {
                 </div>
 
                 <button
-                  onClick={() => setIsNewCreditModalOpen(true)}
+                  onClick={() => {
+                    setSelectedCustomerIdForAction('');
+                    setIsNewCreditModalOpen(true);
+                  }}
                   className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -1308,7 +1320,11 @@ export default function Home() {
       <NewCreditModal
         customers={customers}
         isOpen={isNewCreditModalOpen}
-        onClose={() => setIsNewCreditModalOpen(false)}
+        initialCustomerId={selectedCustomerIdForAction}
+        onClose={() => {
+          setIsNewCreditModalOpen(false);
+          setSelectedCustomerIdForAction('');
+        }}
         onSubmit={handleCreateCredit}
         onAddNewCustomer={() => {
           setIsNewCreditModalOpen(false);
@@ -1320,7 +1336,11 @@ export default function Home() {
       <DepositModal
         customers={customers}
         isOpen={isDepositModalOpen}
-        onClose={() => setIsDepositModalOpen(false)}
+        initialCustomerId={selectedCustomerIdForAction}
+        onClose={() => {
+          setIsDepositModalOpen(false);
+          setSelectedCustomerIdForAction('');
+        }}
         getCustomerBalance={(id) => getCustomerDepositBalance(id, deposits)}
         onSubmit={handleDepositMutation}
         onAddNewCustomer={() => {
@@ -1380,8 +1400,14 @@ export default function Home() {
         deposits={deposits}
         isOpen={!!selectedCustomerForDetail}
         onClose={() => setSelectedCustomerForDetail(null)}
-        onNewCreditForCustomer={() => setIsNewCreditModalOpen(true)}
-        onNewDepositForCustomer={() => setIsDepositModalOpen(true)}
+        onNewCreditForCustomer={(custId) => {
+          setSelectedCustomerIdForAction(custId);
+          setIsNewCreditModalOpen(true);
+        }}
+        onNewDepositForCustomer={(custId) => {
+          setSelectedCustomerIdForAction(custId);
+          setIsDepositModalOpen(true);
+        }}
         onSelectCreditDetail={(cred) => setSelectedCreditForDetail(cred)}
         onDeleteCustomer={handleDeleteCustomer}
         t={t}
@@ -1392,7 +1418,10 @@ export default function Home() {
         deposits={deposits}
         isOpen={!!selectedDepositCustomerForDetail}
         onClose={() => setSelectedDepositCustomerForDetail(null)}
-        onOpenDepositAction={() => setIsDepositModalOpen(true)}
+        onOpenDepositAction={(custId) => {
+          setSelectedCustomerIdForAction(custId);
+          setIsDepositModalOpen(true);
+        }}
         t={t}
       />
 
@@ -1410,8 +1439,14 @@ export default function Home() {
       <BottomNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenNewCredit={() => setIsNewCreditModalOpen(true)}
-        onOpenDeposit={() => setIsDepositModalOpen(true)}
+        onOpenNewCredit={() => {
+          setSelectedCustomerIdForAction('');
+          setIsNewCreditModalOpen(true);
+        }}
+        onOpenDeposit={() => {
+          setSelectedCustomerIdForAction('');
+          setIsDepositModalOpen(true);
+        }}
         onOpenNewCustomer={() => setIsCustomerModalOpen(true)}
         onLogout={handleLogout}
         activeCreditsCount={activeCredits.length}

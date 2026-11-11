@@ -21,6 +21,7 @@ import { toPng, toBlob } from 'html-to-image';
 import { ReceiptData } from '../types';
 import { formatRupiah, openWhatsApp } from '../lib/storage';
 import { TranslationDictionary } from '../lib/i18n';
+import { Logo } from './Logo';
 
 interface ReceiptModalProps {
   isOpen: boolean;
@@ -200,16 +201,24 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
             <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-white/5 pointer-events-none" />
 
-            <div className="flex items-center justify-center gap-1.5 mb-2">
-              <div className="w-6 h-6 rounded-lg bg-white/20 backdrop-blur-xs flex items-center justify-center text-xs font-black tracking-tighter text-emerald-300 border border-white/20">
-                T
+            {/* Logo Resmi TitenFin & Brand Header */}
+            <div className="flex items-center justify-center gap-2.5 mb-3">
+              <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-lg shadow-emerald-950/20 shrink-0 border border-emerald-100">
+                <Logo size={28} color="#059669" />
               </div>
-              <span className="font-extrabold tracking-wider text-xs text-white uppercase">
-                TitenFin
-              </span>
-              <span className="text-[10px] text-emerald-300 bg-white/10 px-1.5 py-0.5 rounded-full font-medium">
-                e-Receipt
-              </span>
+              <div className="text-left">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-black tracking-tight text-lg text-white leading-none">
+                    Titen<span className="text-emerald-300">Fin</span>
+                  </span>
+                  <span className="text-[9px] text-emerald-950 bg-emerald-200 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                    e-Receipt
+                  </span>
+                </div>
+                <span className="text-[10px] text-emerald-200/90 font-medium block leading-tight mt-0.5">
+                  Pembukuan Kredit & Kas Titipan
+                </span>
+              </div>
             </div>
 
             {/* Success Checkmark Circle */}
@@ -341,14 +350,18 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
             )}
 
             {/* Footer Resmi Keaslian Dokumen */}
-            <div className="pt-3 border-t border-slate-100 text-center space-y-1">
-              <div className="flex items-center justify-center gap-1 text-[10px] text-slate-400">
+            <div className="pt-3 border-t border-slate-100 text-center space-y-1.5">
+              <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-500">
+                <Logo size={14} color="#059669" />
+                <span className="font-semibold text-slate-700">TitenFin Official Receipt</span>
+                <span className="text-slate-300">•</span>
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="font-medium">
-                  {t.receiptOfficialNotice || 'Bukti transaksi sah & terverifikasi resmi oleh TitenFin'}
-                </span>
+                <span>Terverifikasi Sah</span>
               </div>
-              <div className="flex justify-center gap-1 opacity-20 pt-1">
+              <p className="text-[9px] text-slate-400">
+                {t.receiptOfficialNotice || 'Bukti transaksi sah & terverifikasi resmi oleh TitenFin'}
+              </p>
+              <div className="flex justify-center gap-1 opacity-20 pt-0.5">
                 <div className="h-4 w-1 bg-slate-800" />
                 <div className="h-4 w-2 bg-slate-800" />
                 <div className="h-4 w-0.5 bg-slate-800" />

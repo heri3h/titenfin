@@ -196,6 +196,17 @@ export interface TranslationDictionary {
   confirmLogout: string;
   cannotDeleteCustomerWithDebt: string;
   noPhoneAlert: string;
+
+  // Receipt / Kwitansi
+  receiptTitle: string;
+  receiptSubtitle: string;
+  receiptRefNo: string;
+  receiptShareBtn: string;
+  receiptDownloadBtn: string;
+  receiptPrintBtn: string;
+  receiptCloseBtn: string;
+  receiptOfficialNotice: string;
+  viewReceiptBtn: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -352,6 +363,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "Apakah Anda yakin ingin keluar dari akun TitenFin?",
     cannotDeleteCustomerWithDebt: 'Nasabah tidak dapat dihapus karena masih memiliki tagihan kredit aktif atau saldo titipan uang!',
     noPhoneAlert: 'Nomor WhatsApp belum terdaftar!',
+    receiptTitle: "Bukti Transaksi",
+    receiptSubtitle: "Transaksi Berhasil",
+    receiptRefNo: "No. Referensi",
+    receiptShareBtn: "Bagikan Bukti",
+    receiptDownloadBtn: "Simpan Gambar",
+    receiptPrintBtn: "Cetak",
+    receiptCloseBtn: "Tutup",
+    receiptOfficialNotice: "Bukti transaksi ini sah dan diterbitkan resmi oleh sistem TitenFin.",
+    viewReceiptBtn: "Lihat Resi",
   },
 
   jv: {
@@ -507,6 +527,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "Opo sampeyan yakin arep metu seko akun TitenFin?",
     cannotDeleteCustomerWithDebt: 'Nasabah ora keno dibusek amarga isih duwe utang kredit utawa saldo dhuwit titipan!',
     noPhoneAlert: 'Nomer WhatsApp durung kadaptar!',
+    receiptTitle: "Bukti Transaksi",
+    receiptSubtitle: "Transaksi Kasembadan",
+    receiptRefNo: "No. Referensi",
+    receiptShareBtn: "Bagekake Bukti",
+    receiptDownloadBtn: "Simpen Gambar",
+    receiptPrintBtn: "Cithak",
+    receiptCloseBtn: "Tutup",
+    receiptOfficialNotice: "Bukti transaksi iki sah lan diterbitake resmi dening sistem TitenFin.",
+    viewReceiptBtn: "Deleng Resi",
   },
 
   en: {
@@ -662,6 +691,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "Are you sure you want to log out of your TitenFin account?",
     cannotDeleteCustomerWithDebt: 'Customer cannot be deleted while they have active debt or custody fund balance!',
     noPhoneAlert: 'WhatsApp phone number not registered!',
+    receiptTitle: "Transaction Receipt",
+    receiptSubtitle: "Transaction Successful",
+    receiptRefNo: "Ref Number",
+    receiptShareBtn: "Share Receipt",
+    receiptDownloadBtn: "Save Image",
+    receiptPrintBtn: "Print",
+    receiptCloseBtn: "Close",
+    receiptOfficialNotice: "This transaction receipt is valid and officially issued by TitenFin.",
+    viewReceiptBtn: "View Receipt",
   },
 
   zh: {
@@ -817,6 +855,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "您确定要退出 TitenFin 账户吗？",
     cannotDeleteCustomerWithDebt: '无法删除该客户，因为其仍有未结清分期或委托金余额！',
     noPhoneAlert: '客户手机号码未登记！',
+    receiptTitle: "交易收据",
+    receiptSubtitle: "交易成功",
+    receiptRefNo: "参考编号",
+    receiptShareBtn: "分享收据",
+    receiptDownloadBtn: "保存图片",
+    receiptPrintBtn: "打印",
+    receiptCloseBtn: "关闭",
+    receiptOfficialNotice: "此收据有效且由 TitenFin 系统正式发布。",
+    viewReceiptBtn: "查看收据",
   },
 
   hi: {
@@ -972,6 +1019,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "क्या आप वाकई अपने TitenFin खाते से लॉग आउट करना चाहते हैं?",
     cannotDeleteCustomerWithDebt: 'ग्राहक को नहीं हटाया जा सकता क्योंकि बकाया या अमानत शेष है!',
     noPhoneAlert: 'व्हाट्सएप फोन नंबर दर्ज नहीं है!',
+    receiptTitle: "लेनदेन रसीद",
+    receiptSubtitle: "लेनदेन सफल",
+    receiptRefNo: "संदर्भ संख्या",
+    receiptShareBtn: "रसीद साझा करें",
+    receiptDownloadBtn: "छवि सहेजें",
+    receiptPrintBtn: "प्रिंट करें",
+    receiptCloseBtn: "बंद करें",
+    receiptOfficialNotice: "यह रसीद मान्य है और आधिकारिक तौर पर TitenFin द्वारा जारी की गई है।",
+    viewReceiptBtn: "रसीद देखें",
   },
 
   es: {
@@ -1127,6 +1183,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "¿Está seguro de que desea cerrar sesión en su cuenta de TitenFin?",
     cannotDeleteCustomerWithDebt: '¡No se puede eliminar el cliente porque aún tiene saldo pendiente o dinero en custodia!',
     noPhoneAlert: '¡Número de WhatsApp no registrado!',
+    receiptTitle: "Comprobante de Transacción",
+    receiptSubtitle: "Transacción Exitosa",
+    receiptRefNo: "No. de Referencia",
+    receiptShareBtn: "Compartir Comprobante",
+    receiptDownloadBtn: "Guardar Imagen",
+    receiptPrintBtn: "Imprimir",
+    receiptCloseBtn: "Cerrar",
+    receiptOfficialNotice: "Este recibo es válido y emitido oficialmente por TitenFin.",
+    viewReceiptBtn: "Ver Recibo",
   },
 
   ar: {
@@ -1282,6 +1347,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "هل أنت متأكد من تسجيل الخروج من حساب TitenFin الخاص بك؟",
     cannotDeleteCustomerWithDebt: 'لا يمكن حذف العميل لوجود مديونية نشطة أو رصيد أمانة متبقي!',
     noPhoneAlert: 'رقم الواتساب غير مسجل!',
+    receiptTitle: "إيصال المعاملة",
+    receiptSubtitle: "تمت المعاملة بنجاح",
+    receiptRefNo: "رقم المرجع",
+    receiptShareBtn: "مشاركة الإيصال",
+    receiptDownloadBtn: "حفظ الصورة",
+    receiptPrintBtn: "طباعة",
+    receiptCloseBtn: "إغلاق",
+    receiptOfficialNotice: "هذا الإيصال صالح وصادر رسمياً من نظام TitenFin.",
+    viewReceiptBtn: "عرض الإيصال",
   },
 
   bn: {
@@ -1437,6 +1511,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "আপনি কি নিশ্চিত যে আপনি আপনার TitenFin অ্যাকাউন্ট থেকে লগ আউট করতে চান?",
     cannotDeleteCustomerWithDebt: 'গ্রাহককে মুছে ফেলা যাবে না কারণ বাকি পাওনা বা আমানতের ব্যালেন্স রয়েছে!',
     noPhoneAlert: 'হোয়াটসঅ্যাপ নম্বর নিবন্ধিত নেই!',
+    receiptTitle: "লেনদেনের রসিদ",
+    receiptSubtitle: "লেনদেন সফল হয়েছে",
+    receiptRefNo: "রেফারেন্স নম্বর",
+    receiptShareBtn: "রসিদ শেয়ার করুন",
+    receiptDownloadBtn: "ছবি সংরক্ষণ করুন",
+    receiptPrintBtn: "প্রিন্ট করুন",
+    receiptCloseBtn: "বন্ধ করুন",
+    receiptOfficialNotice: "এই রসিদটি বৈধ এবং TitenFin সিস্টেম দ্বারা জারি করা হয়েছে।",
+    viewReceiptBtn: "রসিদ দেখুন",
   },
 
   pt: {
@@ -1592,6 +1675,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "Tem certeza de que deseja sair da sua conta TitenFin?",
     cannotDeleteCustomerWithDebt: 'Não é possível excluir o cliente pois há dívidas ativas ou saldo guardado!',
     noPhoneAlert: 'Número de WhatsApp não cadastrado!',
+    receiptTitle: "Comprovante de Transação",
+    receiptSubtitle: "Transação Concluída com Sucesso",
+    receiptRefNo: "Nº de Referência",
+    receiptShareBtn: "Compartilhar",
+    receiptDownloadBtn: "Salvar Imagem",
+    receiptPrintBtn: "Imprimir",
+    receiptCloseBtn: "Fechar",
+    receiptOfficialNotice: "Este recibo é válido e emitido oficialmente pelo TitenFin.",
+    viewReceiptBtn: "Ver Comprovante",
   },
 
   ru: {
@@ -1747,6 +1839,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "Вы уверены, что хотите выйти из своей учетной записи TitenFin?",
     cannotDeleteCustomerWithDebt: 'Невозможно удалить клиента с непогашенным долгом или средствами на хранении!',
     noPhoneAlert: 'Номер WhatsApp не указан!',
+    receiptTitle: "Квитанция о транзакции",
+    receiptSubtitle: "Транзакция успешно выполнена",
+    receiptRefNo: "Номер квитанции",
+    receiptShareBtn: "Поделиться",
+    receiptDownloadBtn: "Сохранить картинку",
+    receiptPrintBtn: "Печать",
+    receiptCloseBtn: "Закрыть",
+    receiptOfficialNotice: "Эта квитанция действительна и официально сформирована системой TitenFin.",
+    viewReceiptBtn: "Посмотреть чек",
   },
 
   ur: {
@@ -1902,6 +2003,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "کیا آپ واقعی اپنے TitenFin اکاؤنٹ سے لاگ آؤٹ کرنا چاہتے ہیں؟",
     cannotDeleteCustomerWithDebt: 'گاہک کو حذف نہیں کیا جا سکتا کیونکہ اس پر بقایا جات یا امانت بیلنس موجود ہے!',
     noPhoneAlert: 'واٹس ایپ فون نمبر درج نہیں ہے!',
+    receiptTitle: "ٹرانزیکشن کی رسید",
+    receiptSubtitle: "لین دین کامیاب رہا",
+    receiptRefNo: "حوالہ نمبر",
+    receiptShareBtn: "رسید شیئر کریں",
+    receiptDownloadBtn: "تصویر محفوظ کریں",
+    receiptPrintBtn: "پرنٹ کریں",
+    receiptCloseBtn: "بند کریں",
+    receiptOfficialNotice: "یہ رسید درست ہے اور TitenFin کی طرف سے باضابطہ جاری کی گئی ہے۔",
+    viewReceiptBtn: "رسید دیکھیں",
   },
 
   ja: {
@@ -2057,6 +2167,15 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmLogout: "TitenFinアカウントからログアウトしてもよろしいですか？",
     cannotDeleteCustomerWithDebt: '未払い残高または預かり金がある顧客は削除できません！',
     noPhoneAlert: 'WhatsApp電話番号が未登録です！',
+    receiptTitle: "取引領収書",
+    receiptSubtitle: "取引完了",
+    receiptRefNo: "参照番号",
+    receiptShareBtn: "領収書を共有",
+    receiptDownloadBtn: "画像を保存",
+    receiptPrintBtn: "印刷",
+    receiptCloseBtn: "閉じる",
+    receiptOfficialNotice: "この領収書は有効であり、TitenFinシステムによって公式に発行されています。",
+    viewReceiptBtn: "領収書を表示",
   },
 };
 

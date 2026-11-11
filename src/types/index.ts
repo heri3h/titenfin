@@ -60,3 +60,22 @@ export interface CashDashboardSummary {
   totalReceivables: number;   // Kotak 2: Total Piutang (Uang di luar yang belum lunas)
   totalDeposits: number;      // Kotak 3: Dana Titipan (Uang orang lain / AMANAH yang dipegang)
 }
+
+export interface ReceiptData {
+  id: string;
+  refNumber: string;
+  date: string;
+  time?: string;
+  title: string;
+  type: 'installment' | 'settlement' | 'deposit' | 'withdraw' | 'credit_payment';
+  amount: number;
+  customerName: string;
+  customerPhone?: string;
+  itemName?: string;
+  installmentNumber?: number;
+  tenorCount?: number;
+  remainingAmount?: number;
+  balanceAfter?: number;
+  discount?: number;
+  notes?: string;
+}

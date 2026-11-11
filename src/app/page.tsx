@@ -18,9 +18,10 @@ import {
   ShieldCheck,
   AlertTriangle,
   History,
-  FileSpreadsheet
+  FileSpreadsheet,
+  FileText
 } from 'lucide-react';
-import { Customer, CreditItem, CreditPayment, DepositTransaction, DepositType, CreditStatus } from '../types';
+import { Customer, CreditItem, CreditPayment, DepositTransaction, DepositType, CreditStatus, ReceiptData } from '../types';
 import {
   getStorageData,
   saveStorageData,
@@ -41,6 +42,7 @@ import { BottomNav } from '../components/BottomNav';
 import { CreditDetailModal } from '../components/CreditDetailModal';
 import { CustomerDetailModal } from '../components/CustomerDetailModal';
 import { DepositDetailModal } from '../components/DepositDetailModal';
+import { ReceiptModal } from '../components/ReceiptModal';
 import { LandingPage } from '../components/LandingPage';
 import { AuthModal } from '../components/AuthModal';
 import { detectUserLanguage, saveUserLanguage, translations, Language } from '../lib/i18n';
@@ -92,6 +94,7 @@ export default function Home() {
   const [selectedCreditForDetail, setSelectedCreditForDetail] = useState<CreditItem | null>(null);
   const [selectedCustomerForDetail, setSelectedCustomerForDetail] = useState<Customer | null>(null);
   const [selectedDepositCustomerForDetail, setSelectedDepositCustomerForDetail] = useState<Customer | null>(null);
+  const [selectedReceiptData, setSelectedReceiptData] = useState<ReceiptData | null>(null);
 
   // Load initial data & auto-detect language & currency
   useEffect(() => {
@@ -274,6 +277,24 @@ export default function Home() {
     syncAndSave(customers, updatedCredits, updatedPayments, deposits);
     setSelectedCreditForPayment(null);
 
+    const currentPaymentsCount = payments.filter(p => p.creditItemId === cred.id).length + 1;
+    setSelectedReceiptData({
+      id: newPayment.id,
+      refNumber: `TF-${date.replace(/-/g, '').slice(2)}-${String(Date.now()).slice(-4)}`,
+      date,
+      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      title: updatedStatus === 'completed' ? 'Pelunasan Cicilan (Lunas)' : 'Pembayaran Angsuran',
+      type: 'installment',
+      amount,
+      customerName: cust?.name || cred.customerName,
+      customerPhone: cust?.phone,
+      itemName: cred.itemName,
+      installmentNumber: currentPaymentsCount,
+      tenorCount: cred.tenorCount,
+      remainingAmount: newRemaining,
+      notes,
+    });
+
     // Kirim bukti WA jika dipilih
     if (sendWa && cust && cust.phone) {
       const msg = `Halo ${cust.name},\n\nTerima kasih, pembayaran cicilan untuk barang *${cred.itemName}* sebesar *${formatRupiah(amount)}* telah kami terima pada tanggal ${date}.\n\n*Sisa Tagihan:* ${formatRupiah(newRemaining)}\n*Status:* ${updatedStatus === 'completed' ? 'LUNAS SELESAI 🎉' : 'Dalam Angsuran'}\n\nCatatan: ${notes || '-'}\n\n_Salam hangat, TitenFin_`;
@@ -313,6 +334,22 @@ export default function Home() {
 
     syncAndSave(customers, updatedCredits, updatedPayments, deposits);
     setSelectedCreditForEarlySettlement(null);
+
+    setSelectedReceiptData({
+      id: newPayment.id,
+      refNumber: `TF-${date.replace(/-/g, '').slice(2)}-${String(Date.now()).slice(-4)}`,
+      date,
+      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      title: 'Pelunasan Dipercepat',
+      type: 'settlement',
+      amount: finalAmount,
+      customerName: cust?.name || cred.customerName,
+      customerPhone: cust?.phone,
+      itemName: cred.itemName,
+      remainingAmount: 0,
+      discount,
+      notes,
+    });
 
     if (sendWa && cust && cust.phone) {
       const msg = `Halo ${cust.name},\n\nAlhamdulillah, akad kredit barang *${cred.itemName}* telah resmi *LUNAS DIPERCEPAT* pada ${date}.\n\n*Potongan/Diskon Bunga:* ${formatRupiah(discount)}\n*Total Pelunasan:* ${formatRupiah(finalAmount)}\n*Sisa Tagihan:* Rp 0 (LUNAS)\n\nTerima kasih banyak atas kerjasamanya yang baik 🙏\n\n_Salam hangat, TitenFin_`;
@@ -363,6 +400,20 @@ export default function Home() {
     syncAndSave(customers, credits, payments, updatedDeposits);
     setIsDepositModalOpen(false);
     setSelectedCustomerIdForAction('');
+
+    setSelectedReceiptData({
+      id: newTxn.id,
+      refNumber: `TF-${date.replace(/-/g, '').slice(2)}-${String(Date.now()).slice(-4)}`,
+      date,
+      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      title: type === 'deposit' ? 'Setoran Kas Titipan' : 'Penarikan Kas Titipan',
+      type,
+      amount,
+      customerName: cust.name,
+      customerPhone: cust.phone,
+      balanceAfter: newBal,
+      notes,
+    });
 
     if (sendWa && cust.phone) {
       const typeLabel = type === 'deposit' ? 'SETORAN TITIPAN (+)' : 'PENARIKAN TITIPAN (-)';
@@ -920,14 +971,39 @@ export default function Home() {
                           <span className="flex items-center gap-1 text-emerald-600 font-semibold">
                             <CheckCircle className="w-4 h-4" /> {t.statusCompleted}
                           </span>
-                          {cust?.phone && (
+                          <div className="flex items-center gap-2">
                             <button
-                              onClick={() => openWhatsApp(cust.phone, `Halo ${cust.name}, konfirmasi kuitansi lunas untuk barang ${cred.itemName} telah tersimpan rapi di sistem TitenFin. Terima kasih!`)}
-                              className="text-xs text-slate-500 hover:text-emerald-700 font-medium"
+                              onClick={() => {
+                                const lastPayment = payments.find(p => p.creditItemId === cred.id);
+                                setSelectedReceiptData({
+                                  id: lastPayment?.id || cred.id,
+                                  refNumber: `TF-${cred.createdAt.replace(/-/g, '').slice(2, 8)}-${cred.id.slice(-4)}`,
+                                  date: lastPayment?.date || cred.dueDate || cred.startDate,
+                                  title: 'Akad Kredit Lunas',
+                                  type: 'settlement',
+                                  amount: lastPayment?.amount || cred.scheduledAmount || cred.totalCreditPrice,
+                                  customerName: cred.customerName,
+                                  customerPhone: cust?.phone,
+                                  itemName: cred.itemName,
+                                  remainingAmount: 0,
+                                  notes: 'LUNAS SELESAI 🎉',
+                                });
+                              }}
+                              className="text-xs text-teal-700 hover:text-teal-900 font-semibold flex items-center gap-1 bg-teal-50 hover:bg-teal-100 px-2 py-1 rounded-lg transition"
+                              title={t.viewReceiptBtn || 'Lihat Resi'}
                             >
-                              {t.sendReceiptWa}
+                              <FileText className="w-3.5 h-3.5" />
+                              <span>{t.viewReceiptBtn || 'Resi'}</span>
                             </button>
-                          )}
+                            {cust?.phone && (
+                              <button
+                                onClick={() => openWhatsApp(cust.phone, `Halo ${cust.name}, konfirmasi kuitansi lunas untuk barang ${cred.itemName} telah tersimpan rapi di sistem TitenFin. Terima kasih!`)}
+                                className="text-xs text-slate-500 hover:text-emerald-700 font-medium"
+                              >
+                                {t.sendReceiptWa}
+                              </button>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1391,6 +1467,7 @@ export default function Home() {
         onPayInstallment={(cred) => setSelectedCreditForPayment(cred)}
         onEarlySettlement={(cred) => setSelectedCreditForEarlySettlement(cred)}
         onDeleteCredit={handleDeleteCredit}
+        onViewReceipt={(receipt) => setSelectedReceiptData(receipt)}
         t={t}
       />
 
@@ -1422,6 +1499,15 @@ export default function Home() {
           setSelectedCustomerIdForAction(custId);
           setIsDepositModalOpen(true);
         }}
+        onViewReceipt={(receipt) => setSelectedReceiptData(receipt)}
+        t={t}
+      />
+
+      {/* MODAL RESI / BUKTI TRANSAKSI (ALA M-BANKING, DOWNLOAD PNG & SHARE) */}
+      <ReceiptModal
+        isOpen={!!selectedReceiptData}
+        onClose={() => setSelectedReceiptData(null)}
+        data={selectedReceiptData}
         t={t}
       />
 

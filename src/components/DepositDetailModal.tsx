@@ -9,9 +9,10 @@ import {
   MessageCircle,
   History,
   Phone,
-  Plus
+  Plus,
+  FileText
 } from 'lucide-react';
-import { Customer, DepositTransaction } from '../types';
+import { Customer, DepositTransaction, ReceiptData } from '../types';
 import { formatRupiah, getCustomerDepositBalance } from '../lib/storage';
 import { TranslationDictionary } from '../lib/i18n';
 
@@ -21,6 +22,7 @@ interface DepositDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenDepositAction: (customerId: string) => void;
+  onViewReceipt?: (receipt: ReceiptData) => void;
   t: TranslationDictionary;
 }
 
@@ -30,6 +32,7 @@ export const DepositDetailModal: React.FC<DepositDetailModalProps> = ({
   isOpen,
   onClose,
   onOpenDepositAction,
+  onViewReceipt,
   t,
 }) => {
   if (!isOpen || !customer) return null;
@@ -119,13 +122,38 @@ export const DepositDetailModal: React.FC<DepositDetailModalProps> = ({
                         </span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className={`font-bold ${tItem.type === 'deposit' ? 'text-emerald-700' : 'text-amber-700'}`}>
-                        {tItem.type === 'deposit' ? '+' : '-'}{formatRupiah(tItem.amount)}
-                      </span>
-                      <span className="block text-[10px] text-slate-400">
-                        {t.balanceRemaining}: {formatRupiah(tItem.balanceAfter)}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <span className={`font-bold ${tItem.type === 'deposit' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                          {tItem.type === 'deposit' ? '+' : '-'}{formatRupiah(tItem.amount)}
+                        </span>
+                        <span className="block text-[10px] text-slate-400">
+                          {t.balanceRemaining}: {formatRupiah(tItem.balanceAfter)}
+                        </span>
+                      </div>
+                      {onViewReceipt && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onViewReceipt({
+                              id: tItem.id,
+                              refNumber: `TF-${tItem.date.replace(/-/g, '').slice(2)}-${tItem.id.slice(-4)}`,
+                              date: tItem.date,
+                              title: tItem.type === 'deposit' ? 'Setoran Kas Titipan' : 'Penarikan Kas Titipan',
+                              type: tItem.type,
+                              amount: tItem.amount,
+                              customerName: customer.name,
+                              customerPhone: customer.phone,
+                              balanceAfter: tItem.balanceAfter,
+                              notes: tItem.notes,
+                            });
+                          }}
+                          className="p-1.5 text-teal-700 hover:text-white hover:bg-teal-600 bg-teal-50 rounded-lg transition"
+                          title={t.viewReceiptBtn || 'Lihat Resi'}
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}

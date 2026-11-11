@@ -13,9 +13,10 @@ import {
   ShieldAlert,
   ArrowRight,
   History,
-  Tag
+  Tag,
+  FileText
 } from 'lucide-react';
-import { CreditItem, CreditPayment, Customer } from '../types';
+import { CreditItem, CreditPayment, Customer, ReceiptData } from '../types';
 import { formatRupiah } from '../lib/storage';
 import { TranslationDictionary } from '../lib/i18n';
 
@@ -28,6 +29,7 @@ interface CreditDetailModalProps {
   onPayInstallment: (credit: CreditItem) => void;
   onEarlySettlement: (credit: CreditItem) => void;
   onDeleteCredit: (creditId: string) => void;
+  onViewReceipt?: (receipt: ReceiptData) => void;
   t: TranslationDictionary;
 }
 
@@ -40,6 +42,7 @@ export const CreditDetailModal: React.FC<CreditDetailModalProps> = ({
   onPayInstallment,
   onEarlySettlement,
   onDeleteCredit,
+  onViewReceipt,
   t,
 }) => {
   if (!isOpen || !credit) return null;
@@ -193,12 +196,40 @@ export const CreditDetailModal: React.FC<CreditDetailModalProps> = ({
                         {p.date} • {p.notes || '-'}
                       </span>
                     </div>
-                    <div className="text-right">
-                      <span className="font-bold text-emerald-700">+{formatRupiah(p.amount)}</span>
-                      {p.isEarlySettlement && (
-                        <span className="block text-[10px] text-amber-600 font-semibold">
-                          {formatRupiah(p.discountGranted)}
-                        </span>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <span className="font-bold text-emerald-700">+{formatRupiah(p.amount)}</span>
+                        {p.isEarlySettlement && (
+                          <span className="block text-[10px] text-amber-600 font-semibold">
+                            {formatRupiah(p.discountGranted)}
+                          </span>
+                        )}
+                      </div>
+                      {onViewReceipt && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onViewReceipt({
+                              id: p.id,
+                              refNumber: `TF-${p.date.replace(/-/g, '').slice(2)}-${p.id.slice(-4)}`,
+                              date: p.date,
+                              title: p.isEarlySettlement ? 'Pelunasan Dipercepat' : 'Pembayaran Angsuran',
+                              type: p.isEarlySettlement ? 'settlement' : 'installment',
+                              amount: p.amount,
+                              customerName: credit.customerName,
+                              customerPhone: customer?.phone,
+                              itemName: credit.itemName,
+                              installmentNumber: itemPayments.length - idx,
+                              tenorCount: credit.tenorCount,
+                              discount: p.discountGranted,
+                              notes: p.notes,
+                            });
+                          }}
+                          className="p-1.5 text-teal-700 hover:text-white hover:bg-teal-600 bg-teal-50 rounded-lg transition"
+                          title={t.viewReceiptBtn || 'Lihat Resi'}
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                        </button>
                       )}
                     </div>
                   </div>

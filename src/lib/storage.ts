@@ -143,4 +143,12 @@ export const formatRupiah = (val: number, isHidden: boolean = false, currencyCod
   return formatCurrency(val, currencyCode, isHidden);
 };
 
+export const openWhatsApp = (phone: string, message: string) => {
+  const cleanPhone = phone.replace(/^0/, '62').replace(/\D/g, '');
+  const encoded = encodeURIComponent(message);
+  if (typeof window !== 'undefined') {
+    window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, '_blank');
+  }
+};
+
 export { formatCurrency };
